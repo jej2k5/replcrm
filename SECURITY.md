@@ -1,5 +1,7 @@
 # Security policy
 
+HONA LLC is the ReplCRM project steward. The maintainer coordinates project security reporting; stewardship does not establish a reporting channel or response SLA.
+
 ## Private reporting contact: required before public release
 
 **HUMAN REVIEW REQUIRED:** the maintainer must configure and test a private vulnerability-reporting channel and replace this notice before publication. No security email address is currently specified or invented.

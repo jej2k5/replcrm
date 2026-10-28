@@ -89,6 +89,6 @@ The Dockerfile targets Node 22 in each stage and retains project/dependency lega
 
 See [CONTRIBUTING](CONTRIBUTING.md) for DCO and verification expectations, [governance](GOVERNANCE.md), [roadmap](ROADMAP.md), [changelog](CHANGELOG.md), [security policy](SECURITY.md) and [code of conduct](CODE_OF_CONDUCT.md). Verified private reporting contacts remain final human publication actions; do not post sensitive reports publicly.
 
-Project-owned source is authorized under the **Apache License, Version 2.0**: [LICENSE](LICENSE), [NOTICE](NOTICE). Third-party licenses remain independent: [notices](THIRD_PARTY_NOTICES.md), [dependency audit](docs/dependency-license-audit.md). Contributor Covenant retains its upstream attribution/license. `private: true` prevents accidental npm publishing.
+HONA LLC is the project steward and copyright holder for ReplCRM-owned source. **Copyright 2026 HONA LLC.** Project-owned source is licensed under the **Apache License, Version 2.0**: [LICENSE](LICENSE), [NOTICE](NOTICE). Third-party licenses remain independent: [notices](THIRD_PARTY_NOTICES.md), [dependency audit](docs/dependency-license-audit.md). Contributor Covenant retains its upstream attribution/license. `private: true` prevents accidental npm publishing.
 
 ReplCRM is an independent project, not an Apache Software Foundation project or affiliate. Technology names describe capabilities/plans, not sponsorship or endorsement. No vendor logos or external banners are included.

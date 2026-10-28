@@ -2,7 +2,7 @@
 
 ## Authority and source
 
-Source archive: `jej2k5/replcrm`, checkpoint `67be373d5afb16091f617898ee466acdf1dd3d78`. The rights holder has explicitly authorized Apache-2.0 distribution of ReplCRM-owned implementation, tests, schema and documentation, including code historically named Moat CRM Pipeline. This resolves the former project-owned provenance review. It does not override third-party terms or authorize credentials, customer material or independently sourced private content.
+Source archive: `jej2k5/replcrm`, checkpoint `67be373d5afb16091f617898ee466acdf1dd3d78`. HONA LLC, confirmed by the project owner as copyright holder and project steward, has explicitly authorized Apache-2.0 distribution of ReplCRM-owned implementation, tests, schema and documentation, including code historically named Moat CRM Pipeline. This resolves the former project-owned provenance review. It does not override third-party terms or authorize credentials, customer material or independently sourced private content.
 
 [Source selection](source-selection.json) records the exact selected checkpoint files and explicitly reviewed working-tree OSS drafts, with input hashes. Public-facing drafts were adapted only in this isolated candidate. Neither newer private integration renames nor arbitrary uncommitted changes were copied. Historical naming alone was not used to reject owned source.
 

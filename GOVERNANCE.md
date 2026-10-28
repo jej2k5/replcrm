@@ -1,10 +1,10 @@
 # Governance
 
-ReplCRM is an independent project. It is not governed by or affiliated with a software foundation or vendor.
+ReplCRM is an independent open-source project stewarded by HONA LLC, the copyright holder for ReplCRM-owned source. It is not affiliated with or endorsed by the Apache Software Foundation. Third-party works retain their respective ownership and terms.
 
 ## Maintainer
 
-The initial maintainer is **[@jej2k5](https://github.com/jej2k5)**, the source-project repository owner. This identifies the project role, not a legal determination of ownership of every contribution. No steering committee or additional maintainer is claimed. Private contact and final publication tasks in the [readiness report](docs/oss-clean-release-readiness.md) remain open.
+The initial maintainer is **[@jej2k5](https://github.com/jej2k5)**, serving as maintainer under HONA LLC project stewardship. Stewardship does not assign ownership of third-party works or future contributions to HONA LLC. No steering committee or additional maintainer is claimed. Private contact and final publication tasks in the [readiness report](docs/oss-clean-release-readiness.md) remain open.
 
 ## Decisions and review
 

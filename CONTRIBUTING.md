@@ -1,6 +1,6 @@
 # Contributing to ReplCRM
 
-ReplCRM is an independent Apache-2.0 project: **Discover. Reconstruct. Replicate.** Keep the core vendor-neutral and changes small enough to review with executable evidence. The rights holder has authorized Apache-2.0 distribution of project-owned source. Third-party terms and the [final publication actions](docs/oss-clean-release-readiness.md) remain independent.
+ReplCRM is an independent Apache-2.0 project: **Discover. Reconstruct. Replicate.** Keep the core vendor-neutral and changes small enough to review with executable evidence. HONA LLC is the project steward and copyright holder for ReplCRM-owned source, authorized for Apache-2.0 distribution. Contributions retain their applicable ownership; DCO sign-off is not a copyright assignment. Third-party terms and the [final publication actions](docs/oss-clean-release-readiness.md) remain independent.
 
 ## Get started
 
