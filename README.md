@@ -1,5 +1,9 @@
 # ReplCRM
 
+![ReplCRM — Discover. Reconstruct. Replicate.](docs/assets/replcrm-banner.png)
+
+*PostgreSQL is implemented. Snowflake and the other future stores shown in the banner are planned.*
+
 **Discover. Reconstruct. Replicate.**
 
 Metadata-driven CRM replication engine with source-neutral adapters and pluggable replica stores.
