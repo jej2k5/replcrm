@@ -1,0 +1,302 @@
+{
+  "sourceCommit": "67be373d5afb16091f617898ee466acdf1dd3d78",
+  "authorization": "Rights holder authorized Apache-2.0 distribution of ReplCRM-owned implementation; third-party terms remain independent.",
+  "selectedInputs": [
+    {
+      "path": "prisma/migrations/20260428_init/migration.sql",
+      "origin": "authorized-checkpoint",
+      "sha256": "bc8fe3dfcd5811b78d562b2f52020749001ec0f0566a2ec19380c7fd31be604a"
+    },
+    {
+      "path": "prisma/migrations/20260430_polymorphic_references/migration.sql",
+      "origin": "authorized-checkpoint",
+      "sha256": "1725005cec557baab4860e310858d926361a377ba1de0d509f294c7dec368f49"
+    },
+    {
+      "path": "prisma/migrations/20261026_scoped_record_identity/migration.sql",
+      "origin": "authorized-checkpoint",
+      "sha256": "fbb2eeaca9bc0ea2a5f4e42acda8e48176b92cd9489f40f339d771503c9ad041"
+    },
+    {
+      "path": "prisma/migrations/migration_lock.toml",
+      "origin": "authorized-checkpoint",
+      "sha256": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "origin": "authorized-checkpoint",
+      "sha256": "8e6262da8ec4245b05a15c86674aecf25abac7640305b356607f3f72a7246fe8"
+    },
+    {
+      "path": "src/cli.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "9152e38d7eba61e95bcdff735dccbf22ab730a2d1d8b92a8af3a559f881cf074"
+    },
+    {
+      "path": "src/config.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "fc855724effc9e9200b25ea0c5007efc7361df20c1e7c8b53367bf1180fabee2"
+    },
+    {
+      "path": "src/core/config.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "2548313f201aa916fe521c3b0b6378b2bd197255a80e2ef1a4bf11cf08acfbd6"
+    },
+    {
+      "path": "src/core/destination.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "4272875977e5d18d4af3ad5efb8bd94586ea4df28bcc5dbf1da9d480067a6b75"
+    },
+    {
+      "path": "src/core/metadata.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "9a846bbf5e0ebd80acba52a9c899d87adffe1a921b5a0de4cd2470349d013d3a"
+    },
+    {
+      "path": "src/core/model.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "50db0215064187bc4c3a8f1311b872120b8fa2d11f4c0a0e925701d18779e66d"
+    },
+    {
+      "path": "src/core/orchestrator.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "703dc93a986169569cda892181c0533cefd0e47b280ca703ae33e0dfa418f2d5"
+    },
+    {
+      "path": "src/core/replica-store.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "a119bebb60935724b700485c351dfc61158bc9ade95377e33234ee0ca20687d3"
+    },
+    {
+      "path": "src/core/source.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "6d3e345e612a0ee93efd218288ba1812950176e0aeb9053e936c5a94b9c044fd"
+    },
+    {
+      "path": "src/core/type-mapper.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "8ae0a883ef76eec00e78c60207287ff985a2cd61c90a2b66abebae3c592f2bc8"
+    },
+    {
+      "path": "src/sources/salesforce/client.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "e2eee85f5d43ad689fd8728bda853090150995c8fe0d07a4992e642bdcd5185a"
+    },
+    {
+      "path": "src/sources/salesforce/metadata.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "60169335d55f08ec379897f1c1eb019225bfc46c2eb26bccc7cc26c4e4a5996b"
+    },
+    {
+      "path": "src/sources/salesforce/records.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "887c16abadf62babcd1eaeea8d7c1412c3637e756887c5229532381834d13a6e"
+    },
+    {
+      "path": "src/sources/salesforce/types.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "875d5d9871e8ce3bdb3dddb1a18136e8423f0f8c6865770e940f8ba5d0021cf4"
+    },
+    {
+      "path": "src/sources/salesforce/values.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "bb5cb5750926263b2b754d5eb8f0559ac773fc39dbe6b8f88f0316956c86f6ca"
+    },
+    {
+      "path": "src/stores/memory/index.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "77e3e5e90cfaea62eaec2f5b9ea64d922237ec6bf28291503ad580db11f2ec7c"
+    },
+    {
+      "path": "src/stores/postgres/index.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "e1d3fff8b8b4134b1f894fcb5b675d0d29f803e4aa5d469b882058a0c54c1a18"
+    },
+    {
+      "path": "src/stores/postgres/metadata-sync.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "33c16fa67ab47d16a96a70759f37e052ac919b1ca315d485111bab882ed2aae7"
+    },
+    {
+      "path": "src/stores/postgres/record-sync.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "1fbcbb7748d4ddda6d4a555fde180fbf94925d494b84180e8c3d2028a6de9cf4"
+    },
+    {
+      "path": "src/stores/postgres/user-sync.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "f8cf5c70bf7a32e8204bff75e9bb0c68200c4397f2e6a1887580d620f0da13ea"
+    },
+    {
+      "path": "src/stores/postgres/wide-view-sync.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "da32573d30331d3b720b5342671c8a998729b1cff6e91fc8d52e2e52c1698dbe"
+    },
+    {
+      "path": "tests/architecture.test.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "dbfab15b7dc461ed198e0478406be9a506d64b9459e2433fdf19e0f646f661cc"
+    },
+    {
+      "path": "tests/helpers/database.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "db9cc0d9883a93598d8dd3dc554dc8c03104cb5e590f8253d0a9aaca60b27fcf"
+    },
+    {
+      "path": "tests/helpers/no-db-loader.mjs",
+      "origin": "authorized-checkpoint",
+      "sha256": "88204cdc0a2d74691a6437eea6769ffa70e9297fa45268e1892484c90116a210"
+    },
+    {
+      "path": "tests/helpers/replica-store-contract.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "c487825b7e3d8315c22c975edfac739c846a6eacb236061f6c4685155c13d08f"
+    },
+    {
+      "path": "tests/replica-store-adversarial.test.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "8128f39c4d91b1bd029eee54a9a7936767771fc8267f340e496d1932dc0bb6c4"
+    },
+    {
+      "path": "tests/replica-store.test.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "de96d97dd24877c4865f96c3a558b53e539ef95068b2a60827f35116c920e072"
+    },
+    {
+      "path": "tests/salesforce.test.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "5df02a8682ff8ad4c5d450ac6a11574f50073f07ff390d79f494c2177f5c9aa0"
+    },
+    {
+      "path": "tests/semantic-contract.test.ts",
+      "origin": "authorized-checkpoint",
+      "sha256": "eb50f5d07b613221260527e4528a3af2e2325c14006fae496178e0c698aca871"
+    },
+    {
+      "path": "tsconfig.json",
+      "origin": "authorized-checkpoint",
+      "sha256": "c3eb5475f46f45660884bb8739ce6437076bd2f0659caa8ed758296b407bc973"
+    },
+    {
+      "path": "tsconfig.tests.json",
+      "origin": "authorized-checkpoint",
+      "sha256": "23b172868a9b480f6daa1aaeed654b3ae47a8515ff57361c8fbc0d87539a626a"
+    },
+    {
+      "path": "LICENSE",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "c11d6a85955033b387580a849a7f7528c73910e726c919cf0960dab5920729a1"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "0cd3e32e431a5713037a6a30f7c7291fff2b8c387600fc8839e6b822a9b1d183"
+    },
+    {
+      "path": "SECURITY.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "7c48ac0e111f0c5466eb05fa82ecee9010fb7d1e106c8ec4695157346b75f9bc"
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "f1ba997f1f27e09cb97f5f81a64a96a8c92ca7e842e5d6b51b1c5927937a9824"
+    },
+    {
+      "path": "ROADMAP.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "d0e65d55af9c154f7751706ad4be1148d85f1aca45f32e642f1d07e82af38dc3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "29d794dd075a925c172b0190533dd1ba9373c255b22ef995bc01a55e2f40915f"
+    },
+    {
+      "path": ".env.example",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "8fcf6f4a23b68040de0a10746ac40bc8ca80ff45dfe313a4763ea1cee5038565"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.yml",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "df2a4b31ef3e2006f0fcb877a7c157d1c0dfd71736dcfb2178c3837df5d922fd"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "8ca14da31a4becd03595c7513835466f00b4d25ab63639dc89810aa97c3b2a23"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "13064e7bea658e01e718b414fbb7b3b244f36411fe25ee2055c151f7b534547a"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "7ce3da334dd7d20143c53672bedf3fac7457cc3592c1365ba271baf28425b878"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "a71ba20f3891de69e14e3ec980a85d9a77a1c20bdab6de8cef56782d5566dea0"
+    },
+    {
+      "path": "docs/architecture-principles.md",
+      "origin": "explicitly reviewed OSS preparation working-tree file",
+      "sha256": "887f41be8605b59066ff4a7ef48cd3dfeb462f91439f35b6e8b75f6a9d918da5"
+    },
+    {
+      "path": "package.json",
+      "origin": "authorized-checkpoint",
+      "sha256": "6fc964979e367b671efae7f65e4e1984d37e67f98751b0f8579f2ebbef0b1896"
+    },
+    {
+      "path": "package-lock.json",
+      "origin": "authorized-checkpoint",
+      "sha256": "000afe4405405139390b822012fd3d4925e4bb4892161243cae396b5118515e5"
+    },
+    {
+      "path": "Dockerfile",
+      "origin": "authorized-checkpoint",
+      "sha256": "8f498d82ccc25bb231f3a0e617fcc52703808100d54f7e3720d4aab7edd24467"
+    },
+    {
+      "path": ".dockerignore",
+      "origin": "authorized-checkpoint",
+      "sha256": "22f8bdf8435cd1ae021df47c9d2834cd4638d68aedb74f0d6b100f319dc8b611"
+    },
+    {
+      "path": ".gitignore",
+      "origin": "authorized-checkpoint",
+      "sha256": "8b93bfec94c40f34c9af444af0d34af629f324fc30d13ff36b79099b3d34628c"
+    },
+    {
+      "path": "docs/core-contract.md",
+      "origin": "authorized-checkpoint",
+      "sha256": "87f7771dc10e4b5f233bf04c35811ba301dc7936fce461f0ef7caf5d1bd5a39c"
+    },
+    {
+      "path": "docs/replica-store.md",
+      "origin": "authorized-checkpoint",
+      "sha256": "d1903eb1da481b28668d5bf45954fdfff2cca802c7105e9e0417d0bda47f8686"
+    }
+  ],
+  "excludedScopes": [
+    "src/destinations/",
+    "src/compat/",
+    "tests/moat-destination.test.ts",
+    "uncommitted application-crm rename and tests",
+    "python/",
+    ".claude/",
+    "historical private audits/operator artifacts",
+    ".git/",
+    "local credentials/build/dependency caches"
+  ]
+}

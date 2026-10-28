@@ -1,0 +1,313 @@
+// CRM data model: replicates an upstream CRM with per-deployment
+// custom entity/attribute support via metadata-driven EAV storage.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// TENANCY
+// ============================================================
+
+// One customer environment. All metadata and records are scoped
+// to a Deployment so a single database can host many isolated
+// CRMs, each with its own custom schema.
+model Deployment {
+  id             String   @id @default(cuid())
+  name           String
+  sourceTenantId String?  @unique
+  sourceUrl      String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  entityDefinitions EntityDefinition[]
+  records           Record[]
+  users             User[]
+  entityVariants    EntityVariant[]
+  syncRuns          SyncRun[]
+}
+
+// User in the source CRM. Used for ownership and audit fields.
+model User {
+  id           String   @id @default(cuid())
+  deploymentId String
+  sourceId     String?
+  username     String
+  email        String
+  firstName    String?
+  lastName     String
+  role         String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  deployment      Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  ownedRecords    Record[]   @relation("RecordOwner")
+  createdRecords  Record[]   @relation("RecordCreatedBy")
+  modifiedRecords Record[]   @relation("RecordModifiedBy")
+
+  @@unique([deploymentId, sourceId])
+  @@unique([deploymentId, username])
+}
+
+// ============================================================
+// METADATA LAYER — describes what entities/attributes exist
+// ============================================================
+
+// Definition of any entity (e.g. Company, Person, Deal, Ticket,
+// or a customer-defined custom entity). Standard entities are
+// seeded per deployment; custom entities are added at runtime.
+model EntityDefinition {
+  id           String   @id @default(cuid())
+  deploymentId String
+  key          String // stable system name, e.g. "company", "person"
+  label        String
+  pluralLabel  String
+  isCustom     Boolean  @default(false)
+  description  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  deployment            Deployment            @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  attributes            AttributeDefinition[]
+  records               Record[]
+  variants              EntityVariant[]
+  outgoingRelations     RelationDefinition[]  @relation("FromEntity")
+  incomingRelations     RelationDefinition[]  @relation("ToEntity")
+  referencingAttributes AttributeDefinition[] @relation("AttributeReferenceTarget")
+
+  @@unique([deploymentId, key])
+}
+
+// Attribute (column) on an EntityDefinition. The dataType
+// determines which typed column on AttributeValue is populated.
+model AttributeDefinition {
+  id                 String            @id @default(cuid())
+  entityDefinitionId String
+  key                String // stable system name, e.g. "annual_revenue"
+  label              String
+  dataType           AttributeDataType
+  isCustom           Boolean           @default(false)
+  isRequired         Boolean           @default(false)
+  isUnique           Boolean           @default(false)
+  isExternalKey      Boolean           @default(false)
+  isComputed         Boolean           @default(false)
+  length             Int?
+  precision          Int?
+  scale              Int?
+  defaultValue       String?
+  expression         String? // for computed/derived attributes
+  helpText           String?
+  // For Reference/Composition attributes, the target entity. When the
+  // upstream field is polymorphic (e.g. Task.WhoId → Lead|Contact),
+  // referenceEntityId stays null and the full target list lives in
+  // referenceEntityKeys instead.
+  referenceEntityId  String?
+  // Canonical keys of every reference target the source attribute
+  // declared. Single-element for ordinary refs; multi-element for
+  // polymorphic refs. Empty for non-reference attributes.
+  referenceEntityKeys String[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  entityDefinition EntityDefinition    @relation(fields: [entityDefinitionId], references: [id], onDelete: Cascade)
+  referenceEntity  EntityDefinition?   @relation("AttributeReferenceTarget", fields: [referenceEntityId], references: [id])
+  enumOptions      EnumOption[]
+  attributeValues  AttributeValue[]
+  relation         RelationDefinition?
+
+  @@unique([entityDefinitionId, key])
+  @@index([referenceEntityId])
+}
+
+enum AttributeDataType {
+  Text
+  TextArea
+  LongText
+  RichText
+  Number
+  Currency
+  Percent
+  Boolean
+  Date
+  DateTime
+  Time
+  Email
+  Phone
+  Url
+  Enum
+  MultiEnum
+  Reference
+  Composition
+  Computed
+  Sequence
+  Address
+  Geolocation
+  Identifier
+}
+
+// Allowed value for an Enum/MultiEnum attribute.
+model EnumOption {
+  id                    String   @id @default(cuid())
+  attributeDefinitionId String
+  value                 String
+  label                 String
+  sortOrder             Int      @default(0)
+  isActive              Boolean  @default(true)
+  isDefault             Boolean  @default(false)
+  createdAt             DateTime @default(now())
+
+  attributeDefinition AttributeDefinition @relation(fields: [attributeDefinitionId], references: [id], onDelete: Cascade)
+
+  @@unique([attributeDefinitionId, value])
+}
+
+// Reified relation metadata. The fromAttribute is the reference
+// attribute on the child entity; toEntity is the parent.
+model RelationDefinition {
+  id              String       @id @default(cuid())
+  fromEntityId    String
+  toEntityId      String
+  fromAttributeId String       @unique
+  relationName    String
+  relationType    RelationType
+  cascadeDelete   Boolean      @default(false)
+  reparentable    Boolean      @default(false)
+
+  fromEntity    EntityDefinition    @relation("FromEntity", fields: [fromEntityId], references: [id], onDelete: Cascade)
+  toEntity      EntityDefinition    @relation("ToEntity", fields: [toEntityId], references: [id])
+  fromAttribute AttributeDefinition @relation(fields: [fromAttributeId], references: [id], onDelete: Cascade)
+
+  @@index([toEntityId])
+}
+
+enum RelationType {
+  Reference // many-to-one, independent lifecycle
+  Composition // many-to-one, child cannot exist without parent
+  Hierarchy // self-reference within the same entity
+}
+
+// Subtype of an entity (e.g. distinguishing Customer vs Partner
+// rows of the Company entity) with its own validation/UI rules.
+model EntityVariant {
+  id                 String   @id @default(cuid())
+  deploymentId       String
+  entityDefinitionId String
+  key                String
+  label              String
+  description        String?
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  deployment       Deployment       @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  entityDefinition EntityDefinition @relation(fields: [entityDefinitionId], references: [id], onDelete: Cascade)
+  records          Record[]
+
+  @@unique([entityDefinitionId, key])
+}
+
+// ============================================================
+// DATA LAYER — actual record instances and attribute values
+// ============================================================
+
+// Generic record. Every row of every entity (standard or custom)
+// is a Record pointing at its EntityDefinition.
+model Record {
+  id                 String    @id @default(cuid())
+  deploymentId       String
+  entityDefinitionId String
+  variantId          String?
+  sourceId           String? // ID of this record in the upstream CRM
+  externalKey        String? // customer-managed external identifier
+  ownerId            String?
+  createdById        String?
+  lastModifiedById   String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  sourceModifiedAt   DateTime?
+  lastSyncedAt       DateTime?
+  isDeleted          Boolean   @default(false)
+  deletedAt          DateTime?
+
+  deployment       Deployment       @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  entityDefinition EntityDefinition @relation(fields: [entityDefinitionId], references: [id])
+  variant          EntityVariant?   @relation(fields: [variantId], references: [id])
+  owner            User?            @relation("RecordOwner", fields: [ownerId], references: [id])
+  createdBy        User?            @relation("RecordCreatedBy", fields: [createdById], references: [id])
+  lastModifiedBy   User?            @relation("RecordModifiedBy", fields: [lastModifiedById], references: [id])
+
+  attributeValues AttributeValue[]
+  referencedBy    AttributeValue[] @relation("ReferenceTarget")
+
+  @@unique([deploymentId, entityDefinitionId, sourceId])
+  @@index([deploymentId, entityDefinitionId, isDeleted])
+  @@index([deploymentId, entityDefinitionId, externalKey])
+  @@index([deploymentId, entityDefinitionId, sourceModifiedAt])
+}
+
+// EAV row: one (record, attribute) pair. Exactly one typed column
+// is populated based on the AttributeDefinition's dataType, which
+// keeps values queryable/indexable instead of stuffed into JSON.
+model AttributeValue {
+  id                    String    @id @default(cuid())
+  recordId              String
+  attributeDefinitionId String
+  textValue             String?
+  numberValue           Decimal?  @db.Decimal(38, 18)
+  booleanValue          Boolean?
+  dateValue             DateTime? @db.Date
+  dateTimeValue         DateTime?
+  referenceValue        String? // FK to Record.id for Reference/Composition
+  jsonValue             Json? // MultiEnum, Address, Geolocation
+  updatedAt             DateTime  @updatedAt
+
+  record              Record              @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  attributeDefinition AttributeDefinition @relation(fields: [attributeDefinitionId], references: [id], onDelete: Cascade)
+  referenceRecord     Record?             @relation("ReferenceTarget", fields: [referenceValue], references: [id])
+
+  @@unique([recordId, attributeDefinitionId])
+  @@index([attributeDefinitionId, textValue])
+  @@index([attributeDefinitionId, numberValue])
+  @@index([attributeDefinitionId, dateTimeValue])
+  @@index([attributeDefinitionId, booleanValue])
+  @@index([referenceValue])
+}
+
+// ============================================================
+// REPLICATION / SYNC METADATA
+// ============================================================
+
+// Tracks each pull from the upstream CRM so incremental sync can
+// resume from the last cursor / watermark per entity.
+model SyncRun {
+  id               String     @id @default(cuid())
+  deploymentId     String
+  entityKey        String?
+  startedAt        DateTime   @default(now())
+  completedAt      DateTime?
+  status           SyncStatus
+  cursor           String?
+  recordsProcessed Int        @default(0)
+  recordsCreated   Int        @default(0)
+  recordsUpdated   Int        @default(0)
+  recordsDeleted   Int        @default(0)
+  errorMessage     String?
+
+  deployment Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+
+  @@index([deploymentId, entityKey, startedAt])
+}
+
+enum SyncStatus {
+  Running
+  Succeeded
+  Failed
+  PartialSuccess
+}

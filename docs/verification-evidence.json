@@ -1,0 +1,80 @@
+{
+  "sourceCommit": "67be373d5afb16091f617898ee466acdf1dd3d78",
+  "runtime": {
+    "node": "22.23.4",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "archiveChecksumVerified": true
+  },
+  "install": {
+    "command": "npm ci",
+    "exitCode": 0,
+    "installedPackages": 125,
+    "cleanCandidateInstall": true
+  },
+  "checks": {
+    "prismaGenerate": {
+      "exitCode": 0,
+      "clientVersion": "5.22.0"
+    },
+    "typecheck": {
+      "exitCode": 0
+    },
+    "build": {
+      "exitCode": 0
+    },
+    "prismaValidate": {
+      "exitCode": 0,
+      "externalDatabaseContacted": false
+    },
+    "tests": {
+      "exitCode": 0,
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "sharedContractExecutions": 30,
+      "failureInjectionExecutions": 16,
+      "characterizationOnly": 0
+    },
+    "publicSmoke": {
+      "exitCode": 0,
+      "passed": 5
+    },
+    "privateIntegrationSmoke": {
+      "executed": false,
+      "excludedChecks": 17
+    },
+    "yamlParse": {
+      "passed": 4
+    },
+    "packageMetadataParse": {
+      "passed": true
+    },
+    "staticPublicCiReview": {
+      "passed": true,
+      "hostedExecutionVerified": false
+    }
+  },
+  "sourcePreservation": {
+    "includedSourceTestsSchemaByteIdenticalToCheckpoint": 34,
+    "retainedLockVersionsUnchanged": true,
+    "originalArchiveSnapshotUnchanged": true
+  },
+  "security": {
+    "scanner": "Gitleaks 8.30.1",
+    "scope": "Every publication file, excluding generated node_modules/dist and Git internals; all source/tests/docs/legal/config/workflow/example files included",
+    "findings": 0,
+    "nonPlaceholderHistoricalValuesChecked": 2,
+    "historicalLiteralCandidateMatches": 0,
+    "targetedPrivateKeyTokenPrivateHostFindings": 0,
+    "knownLiveCredentials": 0
+  },
+  "notVerified": [
+    "Live Salesforce replication",
+    "Populated operator database upgrade",
+    "External wide-table consumer upgrade",
+    "Docker build/publication and exact binary-artifact attribution",
+    "Hosted GitHub fork CI execution",
+    "Historical development credential reuse outside reviewed archive"
+  ]
+}

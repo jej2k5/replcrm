@@ -1,0 +1,59 @@
+name: Bug report
+description: Report reproducible ReplCRM behavior using synthetic, redacted evidence.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "For security vulnerabilities, follow SECURITY.md instead. Do not include credentials, private endpoints or customer records."
+  - type: input
+    id: version
+    attributes:
+      label: ReplCRM version or commit
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source adapter
+      description: Salesforce, fake source, or not applicable.
+    validations:
+      required: true
+  - type: input
+    id: store
+    attributes:
+      label: Replica store
+      description: PostgreSQL, in-memory, or not applicable. Planned stores are not implemented support.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Runtime environment
+      description: Node/npm version, OS, database version and execution method; no connection strings.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Minimal steps and synthetic inputs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Redacted logs
+      description: Remove secrets, source data, user identifiers and private URLs before posting.
+      render: text

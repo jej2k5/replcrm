@@ -1,0 +1,2427 @@
+{
+  "scope": "Source candidate dependency declarations and retained legal texts; node_modules/dist are excluded from the root commit",
+  "packages": [
+    {
+      "name": "@babel/runtime",
+      "version": "7.29.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt",
+          "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+          "origin": "node_modules/@babel/runtime/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@babel/runtime-corejs3",
+      "version": "7.29.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt",
+          "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76",
+          "origin": "node_modules/@babel/runtime-corejs3/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@electric-sql/pglite",
+      "version": "0.5.12",
+      "license": "Apache-2.0",
+      "direct": true,
+      "scope": "development",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9.txt",
+          "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+          "origin": "node_modules/@electric-sql/pglite/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/aix-ppc64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/android-arm",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/android-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/android-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/darwin-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+          "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+          "origin": "node_modules/esbuild/LICENSE.md (same upstream binary copyright)"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/darwin-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/freebsd-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/freebsd-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-arm",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-ia32",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-loong64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-mips64el",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-ppc64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-riscv64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-s390x",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/linux-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/netbsd-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/netbsd-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/openbsd-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/openbsd-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/openharmony-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/sunos-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/win32-arm64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/win32-ia32",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@esbuild/win32-x64",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": false,
+      "notices": [],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@inquirer/external-editor",
+      "version": "1.0.3",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/85aca0b12ce5ade4ff76e9cbbe7e0d5a4cdde979e3930727c272e1fa04b8cc23.txt",
+          "sha256": "85aca0b12ce5ade4ff76e9cbbe7e0d5a4cdde979e3930727c272e1fa04b8cc23",
+          "origin": "node_modules/@inquirer/external-editor/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@prisma/client",
+      "version": "5.22.0",
+      "license": "Apache-2.0",
+      "direct": true,
+      "scope": "runtime",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "origin": "node_modules/@prisma/client/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@prisma/debug",
+      "version": "5.22.0",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "origin": "node_modules/@prisma/debug/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@prisma/engines",
+      "version": "5.22.0",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "origin": "node_modules/@prisma/engines/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@prisma/engines-version",
+      "version": "5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "origin": "node_modules/@prisma/engines-version/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@prisma/fetch-engine",
+      "version": "5.22.0",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "origin": "node_modules/@prisma/fetch-engine/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@prisma/get-platform",
+      "version": "5.22.0",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "origin": "node_modules/@prisma/get-platform/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@sindresorhus/is",
+      "version": "4.6.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/@sindresorhus/is/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "@types/node",
+      "version": "22.19.17",
+      "license": "MIT",
+      "direct": true,
+      "scope": "development",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+          "origin": "node_modules/@types/node/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "agent-base",
+      "version": "6.0.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/62ec9b69ae7e308c49318de661938694182a7fd09ac4ceacacd36b2c071436de.txt",
+          "sha256": "62ec9b69ae7e308c49318de661938694182a7fd09ac4ceacacd36b2c071436de",
+          "origin": "node_modules/agent-base/README.md license section"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "ansi-escapes",
+      "version": "4.3.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/ansi-escapes/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "ansi-regex",
+      "version": "5.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/ansi-regex/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "ansi-styles",
+      "version": "4.3.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/ansi-styles/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "asap",
+      "version": "2.0.6",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e80373b1ed0f33cecc47173b4b0c6afe0d0318b32dbd84116a1a957e3f7f43a8.txt",
+          "sha256": "e80373b1ed0f33cecc47173b4b0c6afe0d0318b32dbd84116a1a957e3f7f43a8",
+          "origin": "node_modules/asap/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "asynckit",
+      "version": "0.4.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/1953150d5d4b10c7542cee6f6e0c613b2682545233f069d75cfff1936386ce10.txt",
+          "sha256": "1953150d5d4b10c7542cee6f6e0c613b2682545233f069d75cfff1936386ce10",
+          "origin": "node_modules/asynckit/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "base64-js",
+      "version": "1.5.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5b37224c080cdcc97c871ada971c224e9926370fe74f11b539aa1cf9f3b1aca1.txt",
+          "sha256": "5b37224c080cdcc97c871ada971c224e9926370fe74f11b539aa1cf9f3b1aca1",
+          "origin": "node_modules/base64-js/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "base64url",
+      "version": "3.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/0745065f98b9623997c37b41d4d929f59d8ba26933ae518aee51e85d0367461c.txt",
+          "sha256": "0745065f98b9623997c37b41d4d929f59d8ba26933ae518aee51e85d0367461c",
+          "origin": "node_modules/base64url/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "bl",
+      "version": "4.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/9377db95383c8befacf05c6e465d969d756edf178487ca1344fdf3ba147c596f.txt",
+          "sha256": "9377db95383c8befacf05c6e465d969d756edf178487ca1344fdf3ba147c596f",
+          "origin": "node_modules/bl/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "buffer",
+      "version": "5.7.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/06bafa45fdad2579ba0e43b0c9b2c6290287c99c4203c300254a462b38a307f6.txt",
+          "sha256": "06bafa45fdad2579ba0e43b0c9b2c6290287c99c4203c300254a462b38a307f6",
+          "origin": "node_modules/buffer/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "call-bind-apply-helpers",
+      "version": "1.0.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt",
+          "sha256": "5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292",
+          "origin": "node_modules/call-bind-apply-helpers/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "chalk",
+      "version": "4.1.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/chalk/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "chardet",
+      "version": "2.1.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/04c53d57d2262d584caa8403251095d51df02146aa4628b6c01e63753bc64b3d.txt",
+          "sha256": "04c53d57d2262d584caa8403251095d51df02146aa4628b6c01e63753bc64b3d",
+          "origin": "node_modules/chardet/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "cli-cursor",
+      "version": "3.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/cli-cursor/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "cli-spinners",
+      "version": "2.9.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/cli-spinners/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "cli-width",
+      "version": "3.0.0",
+      "license": "ISC",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/33fa5470b2195e410b075a32516b6ad27784b8a8ff74ae90cfd60c14b76e6644.txt",
+          "sha256": "33fa5470b2195e410b075a32516b6ad27784b8a8ff74ae90cfd60c14b76e6644",
+          "origin": "node_modules/cli-width/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "clone",
+      "version": "1.0.4",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/3fb0857ef0133928cf72c88dfc464e931486e88778961eedec25585e2321507f.txt",
+          "sha256": "3fb0857ef0133928cf72c88dfc464e931486e88778961eedec25585e2321507f",
+          "origin": "node_modules/clone/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "color-convert",
+      "version": "2.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/693866fc419c6f61c8570438ec00659d156ec2b4d4a4d04091711f5f11a365d4.txt",
+          "sha256": "693866fc419c6f61c8570438ec00659d156ec2b4d4a4d04091711f5f11a365d4",
+          "origin": "node_modules/color-convert/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "color-name",
+      "version": "1.1.4",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c064f7a3e353bc1bc977f3c897941c75ef763f44f41677e0a15370ca0853d6e2.txt",
+          "sha256": "c064f7a3e353bc1bc977f3c897941c75ef763f44f41677e0a15370ca0853d6e2",
+          "origin": "node_modules/color-name/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "combined-stream",
+      "version": "1.0.8",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/47eb8ca82c798246774946d1be0f9aa08f025fa8325ced0947aeeb4c05fe5547.txt",
+          "sha256": "47eb8ca82c798246774946d1be0f9aa08f025fa8325ced0947aeeb4c05fe5547",
+          "origin": "node_modules/combined-stream/License"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "commander",
+      "version": "4.1.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b.txt",
+          "sha256": "04512a63dce4d2d506ad612dc0bd7681ccf6e3655f7b6eaef7dfac8323d1ec0b",
+          "origin": "node_modules/commander/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "core-js",
+      "version": "3.49.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/b87653fff2d44426ab5cd4723cee3b1364dc8d35a0acdf098c54689543123bf8.txt",
+          "sha256": "b87653fff2d44426ab5cd4723cee3b1364dc8d35a0acdf098c54689543123bf8",
+          "origin": "node_modules/core-js/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "core-js-pure",
+      "version": "3.49.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/b87653fff2d44426ab5cd4723cee3b1364dc8d35a0acdf098c54689543123bf8.txt",
+          "sha256": "b87653fff2d44426ab5cd4723cee3b1364dc8d35a0acdf098c54689543123bf8",
+          "origin": "node_modules/core-js-pure/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "csprng",
+      "version": "0.1.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/ef372ec37da43256cb62eaf4c0e82bc8edd6b524556be329a9fc3772a7387dca.txt",
+          "sha256": "ef372ec37da43256cb62eaf4c0e82bc8edd6b524556be329a9fc3772a7387dca",
+          "origin": "node_modules/csprng/README.md license section"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "csv-parse",
+      "version": "5.6.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/032efe3de772e9f85c722ee9ff7ccd5cab01e024296b2b8d25893bf779be9360.txt",
+          "sha256": "032efe3de772e9f85c722ee9ff7ccd5cab01e024296b2b8d25893bf779be9360",
+          "origin": "node_modules/csv-parse/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "csv-stringify",
+      "version": "6.7.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/032efe3de772e9f85c722ee9ff7ccd5cab01e024296b2b8d25893bf779be9360.txt",
+          "sha256": "032efe3de772e9f85c722ee9ff7ccd5cab01e024296b2b8d25893bf779be9360",
+          "origin": "node_modules/csv-stringify/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "debug",
+      "version": "4.4.3",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/3a61c6c96caf5c1d9b623fb9b04c822b783dfcb78aa7e49c76a3f643e6ed7f95.txt",
+          "sha256": "3a61c6c96caf5c1d9b623fb9b04c822b783dfcb78aa7e49c76a3f643e6ed7f95",
+          "origin": "node_modules/debug/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "decimal.js",
+      "version": "10.6.0",
+      "license": "MIT",
+      "direct": true,
+      "scope": "runtime",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/3108b546bcff5d346923a82f48b2d252ca722f9088076db6d145f6b67757ad6c.txt",
+          "sha256": "3108b546bcff5d346923a82f48b2d252ca722f9088076db6d145f6b67757ad6c",
+          "origin": "node_modules/decimal.js/LICENCE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "defaults",
+      "version": "1.0.4",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/fe99d9a94ec7edc64a9767701f830f66e08239b000d653a359d66e640289ed0c.txt",
+          "sha256": "fe99d9a94ec7edc64a9767701f830f66e08239b000d653a359d66e640289ed0c",
+          "origin": "node_modules/defaults/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "delayed-stream",
+      "version": "1.0.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/47eb8ca82c798246774946d1be0f9aa08f025fa8325ced0947aeeb4c05fe5547.txt",
+          "sha256": "47eb8ca82c798246774946d1be0f9aa08f025fa8325ced0947aeeb4c05fe5547",
+          "origin": "node_modules/delayed-stream/License"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "dunder-proto",
+      "version": "1.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/2b770a704c15de238c3f622b01b0044ddd60b49ee30608ea6991ebf19db7a7a1.txt",
+          "sha256": "2b770a704c15de238c3f622b01b0044ddd60b49ee30608ea6991ebf19db7a7a1",
+          "origin": "node_modules/dunder-proto/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "emoji-regex",
+      "version": "8.0.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a.txt",
+          "sha256": "483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a",
+          "origin": "node_modules/emoji-regex/LICENSE-MIT.txt"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "es-define-property",
+      "version": "1.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt",
+          "sha256": "5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292",
+          "origin": "node_modules/es-define-property/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "es-errors",
+      "version": "1.3.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt",
+          "sha256": "5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292",
+          "origin": "node_modules/es-errors/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "es-object-atoms",
+      "version": "1.1.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt",
+          "sha256": "5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292",
+          "origin": "node_modules/es-object-atoms/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "es-set-tostringtag",
+      "version": "2.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/1a3aeb1f1398bd697d57c3c585faadf59d825aca6e3162cd7eeb72ff76eb2466.txt",
+          "sha256": "1a3aeb1f1398bd697d57c3c585faadf59d825aca6e3162cd7eeb72ff76eb2466",
+          "origin": "node_modules/es-set-tostringtag/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "esbuild",
+      "version": "0.27.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+          "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+          "origin": "node_modules/esbuild/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "escape-string-regexp",
+      "version": "1.0.5",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/6fb9754611c20f6649f68805e8c990e83261f29316e29de9e6cedae607b8634c.txt",
+          "sha256": "6fb9754611c20f6649f68805e8c990e83261f29316e29de9e6cedae607b8634c",
+          "origin": "node_modules/escape-string-regexp/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "faye",
+      "version": "1.4.1",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/f5be57a4ede078beca3d6eda6bd8f81826db6f1acf1dc2f1ecf7f9d985895a84.txt",
+          "sha256": "f5be57a4ede078beca3d6eda6bd8f81826db6f1acf1dc2f1ecf7f9d985895a84",
+          "origin": "node_modules/faye/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "faye-websocket",
+      "version": "0.11.4",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/8902618377ddec746fc6aba466b4d489c0d4bba91d098d2be4637819f8d14d54.txt",
+          "sha256": "8902618377ddec746fc6aba466b4d489c0d4bba91d098d2be4637819f8d14d54",
+          "origin": "node_modules/faye-websocket/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "figures",
+      "version": "3.2.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/figures/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "form-data",
+      "version": "4.0.5",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e5b780d4f38d1d3328e3e53186c4e62d3fa149ea6f2bacd5de5ad0c30ac85343.txt",
+          "sha256": "e5b780d4f38d1d3328e3e53186c4e62d3fa149ea6f2bacd5de5ad0c30ac85343",
+          "origin": "node_modules/form-data/License"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "fsevents",
+      "version": "2.3.3",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": true,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/2a8a5d6197bb97a018b8a190dd3ed853d750ca87c8e80c17aad41d6c6ff448e1.txt",
+          "sha256": "2a8a5d6197bb97a018b8a190dd3ed853d750ca87c8e80c17aad41d6c6ff448e1",
+          "origin": "node_modules/fsevents/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "function-bind",
+      "version": "1.1.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/773e131a7684726005a7e4688a80b4620033bc08499bc1404dd1a1eb3bca725e.txt",
+          "sha256": "773e131a7684726005a7e4688a80b4620033bc08499bc1404dd1a1eb3bca725e",
+          "origin": "node_modules/function-bind/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "get-intrinsic",
+      "version": "1.3.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/39c5ec504cf6bd5cd782a7c695828e09189df79f5d94840e4f08feb97b9fd416.txt",
+          "sha256": "39c5ec504cf6bd5cd782a7c695828e09189df79f5d94840e4f08feb97b9fd416",
+          "origin": "node_modules/get-intrinsic/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "get-proto",
+      "version": "1.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/be46ce1e3b0479af9ce82d22b465a6d7d2ff084fca0aaf3d54172da2b5eb5781.txt",
+          "sha256": "be46ce1e3b0479af9ce82d22b465a6d7d2ff084fca0aaf3d54172da2b5eb5781",
+          "origin": "node_modules/get-proto/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "get-tsconfig",
+      "version": "4.14.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/10c904a49af44409b073532e45a53fd4df19bdf26eaf9afc7917258c2b354382.txt",
+          "sha256": "10c904a49af44409b073532e45a53fd4df19bdf26eaf9afc7917258c2b354382",
+          "origin": "node_modules/get-tsconfig/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "gopd",
+      "version": "1.2.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/d90bf0a089da4cf43d644ed240a0b3825dcdb705e64e38371d56995a4cc9e4c5.txt",
+          "sha256": "d90bf0a089da4cf43d644ed240a0b3825dcdb705e64e38371d56995a4cc9e4c5",
+          "origin": "node_modules/gopd/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "has-flag",
+      "version": "4.0.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/has-flag/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "has-symbols",
+      "version": "1.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/206c1adcf206dc0031b11232f5b054ec5f1662407ab1ca415247921cab2068ab.txt",
+          "sha256": "206c1adcf206dc0031b11232f5b054ec5f1662407ab1ca415247921cab2068ab",
+          "origin": "node_modules/has-symbols/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "has-tostringtag",
+      "version": "1.0.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e2560e002e13281578c75c850061d9255c33d16d732939e8c2db64c2506642fa.txt",
+          "sha256": "e2560e002e13281578c75c850061d9255c33d16d732939e8c2db64c2506642fa",
+          "origin": "node_modules/has-tostringtag/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "hasown",
+      "version": "2.0.3",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/bf9b0d665be2a689851eea667ca9f42066ea1d903b38349c51e6a44b2577680a.txt",
+          "sha256": "bf9b0d665be2a689851eea667ca9f42066ea1d903b38349c51e6a44b2577680a",
+          "origin": "node_modules/hasown/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "http-parser-js",
+      "version": "0.5.10",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/78cd8b5ed8c97bfca3d7ba48cbba846df42bfcf96ebe137cd6122100236fb6e1.txt",
+          "sha256": "78cd8b5ed8c97bfca3d7ba48cbba846df42bfcf96ebe137cd6122100236fb6e1",
+          "origin": "node_modules/http-parser-js/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "https-proxy-agent",
+      "version": "5.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e8cfdce74a6598fbbf1db25dc917257f04e9c0db4a24818bdd821806a66339d4.txt",
+          "sha256": "e8cfdce74a6598fbbf1db25dc917257f04e9c0db4a24818bdd821806a66339d4",
+          "origin": "node_modules/https-proxy-agent/README.md license section"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "iconv-lite",
+      "version": "0.7.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/ac779f7314c74f232ef847ea86e714abe25cf6eeb5cc97b69451b74e2af6492d.txt",
+          "sha256": "ac779f7314c74f232ef847ea86e714abe25cf6eeb5cc97b69451b74e2af6492d",
+          "origin": "node_modules/iconv-lite/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "ieee754",
+      "version": "1.2.1",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/18d45466ba3253deae04667e267a91ea8de8548f18c1125264d1c9db28194cc1.txt",
+          "sha256": "18d45466ba3253deae04667e267a91ea8de8548f18c1125264d1c9db28194cc1",
+          "origin": "node_modules/ieee754/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "inherits",
+      "version": "2.0.4",
+      "license": "ISC",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5ffe28e7ade7d8f10d85d5337a73fd793dac5c462fb9a28fbf8c5046c7fbca3b.txt",
+          "sha256": "5ffe28e7ade7d8f10d85d5337a73fd793dac5c462fb9a28fbf8c5046c7fbca3b",
+          "origin": "node_modules/inherits/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "inquirer",
+      "version": "8.2.7",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/fa8f92d7a321046b6a9cd89d4d069f1fafb00728de04459536eafeb8daf78193.txt",
+          "sha256": "fa8f92d7a321046b6a9cd89d4d069f1fafb00728de04459536eafeb8daf78193",
+          "origin": "node_modules/inquirer/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "is-docker",
+      "version": "2.2.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/is-docker/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "is-fullwidth-code-point",
+      "version": "3.0.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/is-fullwidth-code-point/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "is-interactive",
+      "version": "1.0.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/is-interactive/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "is-unicode-supported",
+      "version": "0.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/is-unicode-supported/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "is-wsl",
+      "version": "2.2.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/is-wsl/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "jsforce",
+      "version": "3.10.14",
+      "license": "MIT",
+      "direct": true,
+      "scope": "runtime",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5635ac9e013663c9d20a52ef8c7edb3ec8703f2f8c2510cc313c9be8f2ff80ef.txt",
+          "sha256": "5635ac9e013663c9d20a52ef8c7edb3ec8703f2f8c2510cc313c9be8f2ff80ef",
+          "origin": "node_modules/jsforce/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "lodash",
+      "version": "4.18.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc.txt",
+          "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc",
+          "origin": "node_modules/lodash/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "log-symbols",
+      "version": "4.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/log-symbols/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "math-intrinsics",
+      "version": "1.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/2b770a704c15de238c3f622b01b0044ddd60b49ee30608ea6991ebf19db7a7a1.txt",
+          "sha256": "2b770a704c15de238c3f622b01b0044ddd60b49ee30608ea6991ebf19db7a7a1",
+          "origin": "node_modules/math-intrinsics/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "mime-db",
+      "version": "1.52.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/cc1dfd4dafa27271e8212cd3b274eeb3f262e40a6fdab36ddc3f9696f706f58b.txt",
+          "sha256": "cc1dfd4dafa27271e8212cd3b274eeb3f262e40a6fdab36ddc3f9696f706f58b",
+          "origin": "node_modules/mime-db/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "mime-types",
+      "version": "2.1.35",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/71f83c4c0621102a56d9853812777b85751bce7e9726f686f5b056c1f8a4b0e6.txt",
+          "sha256": "71f83c4c0621102a56d9853812777b85751bce7e9726f686f5b056c1f8a4b0e6",
+          "origin": "node_modules/mime-types/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "mimic-fn",
+      "version": "2.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/mimic-fn/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "ms",
+      "version": "2.1.3",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/1662fae9b5314d11cf51284e2dcd1f006a354f7343f08712a730fcff9a359801.txt",
+          "sha256": "1662fae9b5314d11cf51284e2dcd1f006a354f7343f08712a730fcff9a359801",
+          "origin": "node_modules/ms/license.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "multistream",
+      "version": "3.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/d4c2065e2b936e62a4eb400efb4576edec9ca1388a9f78aa288e147275e7bc8b.txt",
+          "sha256": "d4c2065e2b936e62a4eb400efb4576edec9ca1388a9f78aa288e147275e7bc8b",
+          "origin": "node_modules/multistream/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "mute-stream",
+      "version": "0.0.8",
+      "license": "ISC",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt",
+          "sha256": "4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b",
+          "origin": "node_modules/mute-stream/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "node-fetch",
+      "version": "2.7.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/84eaa985e1ef71b8c630e8aba73404c219ff425c6fdb45c62e998b58d4fbdc8e.txt",
+          "sha256": "84eaa985e1ef71b8c630e8aba73404c219ff425c6fdb45c62e998b58d4fbdc8e",
+          "origin": "node_modules/node-fetch/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "onetime",
+      "version": "5.1.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/onetime/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "open",
+      "version": "7.4.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/open/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "ora",
+      "version": "5.4.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt",
+          "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+          "origin": "node_modules/ora/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "prisma",
+      "version": "5.22.0",
+      "license": "Apache-2.0",
+      "direct": true,
+      "scope": "development",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "origin": "node_modules/prisma/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "readable-stream",
+      "version": "3.6.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/ec62dc96da0099b87f4511736c87309335527fb7031639493e06c95728dc8c54.txt",
+          "sha256": "ec62dc96da0099b87f4511736c87309335527fb7031639493e06c95728dc8c54",
+          "origin": "node_modules/readable-stream/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "resolve-pkg-maps",
+      "version": "1.0.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "development-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/10c904a49af44409b073532e45a53fd4df19bdf26eaf9afc7917258c2b354382.txt",
+          "sha256": "10c904a49af44409b073532e45a53fd4df19bdf26eaf9afc7917258c2b354382",
+          "origin": "node_modules/resolve-pkg-maps/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "restore-cursor",
+      "version": "3.1.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/restore-cursor/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "run-async",
+      "version": "2.4.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e5c1364118b39fa98b959138ce4aa4d0e68cfbee12d115e69730579fecb1dc1b.txt",
+          "sha256": "e5c1364118b39fa98b959138ce4aa4d0e68cfbee12d115e69730579fecb1dc1b",
+          "origin": "node_modules/run-async/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "rxjs",
+      "version": "7.8.2",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/81c407ac717813b0e3795402960e04003c7bba8ba59b621624707028531c9ade.txt",
+          "sha256": "81c407ac717813b0e3795402960e04003c7bba8ba59b621624707028531c9ade",
+          "origin": "node_modules/rxjs/LICENSE.txt"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "safe-buffer",
+      "version": "5.2.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c7cc929b57080f4b9d0c6cf57669f0463fc5b39906344dfc8d3bc43426b30eac.txt",
+          "sha256": "c7cc929b57080f4b9d0c6cf57669f0463fc5b39906344dfc8d3bc43426b30eac",
+          "origin": "node_modules/safe-buffer/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/4bc935e71be198c67ddf3c2b5fddb195f6edc182bfc155a96a6db61b44b494b9.txt",
+          "sha256": "4bc935e71be198c67ddf3c2b5fddb195f6edc182bfc155a96a6db61b44b494b9",
+          "origin": "node_modules/safer-buffer/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "sax",
+      "version": "1.6.0",
+      "license": "BlueOak-1.0.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/8a1af140fdfbf5afd3df27f7e662f989c5b963a300020dfafce42033cae9e004.txt",
+          "sha256": "8a1af140fdfbf5afd3df27f7e662f989c5b963a300020dfafce42033cae9e004",
+          "origin": "node_modules/sax/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "sequin",
+      "version": "0.1.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/09920f32db18e1b17076230cd395f5c0727fd0bd58724d1eb88d411ee44506cd.txt",
+          "sha256": "09920f32db18e1b17076230cd395f5c0727fd0bd58724d1eb88d411ee44506cd",
+          "origin": "node_modules/sequin/README.md license section"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "signal-exit",
+      "version": "3.0.7",
+      "license": "ISC",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e05b1eaf5b5f99b7ad75cd1f38858ff9a311780b97715ead67936d60bf96aa7e.txt",
+          "sha256": "e05b1eaf5b5f99b7ad75cd1f38858ff9a311780b97715ead67936d60bf96aa7e",
+          "origin": "node_modules/signal-exit/LICENSE.txt"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "string_decoder",
+      "version": "1.3.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b.txt",
+          "sha256": "11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b",
+          "origin": "node_modules/string_decoder/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "string-width",
+      "version": "4.2.3",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/string-width/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "strip-ansi",
+      "version": "6.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/strip-ansi/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "supports-color",
+      "version": "7.2.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/supports-color/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "through",
+      "version": "2.3.8",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e8734448285a2dd773d40136ed5d5e8163a70701dd540cdc796cfca232f67d55.txt",
+          "sha256": "e8734448285a2dd773d40136ed5d5e8163a70701dd540cdc796cfca232f67d55",
+          "origin": "node_modules/through/LICENSE.APACHE2"
+        },
+        {
+          "path": "licenses/d72dea1a8cdf3f4dfa2f594253d0c5b37baefc76e806f5ecb0e426393edcd505.txt",
+          "sha256": "d72dea1a8cdf3f4dfa2f594253d0c5b37baefc76e806f5ecb0e426393edcd505",
+          "origin": "node_modules/through/LICENSE.MIT"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "tldts",
+      "version": "7.0.28",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c64182d48160db948b6aa97a984f1a32974ce4d2053900361264cd33853796cb.txt",
+          "sha256": "c64182d48160db948b6aa97a984f1a32974ce4d2053900361264cd33853796cb",
+          "origin": "node_modules/tldts/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "tldts-core",
+      "version": "7.0.28",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c64182d48160db948b6aa97a984f1a32974ce4d2053900361264cd33853796cb.txt",
+          "sha256": "c64182d48160db948b6aa97a984f1a32974ce4d2053900361264cd33853796cb",
+          "origin": "node_modules/tldts-core/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "tough-cookie",
+      "version": "6.0.1",
+      "license": "BSD-3-Clause",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/22ec6791c91ba42c0516a05f4cbdde019aae4687f8a38c5ca7e8a69ee68f851d.txt",
+          "sha256": "22ec6791c91ba42c0516a05f4cbdde019aae4687f8a38c5ca7e8a69ee68f851d",
+          "origin": "node_modules/tough-cookie/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "tr46",
+      "version": "0.0.3",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/499d6d466d064e0460427967a344e2a32fcb86ea8c6cd1a285ec4f1fa03fba67.txt",
+          "sha256": "499d6d466d064e0460427967a344e2a32fcb86ea8c6cd1a285ec4f1fa03fba67",
+          "origin": "https://raw.githubusercontent.com/jsdom/tr46/main/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "tslib",
+      "version": "2.8.1",
+      "license": "0BSD",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/da16ddb65f8ca390998fb99223d0112498b56b45784d00afd77ff8ce1ac4de8b.txt",
+          "sha256": "da16ddb65f8ca390998fb99223d0112498b56b45784d00afd77ff8ce1ac4de8b",
+          "origin": "node_modules/tslib/CopyrightNotice.txt"
+        },
+        {
+          "path": "licenses/210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751.txt",
+          "sha256": "210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751",
+          "origin": "node_modules/tslib/LICENSE.txt"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "tsx",
+      "version": "4.21.0",
+      "license": "MIT",
+      "direct": true,
+      "scope": "development",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/8dded67841a9261a622c739fb61c81785e93765de852828ceeb9403d20a74581.txt",
+          "sha256": "8dded67841a9261a622c739fb61c81785e93765de852828ceeb9403d20a74581",
+          "origin": "node_modules/tsx/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "tunnel-agent",
+      "version": "0.6.0",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/d446a8c73d7bbe4872d6524b15ae206f9a2d7eb53f8c9cb6e6c893a43acc5276.txt",
+          "sha256": "d446a8c73d7bbe4872d6524b15ae206f9a2d7eb53f8c9cb6e6c893a43acc5276",
+          "origin": "node_modules/tunnel-agent/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "type-fest",
+      "version": "0.21.3",
+      "license": "(MIT OR CC0-1.0)",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/64a93ffc0a06a2266dbb57ed7ebe3b56ba66ab337b6347fabdbf86c76819fbae.txt",
+          "sha256": "64a93ffc0a06a2266dbb57ed7ebe3b56ba66ab337b6347fabdbf86c76819fbae",
+          "origin": "node_modules/type-fest/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "typescript",
+      "version": "5.9.3",
+      "license": "Apache-2.0",
+      "direct": true,
+      "scope": "development",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47.txt",
+          "sha256": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47",
+          "origin": "node_modules/typescript/LICENSE.txt"
+        },
+        {
+          "path": "licenses/1af3c68039c57e539422da82a4faada506ce6d0ea6f90e0b699d02dbcdb7a90c.txt",
+          "sha256": "1af3c68039c57e539422da82a4faada506ce6d0ea6f90e0b699d02dbcdb7a90c",
+          "origin": "node_modules/typescript/ThirdPartyNoticeText.txt"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "undici-types",
+      "version": "6.21.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27.txt",
+          "sha256": "a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27",
+          "origin": "node_modules/undici-types/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "util-deprecate",
+      "version": "1.0.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/0154425673db15cdfa80ecba2c9b1f1a867f7197a006764712849bfc3a93cbb7.txt",
+          "sha256": "0154425673db15cdfa80ecba2c9b1f1a867f7197a006764712849bfc3a93cbb7",
+          "origin": "node_modules/util-deprecate/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "wcwidth",
+      "version": "1.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/6294da0e0a201bbe1de254445c9d07133a9448af05e4e44d0a2364747d114368.txt",
+          "sha256": "6294da0e0a201bbe1de254445c9d07133a9448af05e4e44d0a2364747d114368",
+          "origin": "node_modules/wcwidth/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "webidl-conversions",
+      "version": "3.0.1",
+      "license": "BSD-2-Clause",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/a889cc4dbee2ae172c179856b25d75b0b7a5a136e1b97109b9b590b2ff1a879c.txt",
+          "sha256": "a889cc4dbee2ae172c179856b25d75b0b7a5a136e1b97109b9b590b2ff1a879c",
+          "origin": "node_modules/webidl-conversions/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "websocket-driver",
+      "version": "0.7.4",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/dd5f8a3a2a345235915ab09e5394452330ea25c0c6407178be67d9e576259a34.txt",
+          "sha256": "dd5f8a3a2a345235915ab09e5394452330ea25c0c6407178be67d9e576259a34",
+          "origin": "node_modules/websocket-driver/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "websocket-extensions",
+      "version": "0.1.4",
+      "license": "Apache-2.0",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/218ce71e2fb8d13d7fdca2016b02ecbcb02f757914304104e03fbf4066c1685f.txt",
+          "sha256": "218ce71e2fb8d13d7fdca2016b02ecbcb02f757914304104e03fbf4066c1685f",
+          "origin": "node_modules/websocket-extensions/LICENSE.md"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "whatwg-url",
+      "version": "5.0.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/6b7a1792144374d84dc5ed3655b8bbe2754d06f4f1f64a9fb8b9de2d6f448b85.txt",
+          "sha256": "6b7a1792144374d84dc5ed3655b8bbe2754d06f4f1f64a9fb8b9de2d6f448b85",
+          "origin": "node_modules/whatwg-url/LICENSE.txt"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "wrap-ansi",
+      "version": "6.2.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
+          "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
+          "origin": "node_modules/wrap-ansi/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "xml2js",
+      "version": "0.6.2",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/c51452ef1dfd5606c9fe266930fa6bf7e8a534d52973b6475df5bf212cad5b0a.txt",
+          "sha256": "c51452ef1dfd5606c9fe266930fa6bf7e8a534d52973b6475df5bf212cad5b0a",
+          "origin": "node_modules/xml2js/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "xmlbuilder",
+      "version": "11.0.1",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/e368bc4263b466cf98c225af15e300549e00da8859416a4536109e9654d434a8.txt",
+          "sha256": "e368bc4263b466cf98c225af15e300549e00da8859416a4536109e9654d434a8",
+          "origin": "node_modules/xmlbuilder/LICENSE"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    }
+  ],
+  "additionalNotices": [
+    {
+      "path": "licenses/PGLITE-POSTGRES-LICENSE.txt",
+      "origin": "https://raw.githubusercontent.com/electric-sql/pglite/main/POSTGRES-LICENSE",
+      "sha256": "31ccadc0a70e8e0e8a35c5833567b64388dfe34987d962e1911554e271294105"
+    }
+  ]
+}

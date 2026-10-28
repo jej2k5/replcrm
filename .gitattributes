@@ -1,0 +1,4 @@
+# Preserve upstream legal texts byte-for-byte, including CRLF and blank lines.
+licenses/* -whitespace
+# Preserve the authorized historical migration exactly; its final blank line is intentional.
+prisma/migrations/20260428_init/migration.sql whitespace=-blank-at-eof

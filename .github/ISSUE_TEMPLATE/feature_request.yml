@@ -1,0 +1,35 @@
+name: Feature proposal
+description: Explain the need and evidence before proposing an implementation.
+title: "[Feature]: "
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Core
+        - Source adapter
+        - Replica store
+        - Operational tooling
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and current workaround
+      description: What concrete workflow needs this? Avoid confidential examples.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and alternatives
+      description: Distinguish existing evidence from planned capability; include contract and compatibility implications.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Validation plan
+      description: For a store, explain real runtime and shared-contract tests. For a source, explain normalization without coupling core.
