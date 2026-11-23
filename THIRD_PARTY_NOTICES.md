@@ -6,7 +6,7 @@ ReplCRM-owned implementation is distributed under Apache-2.0 by rights-holder au
 
 The [dependency inventory](docs/dependency-license-inventory.json) maps each installed dependency to copies of its packaged license/copyright/notice text in `licenses/`, with SHA-256 and origin. Duplicate legal texts share a content-addressed copy. TypeScript's packaged ThirdPartyNoticeText is included in that mapping in full.
 
-MIT permission/copyright sections embedded in agent-base, csprng, https-proxy-agent and sequin README files are retained. The esbuild root MIT text also covers the platform packages' matching upstream copyright/version. tr46 0.0.3 declares MIT in its published metadata but omits a separate license file; the retained upstream MIT text explicitly credits Sebastian Mayr. Its provenance is distinguished from a nonexistent version-local file.
+MIT permission/copyright sections embedded in the csprng and sequin README files are retained. The esbuild root MIT text also covers the platform packages' matching upstream copyright/version.
 
 [PostgreSQL/PGlite upstream attribution](licenses/PGLITE-POSTGRES-LICENSE.txt) is retained in addition to PGlite's packaged Apache license. Installed/generated dependency notices remain intact; generated clients and native binaries are not committed as project source.
 

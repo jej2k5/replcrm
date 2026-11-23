@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "5b776bcd08b0b26fa1f522e0c0275def6a3faa74",
+  "sourceCommit": "67c4036b0a4d9fe89ef396c8662ad39b56d94a40",
   "authorization": "Rights holder authorized Apache-2.0 distribution of ReplCRM-owned implementation; third-party terms remain independent.",
   "selectedInputs": [
     {
@@ -75,7 +75,7 @@
     {
       "path": "CHANGELOG.md",
       "origin": "public-adapted",
-      "sha256": "504240574ea305bc6164b6e00e5f5678fe4d7e5360828d69813610c52d5250b6"
+      "sha256": "d283af8a4b41116d0014b8510e032ab7b3f737c214b8fff751d04c648413e1c3"
     },
     {
       "path": "CODE_OF_CONDUCT.md",
@@ -135,7 +135,7 @@
     {
       "path": "THIRD_PARTY_NOTICES.md",
       "origin": "public-adapted",
-      "sha256": "5f93fbbe29dad5927b92d4202b411a31f3a7516228c424ee657bfcdc789ec79a"
+      "sha256": "ba8952ce82954346a251585d488a9eca266b7e86017f5bc1fde63a05feeddcc0"
     },
     {
       "path": "docs/architecture-principles.md",
@@ -165,7 +165,7 @@
     {
       "path": "docs/dependency-license-inventory.json",
       "origin": "public-adapted",
-      "sha256": "c142501999ff7e1278143d4e983abfddbbdbd6eca6870f2a926e2650791b0a83"
+      "sha256": "ce08354108009ffe29fc4992cdfb0468d056c2a994025736487987f70e730df0"
     },
     {
       "path": "docs/migration-runbook.md",
@@ -175,12 +175,12 @@
     {
       "path": "docs/oss-clean-release-readiness.md",
       "origin": "public-only",
-      "sha256": "5cc68f77c6a985ba56fa32fdbb41fd4b2e4623f117a212563b38af1a23996c7f"
+      "sha256": "c7f60cb66e1b300235433158baabd1c382ee27dc44b90227fbca627bb4d8bc73"
     },
     {
       "path": "docs/oss-publication-manifest.md",
       "origin": "public-only",
-      "sha256": "d35a6af2dc46538271290abf26fc1e5fdffd4338af4184d31c35689d6a0fe714"
+      "sha256": "1423346ea1026292858f7b5dc0cbe5803c93b413c1032b3b6cff711c8c8a7e58"
     },
     {
       "path": "docs/replica-store-semantic-hardening.md",
@@ -193,19 +193,14 @@
       "sha256": "eb17a0cfac1cb5ef5b27eaf51b7ca2a90a6db650e5a98c936a19d2e72824be35"
     },
     {
-      "path": "docs/source-selection.json",
-      "origin": "public-only",
-      "sha256": "2c188d835a089d38a0c43609a4b87ef12f154edf9f00892ba9a9d1c3cc27ef05"
-    },
-    {
       "path": "docs/verification-evidence.json",
       "origin": "public-only",
-      "sha256": "438e6a01d943f1ea76f3ef8c585d03d224a06697b9b069c75f126882f87bc3ec"
+      "sha256": "0285539d1094a452989ac5a50c792aba6a62f51bb1c8595818976f56ba117ffb"
     },
     {
       "path": "package-lock.json",
       "origin": "public-adapted",
-      "sha256": "1fd9180030aff45b915b8a75c3b7143db22f66885b7cdf5b3e08f6c5b5d852a7"
+      "sha256": "f68d5b670897f125df6132cd4c018ec1da3e72a654fa08960077e130b6f4d285"
     },
     {
       "path": "package.json",

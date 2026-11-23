@@ -18,7 +18,8 @@ Changes will be recorded here for future releases. This file does not assert tha
 
 ### Distribution
 
-- Same public scope as 0.1.0: the optional application destination, its worker and compatibility shims, and the Python research prototype remain excluded. Dependencies are unchanged from 0.1.0.
+- Same public scope as 0.1.0: the optional application destination, its worker and compatibility shims, and the Python research prototype remain excluded.
+- Security: compatible (non-major) updates resolve the critical websocket-driver, high form-data and moderate csv-parse advisories reached through jsforce. One low esbuild advisory remains in the tsx dev toolchain (Windows dev server only, not shipped). The license inventory and `licenses/` bundle were regenerated for the updated tree (148 packages, all permissive).
 
 ## Unreleased
 

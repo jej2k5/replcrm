@@ -7,7 +7,8 @@
 - **Scope:** the 0.1.0 public scope plus the console, guided setup, OAuth sign-in, object selection, recycle-bin deletions and reconcile. The optional application destination and Python research stay excluded. See the [manifest](oss-publication-manifest.md).
 - **Contacts:** resolved. Security and conduct reports use GitHub private vulnerability reporting, verified enabled on 2026-11-23 (`SECURITY.md`, `CODE_OF_CONDUCT.md`).
 - **Credentials:** unchanged from 0.1.0. The owner confirmed the historical localhost credential literals were synthetic; this release again publishes a snapshot without private history. The publication tree was pattern-scanned (Gitleaks was unavailable on the release machine) with no findings beyond placeholders and third-party license author emails.
-- **Licensing:** dependencies unchanged; the embedded JetBrains Mono font is OFL-1.1 with its license text included.
+- **Licensing:** direct dependencies unchanged; compatible security updates to transitive packages, with the license inventory and `licenses/` regenerated (all permissive). The embedded JetBrains Mono font is OFL-1.1 with its license text included.
+- **Advisories:** critical websocket-driver, high form-data and moderate csv-parse advisories resolved; one low esbuild advisory remains in the dev toolchain only.
 - **Verification:** clean `npm ci`, Prisma generate, typecheck, build, 234/234 offline tests and 5/5 smoke checks. Hosted CI runs on the release pull request. Live Salesforce replication was exercised privately against a Developer Edition org; it is not a certified public result.
 - **GitHub:** private vulnerability reporting on; `main` protected (review, required CI, no force-push or deletion); no Actions secrets; first-time contributors need workflow approval.
 

@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "5b776bcd08b0b26fa1f522e0c0275def6a3faa74",
+  "sourceCommit": "67c4036b0a4d9fe89ef396c8662ad39b56d94a40",
   "runtime": {
     "node": "26.4.0",
     "platform": "darwin",
@@ -10,7 +10,7 @@
     "command": "npm ci",
     "exitCode": 0,
     "cleanCandidateInstall": true,
-    "dependenciesChangedSince0_1_0": false
+    "dependenciesChangedSince0_1_0": "transitive only (compatible security updates)"
   },
   "checks": {
     "prismaGenerate": {
@@ -40,7 +40,7 @@
   "sourcePreservation": {
     "filesIdenticalToPrivateCheckpoint": 106,
     "publicAdaptedFiles": 16,
-    "publicOnlyFiles": 9
+    "publicOnlyFiles": 8
   },
   "security": {
     "scanner": "Targeted pattern scan (Gitleaks was not available on the release machine for 0.2.0)",
@@ -62,5 +62,20 @@
     "Hosted GitHub fork CI execution",
     "Historical development credential reuse outside reviewed archive"
   ],
-  "release": "0.2.0"
+  "release": "0.2.0",
+  "audit": {
+    "command": "npm audit",
+    "remaining": [
+      {
+        "package": "esbuild",
+        "severity": "low",
+        "scope": "tsx dev toolchain, Windows dev server only, not shipped"
+      }
+    ],
+    "resolved": [
+      "websocket-driver (critical)",
+      "form-data (high)",
+      "csv-parse (moderate)"
+    ]
+  }
 }

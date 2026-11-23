@@ -2,7 +2,7 @@
 
 ## 0.2.0 update (2026-11-23)
 
-Source: private checkpoint `5b776bc`, published as one snapshot commit on this repository's own history (no private history). HONA LLC, as copyright holder and project steward, authorized this release on 2026-11-23. The 0.1.0 decisions below still apply; this table records what 0.2.0 adds. Exact inputs and hashes are in [source selection](source-selection.json); results are in [verification evidence](verification-evidence.json).
+Source: private checkpoint `67c4036`, published as one snapshot commit on this repository's own history (no private history). HONA LLC, as copyright holder and project steward, authorized this release on 2026-11-23. The 0.1.0 decisions below still apply; this table records what 0.2.0 adds. Exact inputs and hashes are in [source selection](source-selection.json); results are in [verification evidence](verification-evidence.json).
 
 | Component | Classification | Decision/evidence |
 | --- | --- | --- |
@@ -16,7 +16,7 @@ Source: private checkpoint `5b776bc`, published as one snapshot commit on this r
 | Private build governance (build.yaml, prompts/, phase handoffs, discovery logs, operator notes) | EXCLUDE_FROM_PUBLICATION | Internal delivery records, not needed to build or operate ReplCRM |
 | Design sketches, review captures, decision-round files | EXCLUDE_FROM_PUBLICATION | Working material |
 
-Dependencies are unchanged from 0.1.0, so the license inventory and `licenses/` bundle remain complete.
+Direct dependencies are unchanged from 0.1.0. Compatible security updates changed transitive versions; the license inventory and `licenses/` bundle were regenerated from the installed tree (148 packages, every one with a retained license file, all permissive).
 
 ## 0.1.0
 
