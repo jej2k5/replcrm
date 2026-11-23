@@ -1,0 +1,839 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-23T16:13:39+00:00",
+  "title": "Design System: ReplCRM Console",
+  "extensions": {
+    "familySource": "MCPxy's DESIGN.md (the MCPxy repository)",
+    "colorMeta": {
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "ReplCRM Blue (dark)",
+        "canonical": "oklch(0.72 0.12 245)",
+        "tonalRamp": [
+          "oklch(0.15 0.12 245)",
+          "oklch(0.26 0.12 245)",
+          "oklch(0.37 0.12 245)",
+          "oklch(0.48 0.12 245)",
+          "oklch(0.60 0.12 245)",
+          "oklch(0.71 0.12 245)",
+          "oklch(0.83 0.12 245)",
+          "oklch(0.95 0.12 245)"
+        ]
+      },
+      "accent-hi-dark": {
+        "role": "primary",
+        "displayName": "ReplCRM Blue, high (dark)",
+        "canonical": "oklch(0.80 0.11 240)",
+        "tonalRamp": [
+          "oklch(0.15 0.11 240)",
+          "oklch(0.26 0.11 240)",
+          "oklch(0.37 0.11 240)",
+          "oklch(0.48 0.11 240)",
+          "oklch(0.60 0.11 240)",
+          "oklch(0.71 0.11 240)",
+          "oklch(0.83 0.11 240)",
+          "oklch(0.95 0.11 240)"
+        ]
+      },
+      "accent-ink-dark": {
+        "role": "primary",
+        "displayName": "Accent Ink (dark)",
+        "canonical": "oklch(0.14 0.006 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 250)",
+          "oklch(0.26 0.006 250)",
+          "oklch(0.37 0.006 250)",
+          "oklch(0.48 0.006 250)",
+          "oklch(0.60 0.006 250)",
+          "oklch(0.71 0.006 250)",
+          "oklch(0.83 0.006 250)",
+          "oklch(0.95 0.006 250)"
+        ]
+      },
+      "accent-wash-dark": {
+        "role": "primary",
+        "displayName": "Accent Wash (dark)",
+        "canonical": "oklch(0.72 0.12 245 / .14)",
+        "tonalRamp": [
+          "oklch(0.15 0.12 245)",
+          "oklch(0.26 0.12 245)",
+          "oklch(0.37 0.12 245)",
+          "oklch(0.48 0.12 245)",
+          "oklch(0.60 0.12 245)",
+          "oklch(0.71 0.12 245)",
+          "oklch(0.83 0.12 245)",
+          "oklch(0.95 0.12 245)"
+        ]
+      },
+      "accent-light": {
+        "role": "primary",
+        "displayName": "ReplCRM Blue (light)",
+        "canonical": "oklch(0.47 0.13 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.13 250)",
+          "oklch(0.26 0.13 250)",
+          "oklch(0.37 0.13 250)",
+          "oklch(0.48 0.13 250)",
+          "oklch(0.60 0.13 250)",
+          "oklch(0.71 0.13 250)",
+          "oklch(0.83 0.13 250)",
+          "oklch(0.95 0.13 250)"
+        ]
+      },
+      "accent-hi-light": {
+        "role": "primary",
+        "displayName": "ReplCRM Blue, high (light)",
+        "canonical": "oklch(0.40 0.13 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.13 250)",
+          "oklch(0.26 0.13 250)",
+          "oklch(0.37 0.13 250)",
+          "oklch(0.48 0.13 250)",
+          "oklch(0.60 0.13 250)",
+          "oklch(0.71 0.13 250)",
+          "oklch(0.83 0.13 250)",
+          "oklch(0.95 0.13 250)"
+        ]
+      },
+      "accent-ink-light": {
+        "role": "primary",
+        "displayName": "Accent Ink (light)",
+        "canonical": "oklch(0.98 0.005 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.005 250)",
+          "oklch(0.26 0.005 250)",
+          "oklch(0.37 0.005 250)",
+          "oklch(0.48 0.005 250)",
+          "oklch(0.60 0.005 250)",
+          "oklch(0.71 0.005 250)",
+          "oklch(0.83 0.005 250)",
+          "oklch(0.95 0.005 250)"
+        ]
+      },
+      "accent-wash-light": {
+        "role": "primary",
+        "displayName": "Accent Wash (light)",
+        "canonical": "oklch(0.47 0.13 250 / .10)",
+        "tonalRamp": [
+          "oklch(0.15 0.13 250)",
+          "oklch(0.26 0.13 250)",
+          "oklch(0.37 0.13 250)",
+          "oklch(0.48 0.13 250)",
+          "oklch(0.60 0.13 250)",
+          "oklch(0.71 0.13 250)",
+          "oklch(0.83 0.13 250)",
+          "oklch(0.95 0.13 250)"
+        ]
+      },
+      "mark-dark": {
+        "role": "identity",
+        "displayName": "Logo Blue (dark)",
+        "canonical": "#36cbfd",
+        "tonalRamp": [
+          "oklch(0.15 0.138 226)",
+          "oklch(0.26 0.138 226)",
+          "oklch(0.37 0.138 226)",
+          "oklch(0.48 0.138 226)",
+          "oklch(0.60 0.138 226)",
+          "oklch(0.71 0.138 226)",
+          "oklch(0.83 0.138 226)",
+          "oklch(0.95 0.138 226)"
+        ]
+      },
+      "mark-light": {
+        "role": "identity",
+        "displayName": "Logo Blue (light)",
+        "canonical": "#1e88e5",
+        "tonalRamp": [
+          "oklch(0.15 0.167 251)",
+          "oklch(0.26 0.167 251)",
+          "oklch(0.37 0.167 251)",
+          "oklch(0.48 0.167 251)",
+          "oklch(0.60 0.167 251)",
+          "oklch(0.71 0.167 251)",
+          "oklch(0.83 0.167 251)",
+          "oklch(0.95 0.167 251)"
+        ]
+      },
+      "hona-blue": {
+        "role": "identity",
+        "displayName": "HONA Blue",
+        "canonical": "#00A0CA",
+        "tonalRamp": [
+          "oklch(0.15 0.124 225)",
+          "oklch(0.26 0.124 225)",
+          "oklch(0.37 0.124 225)",
+          "oklch(0.48 0.124 225)",
+          "oklch(0.60 0.124 225)",
+          "oklch(0.71 0.124 225)",
+          "oklch(0.83 0.124 225)",
+          "oklch(0.95 0.124 225)"
+        ]
+      },
+      "hona-grey": {
+        "role": "identity",
+        "displayName": "HONA Grey",
+        "canonical": "#8e9597",
+        "tonalRamp": [
+          "oklch(0.15 0.009 217)",
+          "oklch(0.26 0.009 217)",
+          "oklch(0.37 0.009 217)",
+          "oklch(0.48 0.009 217)",
+          "oklch(0.60 0.009 217)",
+          "oklch(0.71 0.009 217)",
+          "oklch(0.83 0.009 217)",
+          "oklch(0.95 0.009 217)"
+        ]
+      },
+      "graphite-950": {
+        "role": "neutral",
+        "displayName": "Graphite 950",
+        "canonical": "oklch(0.13 0.006 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 70)",
+          "oklch(0.26 0.006 70)",
+          "oklch(0.37 0.006 70)",
+          "oklch(0.48 0.006 70)",
+          "oklch(0.60 0.006 70)",
+          "oklch(0.71 0.006 70)",
+          "oklch(0.83 0.006 70)",
+          "oklch(0.95 0.006 70)"
+        ]
+      },
+      "graphite-900": {
+        "role": "neutral",
+        "displayName": "Graphite 900",
+        "canonical": "oklch(0.17 0.006 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 70)",
+          "oklch(0.26 0.006 70)",
+          "oklch(0.37 0.006 70)",
+          "oklch(0.48 0.006 70)",
+          "oklch(0.60 0.006 70)",
+          "oklch(0.71 0.006 70)",
+          "oklch(0.83 0.006 70)",
+          "oklch(0.95 0.006 70)"
+        ]
+      },
+      "graphite-800": {
+        "role": "neutral",
+        "displayName": "Graphite 800",
+        "canonical": "oklch(0.22 0.007 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.007 70)",
+          "oklch(0.26 0.007 70)",
+          "oklch(0.37 0.007 70)",
+          "oklch(0.48 0.007 70)",
+          "oklch(0.60 0.007 70)",
+          "oklch(0.71 0.007 70)",
+          "oklch(0.83 0.007 70)",
+          "oklch(0.95 0.007 70)"
+        ]
+      },
+      "graphite-700": {
+        "role": "neutral",
+        "displayName": "Graphite 700",
+        "canonical": "oklch(0.27 0.008 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.008 70)",
+          "oklch(0.26 0.008 70)",
+          "oklch(0.37 0.008 70)",
+          "oklch(0.48 0.008 70)",
+          "oklch(0.60 0.008 70)",
+          "oklch(0.71 0.008 70)",
+          "oklch(0.83 0.008 70)",
+          "oklch(0.95 0.008 70)"
+        ]
+      },
+      "graphite-600": {
+        "role": "neutral",
+        "displayName": "Graphite 600",
+        "canonical": "oklch(0.34 0.009 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 70)",
+          "oklch(0.26 0.009 70)",
+          "oklch(0.37 0.009 70)",
+          "oklch(0.48 0.009 70)",
+          "oklch(0.60 0.009 70)",
+          "oklch(0.71 0.009 70)",
+          "oklch(0.83 0.009 70)",
+          "oklch(0.95 0.009 70)"
+        ]
+      },
+      "filament-100": {
+        "role": "neutral",
+        "displayName": "Filament 100",
+        "canonical": "oklch(0.94 0.006 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 80)",
+          "oklch(0.26 0.006 80)",
+          "oklch(0.37 0.006 80)",
+          "oklch(0.48 0.006 80)",
+          "oklch(0.60 0.006 80)",
+          "oklch(0.71 0.006 80)",
+          "oklch(0.83 0.006 80)",
+          "oklch(0.95 0.006 80)"
+        ]
+      },
+      "filament-200": {
+        "role": "neutral",
+        "displayName": "Filament 200",
+        "canonical": "oklch(0.86 0.007 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.007 80)",
+          "oklch(0.26 0.007 80)",
+          "oklch(0.37 0.007 80)",
+          "oklch(0.48 0.007 80)",
+          "oklch(0.60 0.007 80)",
+          "oklch(0.71 0.007 80)",
+          "oklch(0.83 0.007 80)",
+          "oklch(0.95 0.007 80)"
+        ]
+      },
+      "filament-300": {
+        "role": "neutral",
+        "displayName": "Filament 300",
+        "canonical": "oklch(0.78 0.008 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.008 80)",
+          "oklch(0.26 0.008 80)",
+          "oklch(0.37 0.008 80)",
+          "oklch(0.48 0.008 80)",
+          "oklch(0.60 0.008 80)",
+          "oklch(0.71 0.008 80)",
+          "oklch(0.83 0.008 80)",
+          "oklch(0.95 0.008 80)"
+        ]
+      },
+      "filament-400": {
+        "role": "neutral",
+        "displayName": "Filament 400",
+        "canonical": "oklch(0.70 0.009 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 75)",
+          "oklch(0.26 0.009 75)",
+          "oklch(0.37 0.009 75)",
+          "oklch(0.48 0.009 75)",
+          "oklch(0.60 0.009 75)",
+          "oklch(0.71 0.009 75)",
+          "oklch(0.83 0.009 75)",
+          "oklch(0.95 0.009 75)"
+        ]
+      },
+      "filament-500": {
+        "role": "neutral",
+        "displayName": "Filament 500",
+        "canonical": "oklch(0.58 0.009 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 75)",
+          "oklch(0.26 0.009 75)",
+          "oklch(0.37 0.009 75)",
+          "oklch(0.48 0.009 75)",
+          "oklch(0.60 0.009 75)",
+          "oklch(0.71 0.009 75)",
+          "oklch(0.83 0.009 75)",
+          "oklch(0.95 0.009 75)"
+        ]
+      },
+      "paper-950": {
+        "role": "neutral",
+        "displayName": "Stone Paper 950",
+        "canonical": "oklch(0.985 0.004 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.004 75)",
+          "oklch(0.26 0.004 75)",
+          "oklch(0.37 0.004 75)",
+          "oklch(0.48 0.004 75)",
+          "oklch(0.60 0.004 75)",
+          "oklch(0.71 0.004 75)",
+          "oklch(0.83 0.004 75)",
+          "oklch(0.95 0.004 75)"
+        ]
+      },
+      "paper-900": {
+        "role": "neutral",
+        "displayName": "Stone Paper 900",
+        "canonical": "oklch(0.96 0.005 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.005 75)",
+          "oklch(0.26 0.005 75)",
+          "oklch(0.37 0.005 75)",
+          "oklch(0.48 0.005 75)",
+          "oklch(0.60 0.005 75)",
+          "oklch(0.71 0.005 75)",
+          "oklch(0.83 0.005 75)",
+          "oklch(0.95 0.005 75)"
+        ]
+      },
+      "paper-800": {
+        "role": "neutral",
+        "displayName": "Stone Paper 800",
+        "canonical": "oklch(0.93 0.006 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.006 75)",
+          "oklch(0.26 0.006 75)",
+          "oklch(0.37 0.006 75)",
+          "oklch(0.48 0.006 75)",
+          "oklch(0.60 0.006 75)",
+          "oklch(0.71 0.006 75)",
+          "oklch(0.83 0.006 75)",
+          "oklch(0.95 0.006 75)"
+        ]
+      },
+      "paper-700": {
+        "role": "neutral",
+        "displayName": "Stone Paper 700",
+        "canonical": "oklch(0.88 0.007 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.007 75)",
+          "oklch(0.26 0.007 75)",
+          "oklch(0.37 0.007 75)",
+          "oklch(0.48 0.007 75)",
+          "oklch(0.60 0.007 75)",
+          "oklch(0.71 0.007 75)",
+          "oklch(0.83 0.007 75)",
+          "oklch(0.95 0.007 75)"
+        ]
+      },
+      "paper-600": {
+        "role": "neutral",
+        "displayName": "Stone Paper 600",
+        "canonical": "oklch(0.82 0.009 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 75)",
+          "oklch(0.26 0.009 75)",
+          "oklch(0.37 0.009 75)",
+          "oklch(0.48 0.009 75)",
+          "oklch(0.60 0.009 75)",
+          "oklch(0.71 0.009 75)",
+          "oklch(0.83 0.009 75)",
+          "oklch(0.95 0.009 75)"
+        ]
+      },
+      "ink-100": {
+        "role": "neutral",
+        "displayName": "Ledger Ink 100",
+        "canonical": "oklch(0.22 0.008 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.008 75)",
+          "oklch(0.26 0.008 75)",
+          "oklch(0.37 0.008 75)",
+          "oklch(0.48 0.008 75)",
+          "oklch(0.60 0.008 75)",
+          "oklch(0.71 0.008 75)",
+          "oklch(0.83 0.008 75)",
+          "oklch(0.95 0.008 75)"
+        ]
+      },
+      "ink-200": {
+        "role": "neutral",
+        "displayName": "Ledger Ink 200",
+        "canonical": "oklch(0.30 0.008 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.008 75)",
+          "oklch(0.26 0.008 75)",
+          "oklch(0.37 0.008 75)",
+          "oklch(0.48 0.008 75)",
+          "oklch(0.60 0.008 75)",
+          "oklch(0.71 0.008 75)",
+          "oklch(0.83 0.008 75)",
+          "oklch(0.95 0.008 75)"
+        ]
+      },
+      "ink-300": {
+        "role": "neutral",
+        "displayName": "Ledger Ink 300",
+        "canonical": "oklch(0.40 0.009 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 75)",
+          "oklch(0.26 0.009 75)",
+          "oklch(0.37 0.009 75)",
+          "oklch(0.48 0.009 75)",
+          "oklch(0.60 0.009 75)",
+          "oklch(0.71 0.009 75)",
+          "oklch(0.83 0.009 75)",
+          "oklch(0.95 0.009 75)"
+        ]
+      },
+      "ink-400": {
+        "role": "neutral",
+        "displayName": "Ledger Ink 400",
+        "canonical": "oklch(0.48 0.009 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 75)",
+          "oklch(0.26 0.009 75)",
+          "oklch(0.37 0.009 75)",
+          "oklch(0.48 0.009 75)",
+          "oklch(0.60 0.009 75)",
+          "oklch(0.71 0.009 75)",
+          "oklch(0.83 0.009 75)",
+          "oklch(0.95 0.009 75)"
+        ]
+      },
+      "ink-500": {
+        "role": "neutral",
+        "displayName": "Ledger Ink 500",
+        "canonical": "oklch(0.55 0.009 75)",
+        "tonalRamp": [
+          "oklch(0.15 0.009 75)",
+          "oklch(0.26 0.009 75)",
+          "oklch(0.37 0.009 75)",
+          "oklch(0.48 0.009 75)",
+          "oklch(0.60 0.009 75)",
+          "oklch(0.71 0.009 75)",
+          "oklch(0.83 0.009 75)",
+          "oklch(0.95 0.009 75)"
+        ]
+      },
+      "ok-dark": {
+        "role": "status",
+        "displayName": "OK Moss (dark)",
+        "canonical": "oklch(0.72 0.13 145)",
+        "tonalRamp": [
+          "oklch(0.15 0.13 145)",
+          "oklch(0.26 0.13 145)",
+          "oklch(0.37 0.13 145)",
+          "oklch(0.48 0.13 145)",
+          "oklch(0.60 0.13 145)",
+          "oklch(0.71 0.13 145)",
+          "oklch(0.83 0.13 145)",
+          "oklch(0.95 0.13 145)"
+        ]
+      },
+      "warn-dark": {
+        "role": "status",
+        "displayName": "Warn Amber (dark)",
+        "canonical": "oklch(0.80 0.15 80)",
+        "tonalRamp": [
+          "oklch(0.15 0.15 80)",
+          "oklch(0.26 0.15 80)",
+          "oklch(0.37 0.15 80)",
+          "oklch(0.48 0.15 80)",
+          "oklch(0.60 0.15 80)",
+          "oklch(0.71 0.15 80)",
+          "oklch(0.83 0.15 80)",
+          "oklch(0.95 0.15 80)"
+        ]
+      },
+      "err-dark": {
+        "role": "status",
+        "displayName": "Err Rust (dark)",
+        "canonical": "oklch(0.70 0.16 28)",
+        "tonalRamp": [
+          "oklch(0.15 0.16 28)",
+          "oklch(0.26 0.16 28)",
+          "oklch(0.37 0.16 28)",
+          "oklch(0.48 0.16 28)",
+          "oklch(0.60 0.16 28)",
+          "oklch(0.71 0.16 28)",
+          "oklch(0.83 0.16 28)",
+          "oklch(0.95 0.16 28)"
+        ]
+      },
+      "denied-dark": {
+        "role": "status",
+        "displayName": "Denied Violet (dark)",
+        "canonical": "oklch(0.68 0.15 310)",
+        "tonalRamp": [
+          "oklch(0.15 0.15 310)",
+          "oklch(0.26 0.15 310)",
+          "oklch(0.37 0.15 310)",
+          "oklch(0.48 0.15 310)",
+          "oklch(0.60 0.15 310)",
+          "oklch(0.71 0.15 310)",
+          "oklch(0.83 0.15 310)",
+          "oklch(0.95 0.15 310)"
+        ]
+      },
+      "ok-light": {
+        "role": "status",
+        "displayName": "OK Moss (light)",
+        "canonical": "oklch(0.48 0.14 145)",
+        "tonalRamp": [
+          "oklch(0.15 0.14 145)",
+          "oklch(0.26 0.14 145)",
+          "oklch(0.37 0.14 145)",
+          "oklch(0.48 0.14 145)",
+          "oklch(0.60 0.14 145)",
+          "oklch(0.71 0.14 145)",
+          "oklch(0.83 0.14 145)",
+          "oklch(0.95 0.14 145)"
+        ]
+      },
+      "warn-light": {
+        "role": "status",
+        "displayName": "Warn Amber (light)",
+        "canonical": "oklch(0.52 0.15 70)",
+        "tonalRamp": [
+          "oklch(0.15 0.15 70)",
+          "oklch(0.26 0.15 70)",
+          "oklch(0.37 0.15 70)",
+          "oklch(0.48 0.15 70)",
+          "oklch(0.60 0.15 70)",
+          "oklch(0.71 0.15 70)",
+          "oklch(0.83 0.15 70)",
+          "oklch(0.95 0.15 70)"
+        ]
+      },
+      "err-light": {
+        "role": "status",
+        "displayName": "Err Rust (light)",
+        "canonical": "oklch(0.50 0.18 28)",
+        "tonalRamp": [
+          "oklch(0.15 0.18 28)",
+          "oklch(0.26 0.18 28)",
+          "oklch(0.37 0.18 28)",
+          "oklch(0.48 0.18 28)",
+          "oklch(0.60 0.18 28)",
+          "oklch(0.71 0.18 28)",
+          "oklch(0.83 0.18 28)",
+          "oklch(0.95 0.18 28)"
+        ]
+      },
+      "denied-light": {
+        "role": "status",
+        "displayName": "Denied Violet (light)",
+        "canonical": "oklch(0.48 0.16 310)",
+        "tonalRamp": [
+          "oklch(0.15 0.16 310)",
+          "oklch(0.26 0.16 310)",
+          "oklch(0.37 0.16 310)",
+          "oklch(0.48 0.16 310)",
+          "oklch(0.60 0.16 310)",
+          "oklch(0.71 0.16 310)",
+          "oklch(0.83 0.16 310)",
+          "oklch(0.95 0.16 310)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page title, one per page."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Replica names, step titles, brand name."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Operational default, tabular figures."
+      },
+      "prose": {
+        "displayName": "Prose",
+        "purpose": "Explanatory sentences only, max 72ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Family Label spec: section labels, readout labels, table headers, field labels. Uppercase."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Stage sub-lines, IDs, timestamps."
+      }
+    },
+    "shadows": [],
+    "focus": {
+      "value": "2px solid var(--accent), offset 2px (inputs: offset 1px plus accent border)",
+      "purpose": "Every keyboard-focused element."
+    },
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.25, 1, .5, 1)",
+        "purpose": "Family ease for all transitions."
+      },
+      {
+        "name": "control-transition",
+        "value": "background, border-color .12s",
+        "purpose": "Button hover."
+      },
+      {
+        "name": "stage-transition",
+        "value": "border-color, background .3s",
+        "purpose": "Stage cell state changes."
+      },
+      {
+        "name": "connector-breathe",
+        "value": "opacity .2 to .5, 3s ease-in-out infinite (1.6s on non-hot connectors during a sync)",
+        "purpose": "Idle connectors: alive, not travelling."
+      },
+      {
+        "name": "connector-stream",
+        "value": "background-position-x 0 to 48px, var(--flow) linear infinite, --flow 0.3s to 1.6s from sync activity",
+        "purpose": "Hot connectors during a sync, Salesforce up to and into the stage being written."
+      },
+      {
+        "name": "settle",
+        "value": "1.4s, OK border and 18% OK wash fading to hairline",
+        "purpose": "Replicate cell after a successful sync."
+      },
+      {
+        "name": "counter-tick",
+        "value": "900ms exponential ease-out",
+        "purpose": "Record counts move to their new value."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all animation and transition none",
+        "purpose": "Under prefers-reduced-motion: reduce; numbers carry the state."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "pipe-stack",
+        "value": "1100px",
+        "purpose": "Pipeline name stacks above the stage track."
+      },
+      {
+        "name": "topbar",
+        "value": "860px",
+        "purpose": "Sidebar becomes a top bar; section labels hidden."
+      },
+      {
+        "name": "compact",
+        "value": "640px",
+        "purpose": "36px icon nodes, label under active/warn/bad node; table keeps Object, both counts, Check."
+      }
+    ],
+    "security": {
+      "csp": "default-src 'none'; script-src 'nonce-…'; style-src 'nonce-…'; font-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+      "font": "/assets/console-font.woff2 served by the console",
+      "implication": "No external resource loads; icons inline in an SVG sprite; dynamic style via CSSOM only."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary-dark",
+      "description": "The one primary action per region, solid ReplCRM blue (dark theme values).",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\"><svg viewBox=\"0 0 24 24\" width=\"14\" height=\"14\" aria-hidden=\"true\"><path d=\"M7 4.5v15l12-7.5z\" fill=\"currentColor\"/></svg>Run records sync</button>",
+      "css": ".ds-btn-primary { font: 500 13px/1 \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; border-radius: 3px; padding: 9px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background .12s cubic-bezier(.25, 1, .5, 1), border-color .12s cubic-bezier(.25, 1, .5, 1); background: var(--accent, oklch(0.72 0.12 245)); border: 1px solid var(--accent, oklch(0.72 0.12 245)); color: var(--accent-ink, oklch(0.14 0.006 250)); } .ds-btn-primary:hover { background: var(--accent-hi, oklch(0.80 0.11 240)); border-color: var(--accent-hi, oklch(0.80 0.11 240)); } .ds-btn-primary:focus-visible { outline: 2px solid var(--accent, oklch(0.72 0.12 245)); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: .5; cursor: progress; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Transparent with a hairline control edge; every non-primary action.",
+      "html": "<button class=\"ds-btn\" type=\"button\">Run full sync</button>",
+      "css": ".ds-btn { font: 500 13px/1 \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; border-radius: 3px; padding: 9px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background .12s cubic-bezier(.25, 1, .5, 1), border-color .12s cubic-bezier(.25, 1, .5, 1); background: transparent; border: 1px solid var(--s600, oklch(0.34 0.009 70)); color: var(--t100, oklch(0.94 0.006 80)); } .ds-btn:hover { background: var(--s800, oklch(0.22 0.007 70)); border-color: var(--t500, oklch(0.58 0.009 75)); } .ds-btn:focus-visible { outline: 2px solid var(--accent, oklch(0.72 0.12 245)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-dark",
+      "description": "Uppercase label, mono input, sans hint; focus turns the border and outline accent.",
+      "html": "<label class=\"ds-field\"><span>Name</span><input type=\"text\" placeholder=\"EMEA production\"><small>What you call this org, like EMEA production.</small></label>",
+      "css": ".ds-field { display: grid; gap: 5px; max-width: 640px; } .ds-field span { font: 400 .6875rem \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--t500, oklch(0.58 0.009 75)); } .ds-field input { font: 13px \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; color: var(--t100, oklch(0.94 0.006 80)); background: var(--s950, oklch(0.13 0.006 70)); border: 1px solid var(--s600, oklch(0.34 0.009 70)); border-radius: 3px; padding: 9px 11px; } .ds-field input:focus-visible { outline: 2px solid var(--accent, oklch(0.72 0.12 245)); outline-offset: 1px; border-color: var(--accent, oklch(0.72 0.12 245)); } .ds-field small { font: 12.5px ui-sans-serif, system-ui, sans-serif; color: var(--t400, oklch(0.70 0.009 75)); }"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-active-dark",
+      "description": "Uppercase section labels, icon plus label items; current page takes the accent wash.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-label\">Operate</span><a href=\"#\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"5\" rx=\"8\" ry=\"3\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/><path d=\"M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/></svg>Replicas</a><a href=\"#\"><svg viewBox=\"0 0 16 16\" width=\"13\" height=\"13\" aria-hidden=\"true\"><path d=\"M8 2.5l6.5 11h-13zM8 7v3M8 12v.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>Problems <span class=\"ds-muted\">2</span></a></nav>",
+      "css": ".ds-nav { display: grid; gap: 2px; padding: 14px 8px; width: 232px; background: var(--s950, oklch(0.13 0.006 70)); font: 13.5px/1.55 \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; } .ds-label { font-size: .6875rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--t500, oklch(0.58 0.009 75)); padding: 2px 10px 4px; } .ds-nav a { display: flex; align-items: center; gap: 10px; padding: 7px 10px; color: var(--t200, oklch(0.86 0.007 80)); text-decoration: none; border-radius: 3px; } .ds-nav a svg { width: 15px; height: 15px; color: var(--t400, oklch(0.70 0.009 75)); } .ds-nav a:hover { background: var(--s800, oklch(0.22 0.007 70)); } .ds-nav a:focus-visible { outline: 2px solid var(--accent, oklch(0.72 0.12 245)); outline-offset: 2px; } .ds-nav a[aria-current=page] { background: var(--accent-wash, oklch(0.72 0.12 245 / .14)); color: var(--accent-hi, oklch(0.80 0.11 240)); } .ds-nav a[aria-current=page] svg { color: var(--accent, oklch(0.72 0.12 245)); } .ds-muted { color: var(--t400, oklch(0.70 0.009 75)); }"
+    },
+    {
+      "name": "Health Strip",
+      "kind": "custom",
+      "refersTo": "panel-dark",
+      "description": "One row of labelled readouts between hairlines, never tiles.",
+      "html": "<dl class=\"ds-strip\"><div><dt>Health</dt><dd class=\"ds-warn\"><svg viewBox=\"0 0 16 16\" width=\"13\" height=\"13\" aria-hidden=\"true\"><path d=\"M8 2.5l6.5 11h-13zM8 7v3M8 12v.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>NEEDS ATTENTION</dd></div><div><dt>Replicas</dt><dd>3</dd></div><div><dt>Records</dt><dd>226</dd></div><div><dt>Need attention</dt><dd>2</dd></div></dl>",
+      "css": ".ds-strip { display: flex; flex-wrap: wrap; margin: 0; padding: 14px 16px; background: var(--s950, oklch(0.13 0.006 70)); border-top: 1px solid var(--s700, oklch(0.27 0.008 70)); border-bottom: 1px solid var(--s700, oklch(0.27 0.008 70)); font-family: \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; color: var(--t100, oklch(0.94 0.006 80)); } .ds-strip > div { display: grid; gap: 4px; padding-right: 36px; margin-right: 36px; border-right: 1px solid var(--s700, oklch(0.27 0.008 70)); } .ds-strip > div:last-child { border-right: 0; } .ds-strip dt { font-size: .6875rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--t500, oklch(0.58 0.009 75)); } .ds-strip dd { margin: 0; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; font-variant-numeric: tabular-nums; } .ds-warn { color: var(--warn, oklch(0.80 0.15 80)); }"
+    },
+    {
+      "name": "Pipeline Row",
+      "kind": "custom",
+      "refersTo": "stage-cell-active-dark",
+      "description": "Signature component: stage cells joined by connectors. Hot connectors stream dots during a sync; idle ones breathe in place; reduced motion stops both.",
+      "html": "<div class=\"ds-pipe\"><div class=\"ds-pipe-name\"><b>test-1</b><small>Salesforce to Postgres</small></div><ol class=\"ds-stages\"><li class=\"ds-stage\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\"><path d=\"M7 18.5h10.5a4 4 0 0 0 .4-8 6 6 0 0 0-11.6 1.6A3.5 3.5 0 0 0 7 18.5z\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\" stroke-linejoin=\"round\"/></svg><div><b>Salesforce</b><small>connected</small></div></li><li class=\"ds-wire ds-hot\"></li><li class=\"ds-stage\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\"><path d=\"M14 2H5v20h7M14 2l5 5v4M14 2v5h5\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\" stroke-linejoin=\"round\"/><path d=\"M8 11h5M8 15h3\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"17\" cy=\"17\" r=\"3.5\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/><path d=\"M19.6 19.6L22 22\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\"/></svg><div><b>Discover</b><small>7 objects</small></div></li><li class=\"ds-wire ds-hot\"></li><li class=\"ds-stage\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"10\" r=\"2.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M9 3.5v2M9 14.5v2M2.5 10h2M13.5 10h2M4.4 5.4l1.4 1.4M12.2 13.2l1.4 1.4M4.4 14.6l1.4-1.4M12.2 6.8l1.4-1.4\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"17.5\" cy=\"17.5\" r=\"2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M17.5 13.5v1.2M17.5 20.3v1.2M13.5 17.5h1.2M20.3 17.5h1.2\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg><div><b>Reconstruct</b><small>model ready</small></div></li><li class=\"ds-wire ds-hot\"></li><li class=\"ds-stage ds-active\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\"><ellipse cx=\"11\" cy=\"5\" rx=\"7.5\" ry=\"3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M3.5 5v13c0 1.7 3.4 3 7.5 3M18.5 5v5M3.5 11.5c0 1.7 3.4 3 7.5 3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"18\" cy=\"17.5\" r=\"2.2\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M18 13.3v1.4M18 20.3v1.4M13.8 17.5h1.4M20.8 17.5h1.4\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg><div><b>Replicate</b><small>all match</small></div></li><li class=\"ds-wire ds-hot\"></li><li class=\"ds-stage\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" aria-hidden=\"true\"><ellipse cx=\"12\" cy=\"5\" rx=\"8\" ry=\"3\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/><path d=\"M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/></svg><div><b>Postgres</b><small>115 records</small></div></li></ol></div>",
+      "css": ".ds-pipe { display: grid; grid-template-columns: minmax(140px, 1fr) 5fr; gap: 18px; align-items: center; padding: 14px 16px; background: var(--s950, oklch(0.13 0.006 70)); border: 1px solid var(--s700, oklch(0.27 0.008 70)); border-radius: 4px; font-family: \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; color: var(--t100, oklch(0.94 0.006 80)); } .ds-pipe-name b { display: block; font-size: 14px; font-weight: 600; } .ds-pipe-name small { display: block; color: var(--t500, oklch(0.58 0.009 75)); font-size: 11.5px; } .ds-stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr 28px 1fr; align-items: center; } .ds-stage { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border: 1px solid var(--s700, oklch(0.27 0.008 70)); border-radius: 3px; background: var(--s900, oklch(0.17 0.006 70)); min-width: 0; transition: border-color .3s cubic-bezier(.25, 1, .5, 1), background .3s cubic-bezier(.25, 1, .5, 1); } .ds-stage svg { color: var(--t300, oklch(0.78 0.008 80)); flex: none; } .ds-stage b { display: block; font-size: 12px; font-weight: 600; } .ds-stage small { display: block; color: var(--t400, oklch(0.70 0.009 75)); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-active { border-color: var(--accent, oklch(0.72 0.12 245)); background: var(--accent-wash, oklch(0.72 0.12 245 / .14)); } .ds-active svg { color: var(--accent, oklch(0.72 0.12 245)); } .ds-wire { height: 1px; position: relative; background: var(--s600, oklch(0.34 0.009 70)); } .ds-wire::after { content: ''; position: absolute; inset: -3px 0; background: radial-gradient(circle, var(--accent, oklch(0.72 0.12 245)) 0 1.6px, transparent 2.2px) 0 50% / 12px 7px repeat-x; opacity: .3; animation: ds-breathe 3s ease-in-out infinite; } .ds-hot { background: var(--accent, oklch(0.72 0.12 245)); } .ds-hot::after { opacity: 1; background-size: 9px 7px; animation: ds-stream .8s linear infinite; } @keyframes ds-breathe { 0%, 100% { opacity: .2; } 50% { opacity: .5; } } @keyframes ds-stream { from { background-position-x: 0; } to { background-position-x: 48px; } } @media (prefers-reduced-motion: reduce) { .ds-wire::after, .ds-stage { animation: none !important; transition: none !important; } }"
+    },
+    {
+      "name": "Setup Step",
+      "kind": "custom",
+      "refersTo": "step-number-current-dark",
+      "description": "Numbered setup steps: done steps show a check and a Change button; the current step fills its number accent and expands.",
+      "html": "<ol class=\"ds-steps\"><li class=\"ds-step\" data-state=\"done\"><span class=\"ds-num\"><svg viewBox=\"0 0 24 24\" width=\"13\" height=\"13\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><h3>Connect your Salesforce app</h3><p>Consumer key saved for login.salesforce.com.</p><button class=\"ds-change\" type=\"button\">Change app</button></li><li class=\"ds-step\" data-state=\"current\"><span class=\"ds-num\">5</span><h3>Sign in to Salesforce</h3><p>Approve access in the browser.</p></li><li class=\"ds-step\" data-state=\"todo\"><span class=\"ds-num\">6</span><h3>Choose what to copy</h3></li></ol>",
+      "css": ".ds-steps { list-style: none; margin: 0; padding: 0; border: 1px solid var(--s700, oklch(0.27 0.008 70)); border-radius: 4px; background: var(--s950, oklch(0.13 0.006 70)); font-family: \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; color: var(--t100, oklch(0.94 0.006 80)); } .ds-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 4px 14px; padding: 14px 16px; border-bottom: 1px solid var(--s800, oklch(0.22 0.007 70)); } .ds-step:last-child { border-bottom: 0; } .ds-step h3 { margin: 0; font-size: 14px; font-weight: 600; padding-top: 2px; } .ds-step p { grid-column: 2; margin: 0; color: var(--t400, oklch(0.70 0.009 75)); font-size: 12.5px; } .ds-num { width: 24px; height: 24px; border: 1px solid var(--s600, oklch(0.34 0.009 70)); border-radius: 50%; display: grid; place-items: center; font-size: 11.5px; color: var(--t400, oklch(0.70 0.009 75)); } .ds-step[data-state=done] .ds-num { border-color: var(--ok, oklch(0.72 0.13 145)); color: var(--ok, oklch(0.72 0.13 145)); } .ds-step[data-state=current] { background: var(--s900, oklch(0.17 0.006 70)); } .ds-step[data-state=current] .ds-num { border-color: var(--accent, oklch(0.72 0.12 245)); background: var(--accent, oklch(0.72 0.12 245)); color: var(--accent-ink, oklch(0.14 0.006 250)); } .ds-step[data-state=current] p { color: var(--t200, oklch(0.86 0.007 80)); } .ds-step[data-state=todo] h3 { color: var(--t500, oklch(0.58 0.009 75)); } .ds-change { grid-column: 2; justify-self: start; margin-top: 8px; padding: 6px 10px; font: 500 12px/1 \"JetBrains Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; color: var(--t100, oklch(0.94 0.006 80)); background: transparent; border: 1px solid var(--s600, oklch(0.34 0.009 70)); border-radius: 3px; cursor: pointer; } .ds-change:hover { background: var(--s800, oklch(0.22 0.007 70)); border-color: var(--t500, oklch(0.58 0.009 75)); } .ds-change:focus-visible { outline: 2px solid var(--accent, oklch(0.72 0.12 245)); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Watch Floor, Pipeline Schematic",
+    "overview": "ReplCRM is a member of the HONA product family and shares MCPxy's design system. The family source is `MCPxy's DESIGN.md (the MCPxy repository)` (\"The Watch Floor\"). This file does not restate that system; it records which family rules ReplCRM inherits unchanged, and, with values from the shipped code (`src/console/page.ts`), what is ReplCRM's own. Where this file and the family file disagree, this file describes what ReplCRM actually ships.\n\nThe family register holds: a calm, expert operator console in the lineage of real control rooms, not the SaaS aesthetic that imitates them. ReplCRM's own idea sits on top of it. Each replica is drawn as the README banner's pipeline (CRM, Discover, Reconstruct, Replicate, Postgres), and the pipeline is alive: during a sync, records visibly travel along it and the stage doing the work lights up. Everything else on the page reads in plain words, so a first-time operator can tell at once which replicas are in step and which need them.\n\n**Inherited from the family, unchanged:**\n- Warm graphite (dark, default) and stone paper (light) at parity, each designed end to end. Every neutral tints warm (hue 70 to 80); no cool gray, navy or charcoal-blue surface.\n- Mono-first type with JetBrains Mono for every operational word and number; a sans only for explanatory prose.\n- Flat surfaces separated by 1px hairlines; depth from tonal layering, never cast shadows.\n- The status quartet (moss OK, amber warn, rust err, violet denied), always paired with a glyph or position.\n- The Label spec: .6875rem, weight 500, .06em tracking, uppercase.\n- Sidebar navigation with small uppercase section labels.\n- A health strip of labelled readouts instead of metric tiles.\n- No gradient fills, surfaces or text; no glass or backdrop-filter; no navy surfaces.\n- \"by HONA LLC\" with the HONA mark in the sidebar footer.\n\n**ReplCRM's own:** ReplCRM blue replaces Signal Steel as the single accent; the logo mark and the banner's stage icons; the pipeline signature component and its motion; the plain-language state vocabulary; the guided setup components.",
+    "keyCharacteristics": [
+      "Family surfaces, type and status discipline; ReplCRM identity only in mark, icons, accent and pipeline.",
+      "One accent, ReplCRM blue, reserved for what moves, what is active, and what the operator should press.",
+      "The pipeline is the page's signature: five stage cells, live connectors, one row per replica.",
+      "Plain words for every state; the term of art can follow, never lead.",
+      "Motion means data is moving. Idle connectors breathe in place; only a running sync makes dots travel."
+    ],
+    "rules": [
+      {
+        "name": "The One Blue Rule",
+        "body": "ReplCRM blue is the only accent. It belongs to the connectors (breathing dots at rest, solid and streaming in a sync), the active stage, focus, the primary action, selection, the current nav item and current step, live states (\"Syncing now\", \"Setting up\") and links. A resting stage icon, an object name or a body label in blue is wrong. Its chroma (0.12 dark, 0.13 light) is deliberately higher than Signal Steel's and replaces the family's ≤0.10 cap for ReplCRM only; the warm surfaces still carry the temperature contrast.",
+        "section": "colors"
+      },
+      {
+        "name": "The Marks Are Not Accent Rule",
+        "body": "The logo blues and the HONA blue are identity artwork. They live in the sidebar brand and footer and nowhere else.",
+        "section": "colors"
+      },
+      {
+        "name": "The Status-Honest Rule (inherited)",
+        "body": "Every status colour pairs with a glyph (check, warning triangle, cross, arc, dash) or a word. On the Replicas pipeline, green on Replicate is earned only by every object matching; on the setup pipeline, green marks a step that has been verified as done.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono-First Rule (inherited)",
+        "body": "Operational content is mono. A sentence that explains is sans. Default is mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Count Rule",
+        "body": "Store and Salesforce counts sit right-aligned in tabular figures so the two columns compare digit by digit.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Line Pipeline Rule",
+        "body": "At every width the five stages read left to right on one line. The pipeline never wraps or turns vertical.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat-By-Default Rule (inherited)",
+        "body": "No surface casts a shadow. A selected or active thing gets a wash and an accent border, not a lift.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Moving Means Moving Rule",
+        "body": "Dots travel only while a sync is writing records, and only along the path the records take. This is the one deliberate relaxation of the family's \"motion is feedback, never theatre\" rule, made at the owner's explicit request; it does not license motion anywhere else.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do take surfaces, type, status colours, hairlines and the Label spec from the family system unchanged, and name `MCPxy's DESIGN.md (the MCPxy repository)` as the source.",
+      "Do keep ReplCRM blue to the connectors, the active stage, focus, the primary action, the selection wash, the active nav item, the current step, live states and links. The One Blue Rule.",
+      "Do say every state in plain words: MATCH, \"Off by N\", \"Not signed in to Salesforce\", \"not compared\", \"1 object off\". Lead with the plain phrase; the term of art can follow.",
+      "Do group repeated errors, translate them, and end each with the step that fixes it. Keep resolved errors visible as history, muted.",
+      "Do draw new stage or source icons as 2px line drawings on the 24-unit grid in `currentColor`, matching the banner set.",
+      "Do stop every animation under `prefers-reduced-motion` and let the numbers carry the state.",
+      "Do serve every asset from the console itself. Console pages ship under a CSP of `default-src 'none'` with per-response nonces on its style block and its script blocks (the theme boot and the page script), `font-src 'self'` and `connect-src 'self'`: the font is self-hosted at `/assets/console-font.woff2`, icons come from the inline sprite, and dynamic values (such as `--flow`) are set through the CSSOM, never through `style=\"\"` attributes or inline handlers."
+    ],
+    "donts": [
+      "Don't make connector dots travel when no sync is running. Idle connectors breathe in place. The Moving Means Moving Rule.",
+      "Don't colour resting stage icons or object names with the accent.",
+      "Don't use the logo blues or the HONA blue as interface colour. The Marks Are Not Accent Rule.",
+      "Don't use metric tiles, KPI cards or cards-in-cards; use the health strip and hairline panels.",
+      "Don't use gradient fills, surfaces or text, glass, backdrop-filter, shadows or navy surfaces. The connector dot pattern is the only gradient construct and it draws dots, not a fill.",
+      "Don't load anything from another origin on a console page: no web fonts, CDNs, images or scripts from outside.",
+      "Don't present Snowflake, SQL Server, Oracle or any unimplemented source or store as available in a pipeline or setup step.",
+      "Don't wrap the pipeline or turn it vertical on small screens. The One Line Pipeline Rule."
+    ]
+  }
+}

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { InMemoryReplicaStore } from "../src/stores/memory/index.js";
 import { runReplication } from "../src/core/orchestrator.js";
@@ -62,9 +63,12 @@ test("failed batch or reference persistence leaves previous successful checkpoin
 });
 
 test("database imports are blocked transitively while FakeSource runs through compiled core and memory", (): void => {
+  const buildRoot = process.env.REPLCRM_COMPILED_DIR;
+  assert.ok(buildRoot, "Run this test through scripts/offline-suite.mjs");
+  const loader = fileURLToPath(new URL("./helpers/no-db-loader.mjs", import.meta.url));
   const code: string = `
-    import { runReplication } from './dist/core/orchestrator.js';
-    import { InMemoryReplicaStore } from './dist/stores/memory/index.js';
+    import { runReplication } from './core/orchestrator.js';
+    import { InMemoryReplicaStore } from './stores/memory/index.js';
     const store = new InMemoryReplicaStore();
     const source = {
       async connect() {}, async logout() {}, async listEntities() { return ['customer.profile']; },
@@ -74,12 +78,12 @@ test("database imports are blocked transitively while FakeSource runs through co
     await runReplication({store, sourceClient:source, config:${JSON.stringify(config)}});
     if (store.readProjection('test','customer.profile')[0].fields.tags.length !== 2) throw new Error('lost collection');
     if (store.getCheckpoint('test','customer.profile') !== 'page-token::abc123') throw new Error('lost checkpoint');
-    for (const name of ['@prisma/client', 'pg', './dist/stores/postgres/index.js']) {
+    for (const name of ['@prisma/client', 'pg', './stores/postgres/index.js']) {
       try { await import(name); throw new Error('guard missed '+name); }
       catch (error) { if (!error.message.includes('Database import blocked')) throw error; }
     }
   `;
-  execFileSync(process.execPath, ["--loader", "./tests/helpers/no-db-loader.mjs", "--input-type=module", "-e", code], { env: {}, stdio: "pipe" });
+  execFileSync(process.execPath, ["--loader", loader, "--input-type=module", "-e", code], { cwd: buildRoot, env: {}, stdio: "pipe" });
 });
 
 test("memory batches are atomic, patch values round-trip and checkpoint completion is atomic", async (): Promise<void> => {

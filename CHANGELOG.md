@@ -2,6 +2,24 @@
 
 Changes will be recorded here for future releases. This file does not assert that a tagged or published release exists.
 
+## 0.2.0 (2026-11-23)
+
+### Console and setup
+
+- Multi-replica console: every deployment drawn as a live pipeline (Salesforce, Discover, Reconstruct, Replicate, Postgres) with a health strip, plain-language checks (MATCH, Off by N, Not compared) and a Problems list with next steps.
+- Guided setup in the console (Add replica) and the terminal (`npm start -- setup`, `setup status`): database, schema, replica, Salesforce External Client App, sign-in, object selection and a verified first sync. The console starts with nothing configured.
+- Shared light/dark design system; self-hosted JetBrains Mono.
+
+### Replication and operations
+
+- Salesforce OAuth sign-in with PKCE (`auth login|status|refresh|logout`), per-deployment stored sign-ins, refresh-token rotation; password mode retained.
+- Saved object selection per deployment (`objects available|list|set|add|remove|clear`), custom objects, Task and Event.
+- Deletions reach the store from the recycle bin; `reconcile` preview and `--apply` for purged records; `counts` comparison; `deployment verify` org binding; per-deployment run lock shared by console and CLI.
+
+### Distribution
+
+- Same public scope as 0.1.0: the optional application destination, its worker and compatibility shims, and the Python research prototype remain excluded. Dependencies are unchanged from 0.1.0.
+
 ## Unreleased
 
 ### Available baseline

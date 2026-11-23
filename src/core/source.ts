@@ -65,4 +65,5 @@ export interface CrmSource {
   describeEntity(entityKey: string): Promise<CanonicalEntity>;
   fetchChanges(entity: CanonicalEntity, checkpoint: string | null, batchSize: number): AsyncGenerator<ChangeBatch>;
   streamUsers(batchSize: number): AsyncGenerator<SourceUser[]>;
+  listSourceIds?(entityKey: string, batchSize: number): AsyncGenerator<string[]>;
 }

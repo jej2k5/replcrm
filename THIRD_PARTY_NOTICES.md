@@ -10,9 +10,13 @@ MIT permission/copyright sections embedded in agent-base, csprng, https-proxy-ag
 
 [PostgreSQL/PGlite upstream attribution](licenses/PGLITE-POSTGRES-LICENSE.txt) is retained in addition to PGlite's packaged Apache license. Installed/generated dependency notices remain intact; generated clients and native binaries are not committed as project source.
 
+## Embedded font
+
+The console serves **JetBrains Mono** (latin subset, variable weight), embedded as base64 in `src/console/assets/font.ts` so the loopback console needs no external font host. Copyright 2020 The JetBrains Mono Project Authors. SIL Open Font License 1.1; the full license text is in [`src/console/assets/JetBrainsMono-OFL.txt`](src/console/assets/JetBrainsMono-OFL.txt).
+
 ## Standard policy text
 
-CODE_OF_CONDUCT is Contributor Covenant 2.1 with the contact placeholder customized, upstream attribution retained, under its referenced CC-BY-4.0 terms. DCO 1.1 is linked unchanged, not rewritten or represented as a project-owned CLA.
+CODE_OF_CONDUCT is Contributor Covenant 2.1 with the reporting channel customized, upstream attribution retained, under its referenced CC-BY-4.0 terms. DCO 1.1 is linked unchanged, not rewritten or represented as a project-owned CLA.
 
 ## Distribution scope
 

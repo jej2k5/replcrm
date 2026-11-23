@@ -12,11 +12,12 @@ Direction, not a delivery commitment. No dates are promised. Status means code/e
 - Incremental record replication, qualified relationship repair, opaque checkpoints and convergent replay.
 - Projection publication/discovery and the PostgreSQL projection registry.
 - Shared PostgreSQL/memory semantic tests, persisted-state reopen/failure injection, and database-free core execution tests.
+- Salesforce OAuth sign-in (PKCE), saved per-deployment object selection, recycle-bin deletions, reconcile for purged records and per-deployment run locks.
+- Local console for every replica (live pipelines, health, MATCH/DIFF per object, sync controls) and guided setup in the console and the terminal.
 - Credential-free public smoke coverage; private application destination integrations are excluded from this distribution.
 
 ## IN PROGRESS
 
-- Final private release review: source/attribution approval is documented; private reporting contacts and historical credential-use confirmation remain human publication actions.
 - Operational readiness remains pending: populated-database upgrade, record/reference preservation, live source replication, repeated-run behavior and external projection-consumer validation.
 
 ## PLANNED

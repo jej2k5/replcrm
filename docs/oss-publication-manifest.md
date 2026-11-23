@@ -1,5 +1,25 @@
 # OSS publication manifest
 
+## 0.2.0 update (2026-11-23)
+
+Source: private checkpoint `5b776bc`, published as one snapshot commit on this repository's own history (no private history). HONA LLC, as copyright holder and project steward, authorized this release on 2026-11-23. The 0.1.0 decisions below still apply; this table records what 0.2.0 adds. Exact inputs and hashes are in [source selection](source-selection.json); results are in [verification evidence](verification-evidence.json).
+
+| Component | Classification | Decision/evidence |
+| --- | --- | --- |
+| src/console (replicas page, setup page, handler, runs, status) | APPROVED_FOR_PUBLICATION | Project-owned loopback console; no external resources at runtime |
+| src/setup (engine, schema, store, CLI wizard) | APPROVED_FOR_PUBLICATION | Project-owned guided setup; only `prisma migrate deploy`, never resets data |
+| src/cli*.ts, src/locks, src/sources/salesforce/auth | APPROVED_FOR_PUBLICATION | OAuth sign-in, object selection, reconcile, verify, counts and run locks |
+| src/console/assets (JetBrains Mono, OFL text) | APPROVED_FOR_PUBLICATION | OFL-1.1 font embedded with its full license; see THIRD_PARTY_NOTICES |
+| PRODUCT.md, DESIGN.md, .impeccable/config.json, design.json, surfaces/ | APPROVED_FOR_PUBLICATION | Product and design records; local paths and personal references removed |
+| Tests other than the application destination's | APPROVED_FOR_PUBLICATION | 234 offline tests pass; synthetic data only |
+| src/destinations, src/compat, tests/application-crm-* | EXCLUDE_FROM_PUBLICATION | Same decision as 0.1.0: optional private integration |
+| Private build governance (build.yaml, prompts/, phase handoffs, discovery logs, operator notes) | EXCLUDE_FROM_PUBLICATION | Internal delivery records, not needed to build or operate ReplCRM |
+| Design sketches, review captures, decision-round files | EXCLUDE_FROM_PUBLICATION | Working material |
+
+Dependencies are unchanged from 0.1.0, so the license inventory and `licenses/` bundle remain complete.
+
+## 0.1.0
+
 ## Authority and source
 
 Source archive: `jej2k5/replcrm`, checkpoint `67be373d5afb16091f617898ee466acdf1dd3d78`. HONA LLC, confirmed by the project owner as copyright holder and project steward, has explicitly authorized Apache-2.0 distribution of ReplCRM-owned implementation, tests, schema and documentation, including code historically named Moat CRM Pipeline. This resolves the former project-owned provenance review. It does not override third-party terms or authorize credentials, customer material or independently sourced private content.

@@ -4,3 +4,9 @@ dist/
 .env.local
 *.log
 .DS_Store
+
+# Impeccable: keep the design brief and config; leave sketches, captures, caches and the decision round out.
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/questions/
+.impeccable/hook.cache.json

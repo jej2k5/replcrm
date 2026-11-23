@@ -1,6 +1,6 @@
 {
   "name": "replcrm",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Metadata-driven CRM replication engine with source-neutral adapters and pluggable replica stores.",
   "type": "module",
@@ -8,15 +8,22 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "migrate": "tsx src/cli.ts",
-    "migrate:metadata": "tsx src/cli.ts metadata",
-    "migrate:records": "tsx src/cli.ts records",
+    "migrate:metadata": "tsx src/cli.ts metadata --legacy-migrate",
+    "migrate:records": "tsx src/cli.ts records --legacy-migrate",
     "migrate:full": "tsx src/cli.ts full",
     "build": "tsc",
     "start": "node dist/cli.js",
     "typecheck": "tsc --project tsconfig.tests.json",
-    "replicate": "tsx src/cli.ts",
-    "pretest": "npm run build",
-    "test": "tsx --test tests/*.test.ts",
+    "replicate": "tsx src/cli.ts full",
+    "replicate:metadata": "tsx src/cli.ts metadata",
+    "replicate:users": "tsx src/cli.ts users",
+    "replicate:records": "tsx src/cli.ts records",
+    "replicate:projections": "tsx src/cli.ts projections",
+    "replicate:reconcile": "tsx src/cli.ts reconcile",
+    "auth": "tsx src/cli.ts auth",
+    "console": "tsx src/cli.ts console",
+    "test": "node scripts/offline-suite.mjs",
+    "test:offline": "node scripts/offline-suite.mjs",
     "smoke-test": "tsx scripts/smoke-test.ts"
   },
   "dependencies": {
@@ -32,6 +39,14 @@
     "typescript": "^5.6.0"
   },
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jej2k5/replcrm.git"
+  },
+  "homepage": "https://github.com/jej2k5/replcrm#readme",
+  "bugs": {
+    "url": "https://github.com/jej2k5/replcrm/issues"
+  },
   "keywords": [
     "crm",
     "replication",
@@ -42,6 +57,5 @@
   ],
   "engines": {
     "node": ">=22 <23"
-  },
-  "author": "HONA LLC"
+  }
 }

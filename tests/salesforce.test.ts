@@ -2,12 +2,10 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { SourceClient, normalizeRecord, decodeCheckpoint } from "../src/sources/salesforce/client.js";
 import { normalizeMetadata } from "../src/sources/salesforce/metadata.js";
-import type { SourceRecord, SourceFieldDescribe } from "../src/sources/salesforce/types.js";
+import type { SourceRecord } from "../src/sources/salesforce/types.js";
 import type { CanonicalEntity, ChangeBatch } from "../src/core/source.js";
+import { field } from "./helpers/salesforce-fixture.js";
 
-function field(name: string, type: string, overrides: Partial<SourceFieldDescribe> = {}): SourceFieldDescribe {
-  return { name, label: name, type, length: null, precision: null, scale: null, nillable: true, unique: false, externalId: false, calculated: false, custom: false, defaultValueFormula: null, inlineHelpText: null, referenceTo: [], relationshipName: null, cascadeDelete: false, picklistValues: [], ...overrides };
-}
 function source(): SourceClient { return new SourceClient({ mode: "oauth", instanceUrl: "https://example.salesforce.com", accessToken: "fixture" }); }
 
 test("Salesforce adapter normalizes metadata, native values, qualified references and ownership", (): void => {
@@ -32,11 +30,17 @@ test("Salesforce adapter normalizes metadata, native values, qualified reference
 test("Salesforce adapter preserves query sharding and owns checkpoint interpretation", async (): Promise<void> => {
   const client: SourceClient = source();
   const queries: string[] = [];
-  client.queryAll = async function* (query: string, _batchSize: number): AsyncGenerator<SourceRecord[]> {
+  client.queryPage = async (query, includeDeleted) => {
+    assert.equal(includeDeleted, true);
     queries.push(query);
-    yield queries.length === 1 ? [{ Id: "001", SystemModstamp: "2026-01-01T00:00:00Z", OwnerId: "owner", f0: "first" }] : [{ Id: "001", f199: "last" }];
+    const records: SourceRecord[] = queries.length === 1 ? [{ Id: "001", SystemModstamp: "2026-01-01T00:00:00Z", OwnerId: "owner", f0: "first" }] : [{ Id: "001", f199: "last" }];
+    return { records, totalSize: records.length, done: true };
   };
-  const entity: CanonicalEntity = { key: "Account", label: "Account", pluralLabel: "Accounts", attributes: Array.from({ length: 200 }, (_value: unknown, index: number) => ({ key: `f${index}`, label: `f${index}`, dataType: "Text" as const })) };
+  const entity: CanonicalEntity = { key: "Account", label: "Account", pluralLabel: "Accounts", attributes: [
+    { key: "SystemModstamp", label: "System Modstamp", dataType: "DateTime" },
+    { key: "OwnerId", label: "Owner", dataType: "Text" },
+    ...Array.from({ length: 200 }, (_value: unknown, index: number) => ({ key: `f${index}`, label: `f${index}`, dataType: "Text" as const })),
+  ] };
   const batches: ChangeBatch[] = [];
   for await (const batch of client.fetchChanges(entity, "2025-01-01T00:00:00Z", 2)) batches.push(batch);
   assert.equal(queries.length, 2);
@@ -50,11 +54,15 @@ test("Salesforce adapter preserves query sharding and owns checkpoint interpreta
   assert.equal(batches[0]?.records[0]?.ownerSourceId, "owner");
   assert.equal(decodeCheckpoint(batches[0]!.nextCheckpoint), "2026-01-01T00:00:00Z");
   assert.throws(() => decodeCheckpoint("page-token::abc123"), /Invalid Salesforce checkpoint/);
+  // Real Salesforce SystemModstamp values carry a numeric offset, not "Z".
+  assert.equal(decodeCheckpoint(JSON.stringify({ version: 1, systemModstamp: "2026-03-09T22:28:17.000+0000" })), "2026-03-09T22:28:17.000Z");
+  assert.equal(decodeCheckpoint("2026-03-09T16:28:17.000-0600"), "2026-03-09T22:28:17.000Z");
+  assert.throws(() => decodeCheckpoint("2026-03-09T22:28:17.000+99"), /Invalid Salesforce checkpoint/);
 });
 
 test("Salesforce adapter alone filters system objects and validates native API names", async (): Promise<void> => {
   const client: SourceClient = source();
-  client.describeGlobal = async () => ["AccountHistory", "Custom__c"].map((name: string) => ({ name, label: name, custom: false, queryable: true, deprecatedAndHidden: false, layoutable: true }));
+  client.describeGlobal = async () => ["AccountHistory", "Custom__c"].map((name: string) => ({ name, label: name, custom: false, queryable: true, replicateable: true, deprecatedAndHidden: false, layoutable: true }));
   assert.deepEqual(await client.listEntities(), ["Custom__c"]);
   await assert.rejects(client.describeEntity("foo.bar"), /Invalid Salesforce API name/);
 });
