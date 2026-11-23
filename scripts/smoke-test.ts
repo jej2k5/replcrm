@@ -14,7 +14,7 @@ async function check(name: string, action: () => Promise<void>): Promise<void> {
 }
 await check("compiled CLI help needs no configuration or service", async (): Promise<void> => {
   const text: string = execFileSync(process.execPath, ["dist/cli.js", "--help"], { env: {}, encoding: "utf8" });
-  assert.match(text, /ReplCRM/);
+  assert.match(text, /^Usage: replcrm /m);
 });
 await check("fake-source core runs with transitive database imports blocked", async (): Promise<void> => {
   const code: string = `

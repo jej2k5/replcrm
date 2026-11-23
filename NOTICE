@@ -1,5 +1,5 @@
 ReplCRM
-Copyright 2026 HONA LLC
+Copyright 2026 HONA LLC and ReplCRM contributors.
 
-Licensed under the Apache License, Version 2.0.
-Third-party components retain their respective copyrights and licenses.
+This product includes JetBrains Mono, licensed under the SIL Open Font License 1.1
+(src/console/assets/JetBrainsMono-OFL.txt). See THIRD_PARTY_NOTICES.md for dependencies.

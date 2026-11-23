@@ -1,15 +1,17 @@
+import type { FailedStatusRun, StatusRun } from "../status-runs.js";
 import { randomUUID } from "node:crypto";
 import type { CanonicalEntity, CanonicalValue, ChangeBatch, SourceRecord, SourceUser } from "../../core/source.js";
 import type { Counts, PendingRun, Projection, ProjectionResult, ReplicaStore } from "../../core/replica-store.js";
 import { mergeEntity, validateMetadata } from "../../core/metadata.js";
 import { isReference, readTypedValue, toTypedValue } from "../../core/type-mapper.js";
 
-export interface MemoryRecord extends SourceRecord { id: string; resolvedReferences: Record<string, string | null> }
-interface MemoryRun { deploymentId: string; entityKey: string | null; status: "Running" | "Succeeded" | "Failed"; checkpoint: string | null; order: number; error?: string }
+export interface MemoryRecord extends SourceRecord { id: string; deletedAt?: Date; resolvedReferences: Record<string, string | null> }
+interface MemoryRun { deploymentId: string; entityKey: string | null; status: "Running" | "Succeeded" | "Failed"; checkpoint: string | null; order: number; startedAt: Date; completedAt: Date | null; error?: string; counts?: Counts }
 const key = (...parts: string[]): string => JSON.stringify(parts);
 
 // Deliberately independent of database packages, generated clients and physical schemas.
 export class InMemoryReplicaStore implements ReplicaStore {
+  private deployments = new Map<string, { name: string; sourceUrl?: string }>();
   private entities = new Map<string, CanonicalEntity>();
   private users = new Map<string, SourceUser>();
   private records = new Map<string, MemoryRecord>();
@@ -17,6 +19,98 @@ export class InMemoryReplicaStore implements ReplicaStore {
   private nextOrder: number = 0;
   private projectionAttributes = new Map<string, string[]>();
   private projections = new Map<string, MemoryRecord[]>();
+  ensureDeployment(id: string, name: string, sourceUrl?: string): void {
+    if (!this.deployments.has(id)) {
+      this.deployments.set(id, { name, ...(sourceUrl === undefined ? {} : { sourceUrl }) });
+    }
+  }
+
+  deploymentExists(id: string): boolean {
+    return this.deployments.has(id);
+  }
+
+  countRecords(deploymentId: string): Map<string, number> {
+    const counts = new Map(this.listPersistedEntityKeys(deploymentId).map((entityKey) => [entityKey, 0]));
+    for (const [identity, record] of this.records) {
+      const [scope, entityKey] = JSON.parse(identity) as [string, string, string];
+      if (scope === deploymentId && !record.isDeleted) {
+        counts.set(entityKey, (counts.get(entityKey) ?? 0) + 1);
+      }
+    }
+    return counts;
+  }
+
+  async listActiveSourceIds(deploymentId: string, entityKey: string): Promise<Set<string>> {
+    const ids = new Set<string>();
+    for (const [identity, record] of this.records) {
+      const [scope, entity] = JSON.parse(identity) as [string, string, string];
+      if (scope === deploymentId && entity === entityKey && !record.isDeleted) ids.add(record.sourceId);
+    }
+    return ids;
+  }
+
+  async markDeleted(deploymentId: string, entityKey: string, sourceIds: readonly string[]): Promise<number> {
+    const deletedAt = new Date();
+    let count = 0;
+    for (const sourceId of sourceIds) {
+      const record = this.records.get(key(deploymentId, entityKey, sourceId));
+      if (record && !record.isDeleted) {
+        record.isDeleted = true;
+        record.deletedAt = deletedAt;
+        count++;
+      }
+    }
+    return count;
+  }
+
+  listPersistedEntityKeys(deploymentId: string): string[] {
+    const keys: string[] = [];
+    for (const identity of this.entities.keys()) {
+      const [scope, entityKey] = JSON.parse(identity) as [string, string];
+      if (scope === deploymentId) keys.push(entityKey);
+    }
+    return keys.sort();
+  }
+
+  persistedEntityKeys(deploymentId: string): string[] {
+    return this.listPersistedEntityKeys(deploymentId);
+  }
+
+  latestEntityRuns(deploymentId: string): Map<string, StatusRun> {
+    const latest = new Map<string, StatusRun>();
+    for (const run of this.runs.values()) {
+      if (run.deploymentId !== deploymentId || run.entityKey === null) continue;
+      latest.set(run.entityKey, {
+        processed: 0, created: 0, updated: 0, deleted: 0, ...run.counts,
+        startedAt: new Date(run.startedAt),
+        completedAt: run.completedAt && new Date(run.completedAt),
+        status: run.status, errorMessage: run.error ?? null,
+      });
+    }
+    return latest;
+  }
+
+  runningRuns(deploymentId: string): { entityKey: string | null; startedAt: Date }[] {
+    return [...this.runs.values()]
+      .filter((run) => run.deploymentId === deploymentId && run.status === "Running")
+      .reverse()
+      .map(({ entityKey, startedAt }) => ({ entityKey, startedAt: new Date(startedAt) }));
+  }
+
+  recentFailedRuns(deploymentId: string, limit: number): FailedStatusRun[] {
+    return [...this.runs.values()]
+      .filter((run) => run.deploymentId === deploymentId && run.status === "Failed")
+      .reverse().slice(0, limit)
+      .map((run) => ({
+        entityKey: run.entityKey, startedAt: new Date(run.startedAt),
+        completedAt: run.completedAt && new Date(run.completedAt), errorMessage: run.error ?? null,
+      }));
+  }
+
+  hasEntityMetadata(deploymentId: string, entityKeys: string[]): boolean {
+    return entityKeys.every((entityKey) => this.entities.has(key(deploymentId, entityKey)));
+  }
+
   async persistMetadata(deploymentId: string, entities: CanonicalEntity[]): Promise<void> {
     validateMetadata(entities);
     const next: Map<string, CanonicalEntity> = structuredClone(this.entities);
@@ -88,7 +182,7 @@ export class InMemoryReplicaStore implements ReplicaStore {
   async beginRun(deploymentId: string, entityKey: string | null): Promise<{ id: string; checkpoint: string | null }> {
     const checkpoint: string | null = entityKey === null ? null : this.getCheckpoint(deploymentId, entityKey);
     const id: string = randomUUID();
-    this.runs.set(id, { deploymentId, entityKey, checkpoint, status: "Running", order: this.nextOrder++ });
+    this.runs.set(id, { deploymentId, entityKey, checkpoint, status: "Running", order: this.nextOrder++, startedAt: new Date(), completedAt: null });
     return { id, checkpoint };
   }
   async completeRuns(runs: PendingRun[]): Promise<void> {
@@ -107,6 +201,9 @@ export class InMemoryReplicaStore implements ReplicaStore {
       if (run.status !== "Running") throw new Error("Run is not running");
       if (run.entityKey !== null && [...next.values()].some((other): boolean => other.deploymentId === run.deploymentId && other.entityKey === run.entityKey && other.status === "Succeeded" && other.order > run.order)) throw new Error("Stale replication attempt");
       run.status = "Succeeded"; run.checkpoint = item.result.checkpoint;
+      const { processed, created, updated, deleted } = item.result;
+      run.counts = { processed, created, updated, deleted };
+      run.completedAt = new Date();
     }
     this.runs = next;
   }
@@ -115,6 +212,7 @@ export class InMemoryReplicaStore implements ReplicaStore {
     if (!run) throw new Error("Unknown run");
     if (run.status === "Succeeded" || run.status === "Failed") return;
     run.status = "Failed"; run.error = message;
+    run.completedAt = new Date();
   }
   async ensureProjections(deploymentId: string, entities: CanonicalEntity[]): Promise<ProjectionResult[]> {
     return entities.map((entity): ProjectionResult => {

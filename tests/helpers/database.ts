@@ -61,6 +61,25 @@ function port(executor: Executor, transaction: <T>(action: (tx: Executor) => Pro
       for (const row of rows) {
         if (table === "Record" && args.select?.entityDefinition) row.entityDefinition = (await executor.query('SELECT * FROM "EntityDefinition" WHERE id = $1', [row.entityDefinitionId])).rows[0];
       }
+      if (table === "Record" && args.include?.owner) {
+        for (const row of rows) {
+          row.owner = row.ownerId ? (await executor.query(
+            'SELECT "sourceId", email FROM "User" WHERE id = $1', [row.ownerId],
+          )).rows[0] ?? null : null;
+        }
+      }
+      if (table === "Record" && args.include?.attributeValues) {
+        for (const row of rows) {
+          row.attributeValues = (await executor.query(
+            `SELECT av.*, json_build_object('key', a.key, 'dataType', a."dataType") AS "attributeDefinition",
+                    CASE WHEN ref.id IS NOT NULL THEN json_build_object('sourceId', ref."sourceId") END AS "referenceRecord"
+               FROM "AttributeValue" av
+               JOIN "AttributeDefinition" a ON a.id = av."attributeDefinitionId"
+               LEFT JOIN "Record" ref ON ref.id = av."referenceValue"
+              WHERE av."recordId" = $1`, [row.id],
+          )).rows;
+        }
+      }
       return rows;
     };
     const create = async (args: QueryArgs): Promise<Row> => {
@@ -91,7 +110,12 @@ function port(executor: Executor, transaction: <T>(action: (tx: Executor) => Pro
         const changed = await executor.query(`UPDATE ${quote(table)} t SET ${keys.map((key: string, index: number): string => `${quote(key)} = $${index + 1}`).join(", ")} WHERE ${where} RETURNING *`, parameters);
         return { count: changed.rows.length };
       },
-      upsert: async (args: QueryArgs): Promise<Row> => (await findMany(args)).length ? update({ where: args.where!, data: args.update! }) : create({ data: args.create! }),
+      upsert: async (args: QueryArgs): Promise<Row> => {
+        const [existing] = await findMany(args);
+        if (!existing) return create({ data: args.create! });
+        if (Object.keys(args.update!).length === 0) return existing;
+        return update({ where: args.where!, data: args.update! });
+      },
       deleteMany: async (args: QueryArgs): Promise<{ count: number }> => {
         const parameters: unknown[] = [];
         const where: string = predicate(table, args.where ?? {}, parameters);
@@ -100,6 +124,10 @@ function port(executor: Executor, transaction: <T>(action: (tx: Executor) => Pro
       createMany: async (args: { data: Row[] }): Promise<{ count: number }> => { for (const data of args.data) await create({ data }); return { count: args.data.length }; },
     };
   }
+  result.$queryRaw = async (strings: TemplateStringsArray, ...parameters: unknown[]): Promise<Row[]> => {
+    const sql = strings.reduce((query, part, index) => index === 0 ? part : `${query}$${index}${part}`, "");
+    return (await executor.query(sql, parameters)).rows;
+  };
   result.$queryRawUnsafe = async (sql: string, ...parameters: unknown[]): Promise<Row[]> => (await executor.query(sql, parameters)).rows;
   result.$executeRawUnsafe = async (sql: string, ...parameters: unknown[]): Promise<number> => (await executor.query(sql, parameters)).affectedRows ?? 0;
   result.$transaction = async <T>(action: (client: PrismaClient) => Promise<T>): Promise<T> => transaction(async (tx: Executor): Promise<T> => action(port(tx, async <R>(nested: (client: Executor) => Promise<R>): Promise<R> => nested(tx))));
@@ -125,5 +153,7 @@ export async function database(beforeIdentityMigration?: (db: PGlite) => Promise
     return result;
   } });
   const prisma: PrismaClient = port(wrap(db), async <T>(action: (tx: Executor) => Promise<T>): Promise<T> => db.transaction(async (tx): Promise<T> => action(wrap(tx))));
+  // The fixture owns PGlite and closes it after all CLI invocations and assertions.
+  prisma.$disconnect = async (): Promise<void> => {};
   return { db, prisma };
 }

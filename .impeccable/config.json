@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/canon.html"
+        ],
+        "createdAt": "2026-11-23T14:43:13.835Z",
+        "reason": "Claude: canon card deliberately renders the category-standard ETL console look; not a build surface"
+      }
+    ]
+  }
+}

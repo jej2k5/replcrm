@@ -9,7 +9,7 @@ const SOQL_FIELD_THRESHOLD: number = 180;
 
 // Yields per-`batchSize` slices of merged Salesforce rows. When the entity
 // has at most SOQL_FIELD_THRESHOLD user-fields, this is a thin wrapper over
-// source.queryAll. When it has more, the user-fields are sharded across
+// the source's record query. When it has more, the user-fields are sharded across
 // multiple SOQL queries (Id is included in every shard) and shards are
 // merged by Id in memory before being yielded.
 //
@@ -22,17 +22,16 @@ export async function* streamRawRecords(
   entityKey: string,
   userFields: string[],
   systemColumns: readonly string[],
-  sinceCursor: string | null,
+  where: string,
   batchSize: number,
 ): AsyncGenerator<SourceRecord[]> {
-  const where: string = sinceCursor ? `WHERE SystemModstamp > ${sinceCursor}` : "";
   const systemFieldList: string = systemColumns.join(", ");
   const totalFields: number = userFields.length + systemColumns.length;
 
   if (totalFields <= SOQL_FIELD_THRESHOLD) {
     const fieldList: string = userFields.join(", ");
     const soql: string = `SELECT ${fieldList}${userFields.length ? ", " : ""}${systemFieldList} FROM ${entityKey} ${where} ORDER BY SystemModstamp ASC`;
-    for await (const batch of source.queryAll(soql, batchSize)) yield batch;
+    for await (const batch of source.streamQuery(soql, batchSize, true)) yield batch;
     return;
   }
 
@@ -54,7 +53,7 @@ export async function* streamRawRecords(
     const fieldList: string = [...new Set(["Id", ...shardFields])].join(", ");
     const tail: string = s === 0 ? `, ${systemFieldList}` : "";
     const soql: string = `SELECT ${fieldList}${tail} FROM ${entityKey} ${where} ORDER BY SystemModstamp ASC`;
-    for await (const batch of source.queryAll(soql, batchSize)) {
+    for await (const batch of source.streamQuery(soql, batchSize, true)) {
       for (const row of batch) {
         const existing: SourceRecord | undefined = merged.get(row.Id);
         if (existing) Object.assign(existing, row);

@@ -1,4 +1,3 @@
-> Public-release blocker: the private enforcement contact below must be completed and tested by the maintainer. No contact address has been invented.
 
 # Contributor Covenant Code of Conduct
 
@@ -38,7 +37,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at [HUMAN REVIEW REQUIRED: insert a verified private enforcement contact before public release]. All complaints will be reviewed and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement privately through the repository's **Security → Report a vulnerability** form (start the title with "Conduct:"), which only the maintainers can read. For content elsewhere on GitHub, you can also use GitHub's **Report abuse**. All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the reporter of any incident.
 
@@ -84,4 +83,4 @@ For answers to common questions about this code of conduct, see the FAQ at [http
 [FAQ]: https://www.contributor-covenant.org/faq
 [translations]: https://www.contributor-covenant.org/translations
 
-The upstream Contributor Covenant text is licensed under [CC-BY-4.0](https://github.com/ContributorCovenant/contributor_covenant/blob/release/LICENSE.md). Its attribution is retained; only the reporting-contact placeholder and this project's preparation notice are customized.
+The upstream Contributor Covenant text is licensed under [CC-BY-4.0](https://github.com/ContributorCovenant/contributor_covenant/blob/release/LICENSE.md). Its attribution is retained; only the reporting channel is customized.

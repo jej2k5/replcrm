@@ -17,34 +17,72 @@ async function stage<T>(store: ReplicaStore, deploymentId: string, name: string,
   }
 }
 
-export async function runReplication({ store, config, sourceClient: source }: OrchestratorDeps): Promise<void> {
+export async function selectEntityKeys(
+  config: ReplicationConfig,
+  lister: { listEntities(): Promise<string[]> },
+): Promise<string[]> {
+  const requested: string[] = config.entityKeys.length === 1 && config.entityKeys[0] === "*" ? await lister.listEntities() : config.entityKeys;
+  const keys: string[] = [...new Set(requested)].filter((key: string): boolean => !config.entityDenyKeys.includes(key));
+  if (!keys.length) throw new Error("No entities selected for replication");
+  return keys;
+}
+
+export async function describeEntities(source: CrmSource, keys: string[]): Promise<CanonicalEntity[]> {
+  const definitions: CanonicalEntity[] = [];
+  for (const key of keys) {
+    const entity: CanonicalEntity = await source.describeEntity(key);
+    if (entity.key !== key) throw new Error(`Entity definition key mismatch: ${key}`);
+    if (new Set(entity.attributes.map((attr): string => attr.key)).size !== entity.attributes.length) throw new Error(`Duplicate attribute key: ${key}`);
+    for (const attr of entity.attributes) if ((attr.dataType === "Reference" || attr.dataType === "Composition") !== Boolean(attr.relationship)) throw new Error(`Relationship metadata mismatch: ${key}/${attr.key}`);
+    definitions.push(entity);
+  }
+  return definitions;
+}
+
+export async function runWithSource<T>(
+  { config, sourceClient: source }: OrchestratorDeps,
+  action: () => Promise<T>,
+): Promise<T> {
   if (!Number.isInteger(config.batchSize) || config.batchSize < 1) throw new Error("Positive integer batch size required");
   await source.connect();
+  try {
+    return await action();
+  } finally {
+    await source.logout();
+  }
+}
+
+// Stage functions use an already connected source. Full replication shares its metadata snapshot.
+export async function runMetadataStage(
+  { store, config, sourceClient: source }: OrchestratorDeps,
+): Promise<CanonicalEntity[]> {
+  const keys = await selectEntityKeys(config, source);
+  return stage(store, config.deploymentId, "metadata", async (): Promise<CanonicalEntity[]> => {
+    const definitions = await describeEntities(source, keys);
+    await store.persistMetadata(config.deploymentId, definitions);
+    return definitions;
+  });
+}
+
+export async function runUsersStage({ store, config, sourceClient: source }: OrchestratorDeps): Promise<void> {
+  await stage(store, config.deploymentId, "users", async (): Promise<Counts> => {
+    const total: Counts = emptyCounts();
+    for await (const users of source.streamUsers(config.batchSize)) {
+      const counts: Counts = await store.persistUsers(config.deploymentId, users);
+      for (const key of ["processed", "created", "updated", "deleted"] as const) total[key] += counts[key];
+    }
+    return total;
+  }, (counts: Counts): Counts => counts);
+}
+
+export async function runRecordsStage(
+  { store, config, sourceClient: source }: OrchestratorDeps,
+  definitions?: CanonicalEntity[],
+): Promise<void> {
+  const entities = definitions ?? await describeEntities(source, await selectEntityKeys(config, source));
   const pending: PendingRun[] = [];
   try {
-    const requested: string[] = config.entityKeys.length === 1 && config.entityKeys[0] === "*" ? await source.listEntities() : config.entityKeys;
-    const keys: string[] = [...new Set(requested)].filter((key: string): boolean => !config.entityDenyKeys.includes(key));
-    if (!keys.length) throw new Error("No entities selected for replication");
-    const definitions: CanonicalEntity[] = [];
-    await stage(store, config.deploymentId, "metadata", async (): Promise<void> => {
-      for (const key of keys) {
-        const entity: CanonicalEntity = await source.describeEntity(key);
-        if (entity.key !== key) throw new Error(`Entity definition key mismatch: ${key}`);
-        if (new Set(entity.attributes.map((attr): string => attr.key)).size !== entity.attributes.length) throw new Error(`Duplicate attribute key: ${key}`);
-        for (const attr of entity.attributes) if ((attr.dataType === "Reference" || attr.dataType === "Composition") !== Boolean(attr.relationship)) throw new Error(`Relationship metadata mismatch: ${key}/${attr.key}`);
-        definitions.push(entity);
-      }
-      await store.persistMetadata(config.deploymentId, definitions);
-    });
-    await stage(store, config.deploymentId, "users", async (): Promise<Counts> => {
-      const total: Counts = emptyCounts();
-      for await (const users of source.streamUsers(config.batchSize)) {
-        const counts: Counts = await store.persistUsers(config.deploymentId, users);
-        for (const key of ["processed", "created", "updated", "deleted"] as const) total[key] += counts[key];
-      }
-      return total;
-    }, (counts: Counts): Counts => counts);
-    for (const entity of definitions) {
+    for (const entity of entities) {
       const run = await store.beginRun(config.deploymentId, entity.key);
       const item: PendingRun = { id: run.id, result: { ...emptyCounts(), checkpoint: run.checkpoint } };
       pending.push(item);
@@ -57,11 +95,36 @@ export async function runReplication({ store, config, sourceClient: source }: Or
     }
     await store.resolveReferences(config.deploymentId, config.batchSize);
     await store.completeRuns(pending);
-    pending.length = 0;
-    if (config.buildWideViews ?? true) await stage(store, config.deploymentId, "projections", async (): Promise<ProjectionResult[]> => store.ensureProjections(config.deploymentId, definitions), (results: ProjectionResult[]): Counts => ({ ...emptyCounts(), processed: results.reduce((sum: number, item: ProjectionResult): number => sum + item.rowsLoaded, 0) }));
   } catch (error: unknown) {
     for (const item of pending) await store.failRun(item.id, error instanceof Error ? error.message : String(error));
     throw error;
-  } finally { await source.logout(); }
+  }
 }
+
+export async function runProjectionsStage(
+  { store, config, sourceClient: source }: OrchestratorDeps,
+  definitions?: CanonicalEntity[],
+): Promise<void> {
+  const entities = definitions ?? await describeEntities(source, await selectEntityKeys(config, source));
+  await stage(
+    store,
+    config.deploymentId,
+    "projections",
+    () => store.ensureProjections(config.deploymentId, entities),
+    (results: ProjectionResult[]): Counts => ({
+      ...emptyCounts(),
+      processed: results.reduce((sum, item) => sum + item.rowsLoaded, 0),
+    }),
+  );
+}
+
+export async function runReplication(deps: OrchestratorDeps): Promise<void> {
+  await runWithSource(deps, async () => {
+    const definitions = await runMetadataStage(deps);
+    await runUsersStage(deps);
+    await runRecordsStage(deps, definitions);
+    if (deps.config.buildWideViews ?? true) await runProjectionsStage(deps, definitions);
+  });
+}
+
 export const runMigration: typeof runReplication = runReplication;

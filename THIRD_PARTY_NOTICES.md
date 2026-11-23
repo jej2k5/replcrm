@@ -6,13 +6,17 @@ ReplCRM-owned implementation is distributed under Apache-2.0 by rights-holder au
 
 The [dependency inventory](docs/dependency-license-inventory.json) maps each installed dependency to copies of its packaged license/copyright/notice text in `licenses/`, with SHA-256 and origin. Duplicate legal texts share a content-addressed copy. TypeScript's packaged ThirdPartyNoticeText is included in that mapping in full.
 
-MIT permission/copyright sections embedded in agent-base, csprng, https-proxy-agent and sequin README files are retained. The esbuild root MIT text also covers the platform packages' matching upstream copyright/version. tr46 0.0.3 declares MIT in its published metadata but omits a separate license file; the retained upstream MIT text explicitly credits Sebastian Mayr. Its provenance is distinguished from a nonexistent version-local file.
+MIT permission/copyright sections embedded in the csprng and sequin README files are retained. The esbuild root MIT text also covers the platform packages' matching upstream copyright/version.
 
 [PostgreSQL/PGlite upstream attribution](licenses/PGLITE-POSTGRES-LICENSE.txt) is retained in addition to PGlite's packaged Apache license. Installed/generated dependency notices remain intact; generated clients and native binaries are not committed as project source.
 
+## Embedded font
+
+The console serves **JetBrains Mono** (latin subset, variable weight), embedded as base64 in `src/console/assets/font.ts` so the loopback console needs no external font host. Copyright 2020 The JetBrains Mono Project Authors. SIL Open Font License 1.1; the full license text is in [`src/console/assets/JetBrainsMono-OFL.txt`](src/console/assets/JetBrainsMono-OFL.txt).
+
 ## Standard policy text
 
-CODE_OF_CONDUCT is Contributor Covenant 2.1 with the contact placeholder customized, upstream attribution retained, under its referenced CC-BY-4.0 terms. DCO 1.1 is linked unchanged, not rewritten or represented as a project-owned CLA.
+CODE_OF_CONDUCT is Contributor Covenant 2.1 with the reporting channel customized, upstream attribution retained, under its referenced CC-BY-4.0 terms. DCO 1.1 is linked unchanged, not rewritten or represented as a project-owned CLA.
 
 ## Distribution scope
 
