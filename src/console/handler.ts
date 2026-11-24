@@ -1,8 +1,11 @@
+import { LockHeldError } from "../locks/file-lock.js";
+import { changeStatuses, WritebackInputError, type ConsoleWriteback } from "./writeback.js";
+import type { ChangeStatus } from "../writeback/requests.js";
 import { processToken, type ConsoleRuns } from "./runs.js";
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
 import { consoleFontWoff2 } from "./assets/font.js";
-import { renderConsolePage, renderSetupPage } from "./page.js";
+import { renderConsolePage, renderSetupPage, renderWritebackPage } from "./page.js";
 import type { SetupService } from "../setup/core.js";
 import type { ConsoleStatus } from "./status.js";
 
@@ -20,6 +23,8 @@ export interface ConsoleHandlerDeps {
   /** Every deployment the store knows about. Without it the console shows only the default. */
   listReplicas?(): Promise<ReplicaSummary[]>;
   now?: () => Date;
+  defaultDeployment?(): Promise<string | undefined>;
+  writeback?(deploymentId: string): Promise<ConsoleWriteback>;
   /** Runs for the default deployment. */
   runs?: ConsoleRuns | undefined;
   /** Runs for any deployment; falls back to `runs` for the default. */
@@ -137,7 +142,7 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
         return undefined;
       }
     }
-    function setupPage(): ConsoleResponse {
+    function html(render: (nonce: string) => string): ConsoleResponse {
       const nonce = randomBytes(18).toString("base64");
       return {
         status: 200,
@@ -147,8 +152,49 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
           "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'; font-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'`,
           "X-Frame-Options": "DENY",
         },
-        body: renderSetupPage(nonce, processToken, requested),
+        body: render(nonce),
       };
+    }
+
+    const setupPage = () => html((nonce) => renderSetupPage(nonce, processToken, requested));
+    const defaultDeployment = async () => deps.defaultDeployment ? deps.defaultDeployment() : (await getStatus(undefined, false)).deploymentId;
+    const objectsPage = path === "/objects" || path === "/api/objects";
+    const changesPage = path === "/changes" || path === "/api/changes";
+    if (objectsPage || changesPage) {
+      const api = path.startsWith("/api/");
+      if (method !== "GET" && (!api || method !== "POST")) {
+        return json(405, { error: "Method not allowed" }, { Allow: api ? "GET, POST" : "GET" });
+      }
+      if (method === "POST" && !tokenValid()) return json(403, { error: "Invalid console token" });
+      if (!deps.writeback) return json(404, { error: "Write-back is unavailable" });
+      try {
+        const deployment = requested ?? await defaultDeployment();
+        if (!deployment || !(await isKnown(requested))) return json(404, { error: "Unknown deployment" });
+        const writeback = await deps.writeback(deployment);
+        const filter = params.get("status") as ChangeStatus | null;
+        if (changesPage && filter && !changeStatuses.includes(filter)) return json(400, { error: "Unknown status" });
+        if (method === "POST") {
+          const fields = await readFields();
+          if (!fields) return json(400, { error: "Invalid JSON body" });
+          if (objectsPage) return json(200, await writeback.edit(fields));
+          await writeback.review(fields);
+          return json(200, { ok: true });
+        }
+        if (objectsPage) {
+          const objects = await writeback.objects();
+          if (api) return json(200, { objects });
+          const counts = await writeback.counts();
+          return html((nonce) => renderWritebackPage({ objects, counts }, deployment, nonce, processToken, false, now()));
+        }
+        const id = params.get("id") ?? undefined;
+        const changes = await writeback.changes(filter ?? undefined, id);
+        if (api) return json(200, changes);
+        return html((nonce) => renderWritebackPage({ ...changes, filter, id }, deployment, nonce, processToken, Boolean(runsFor(deployment)), now()));
+      } catch (error) {
+        if (error instanceof WritebackInputError) return json(error.status, { error: error.message });
+        if (error instanceof LockHeldError) return json(409, { error: "Another run holds the deployment lock" });
+        return json(500, { error: "Unable to complete the write-back request" });
+      }
     }
 
     if (path === "/api/setup" || path === "/api/setup/objects") {
@@ -210,13 +256,15 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
       const fields = await readFields();
       if (!fields) return json(400, { error: "Invalid JSON body" });
       const stage = fields.stage;
-      if (stage !== "records" && stage !== "full") return json(400, { error: "Stage must be records or full" });
-      const target = fields.deployment;
+      if (stage !== "records" && stage !== "full" && (stage !== "changes" || !deps.writeback)) {
+        return json(400, { error: "Invalid run stage" });
+      }
+      const target = stage === "changes" ? requested ?? await defaultDeployment().catch(() => undefined) : fields.deployment;
       if (target !== undefined && (typeof target !== "string" || !deploymentPattern.test(target))) {
         return json(400, { error: "Invalid deployment" });
       }
       if (!(await isKnown(target))) return json(404, { error: "Unknown deployment" });
-      const runs = runsFor(target);
+      const runs = runsFor(target) ?? (stage === "changes" && requested === undefined ? deps.runs : undefined);
       if (runs?.stopping) return json(503, { error: "Console is stopping" });
       if (!runs) return json(503, { error: "Console sync is unavailable" });
       const { status, ...result } = await runs.start(stage);
@@ -224,8 +272,11 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
     }
     async function getStatusWithWarnings(id: string | undefined, refresh: boolean) {
       const status = await getStatus(id, refresh);
-      if (!deps.interruptedRuns) return status;
-      return { ...status, interruptedRuns: await (id ? deps.interruptedRuns(id) : deps.interruptedRuns()) };
+      const [interruptedRuns, writeback] = await Promise.all([
+        deps.interruptedRuns ? (id ? deps.interruptedRuns(id) : deps.interruptedRuns()) : undefined,
+        deps.writeback ? deps.writeback(status.deploymentId).then((service) => service.counts()) : undefined,
+      ]);
+      return { ...status, ...(interruptedRuns && { interruptedRuns }), ...(writeback && { writeback }) };
     }
     if (path === "/api/status") {
       if (method !== "GET") return json(405, { error: "Method not allowed" }, { Allow: "GET" });
@@ -242,18 +293,8 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
       try {
         if (!(await isKnown(requested))) return json(404, { error: "Unknown deployment" });
         const status = await getStatusWithWarnings(requested, false);
-        const nonce = randomBytes(18).toString("base64");
         const runs = runsFor(requested);
-        return {
-          status: 200,
-          headers: {
-            "Cache-Control": "no-store",
-            "Content-Type": "text/html; charset=utf-8",
-            "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'; font-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'`,
-            "X-Frame-Options": "DENY",
-          },
-          body: renderConsolePage(status, nonce, runs && processToken, runs?.current().state === "running"),
-        };
+        return html((nonce) => renderConsolePage(status, nonce, runs && processToken, runs?.current().state === "running"));
       } catch {
         if (deps.setup && !requested) return setupPage();
         return json(500, { error: "Unable to read console status" });

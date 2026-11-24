@@ -13,6 +13,10 @@ export interface SourceFieldDescribe {
   precision: number | null;
   scale: number | null;
   nillable: boolean;
+  nameField?: boolean;
+  updateable?: boolean;
+  createable?: boolean;
+  defaultedOnCreate?: boolean;
   unique: boolean;
   externalId: boolean;
   calculated: boolean;

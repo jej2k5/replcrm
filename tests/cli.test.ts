@@ -125,10 +125,12 @@ test("help and --help list every accepted command without building adapters", as
   assert.match(help, /full.*default/);
   assert.match(help, /console \[--port N\]/);
   assert.match(help, /deployment verify \[--rebind\] \[--json\]/);
+  assert.match(help, /writeback status \[--json\]/);
+  assert.match(help, /changes process \[--watch\]/);
   assert.match(help, /reconcile \[--entities a,b\] \[--json\]/);
   assert.match(help, /reconcile --apply \[--allow-empty\] \[--allow-large\] \[--json\]/);
   assert.deepEqual([...new Set(help.split("\n").slice(1).map((line) => line.trim().split(/\s+/)[0]))],
-    ["full", "metadata", "users", "records", "projections", "auth", "objects", "console", "setup", "counts", "reconcile", "deployment", "help", "--help"]);
+    ["full", "metadata", "users", "records", "projections", "auth", "objects", "writeback", "changes", "console", "setup", "counts", "reconcile", "deployment", "help", "--help"]);
 });
 
 test("selectEntityKeys discovers wildcard keys, filters denied keys, and preserves unique order", async (t) => {

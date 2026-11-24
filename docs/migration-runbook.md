@@ -41,7 +41,7 @@ createdb crm_prod
 export DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/crm_prod"
 ```
 
-Apply the schema (existing databases must also apply `20261026_scoped_record_identity` before running the semantic-contract version):
+Apply the schema, including `20261026_scoped_record_identity` and `20261123_writeback_foundations` on existing databases.
 
 ```bash
 git clone https://github.com/jej2k5/replcrm.git
@@ -57,8 +57,10 @@ Confirm the tables landed:
 psql "$DATABASE_URL" -c '\dt'
 # expect: Deployment, EntityDefinition, AttributeDefinition, EnumOption,
 #         RelationDefinition, EntityVariant, Record, AttributeValue,
-#         User, SyncRun
+#         User, SyncRun, WritebackPolicy, ChangeRequest
 ```
+
+Refresh object metadata after applying the write-back migration. See [Write-back](write-back.md) for policy and queue setup.
 
 ---
 
@@ -193,11 +195,11 @@ Run metadata before standalone records or projections. Both commands verify that
 
 ### Sync lock
 
-Metadata, users, records, projections, full, reconcile apply, and console-started syncs share one lock per deployment at `<config dir>/locks/<DEPLOYMENT_ID>.run.lock`. A competing CLI command exits 1 immediately. A competing console start shows the refusal on the page. The refusal identifies the holder's command, PID, and start time. Let that run finish before retrying.
+Metadata, users, records, projections, full, reconcile apply, console-started syncs, and write-back processing share one lock per deployment at `<config dir>/locks/<DEPLOYMENT_ID>.run.lock`. A sync waits when a live local change-processing batch holds the lock. Other competing starts get a refusal with the holder’s command, PID, and start time. The CLI exits 1 and the console shows the refusal on the page.
 
 Use **Run records sync** or **Run full sync** in the console to start a sync with the saved selection and follow its progress. Running entries without a lock appear as interrupted run warnings. Ctrl+C stops the console from accepting starts and gives an active sync up to ten seconds to finish before marking it failed and releasing the lock.
 
-In the CLI, Ctrl+C and SIGTERM release the run lock and exit 130. A hard kill or crash can leave the file behind. Confirm the run has stopped, checking the named host first if it differs from yours, then delete the named lock file and retry. The start time alone does not determine whether a run has stopped.
+In the CLI, Ctrl+C and SIGTERM release the run lock and exit 130. The change processor finishes the active request before releasing its batch lock. A hard kill or crash can leave the file behind. Confirm the run has stopped, checking the named host first if it differs from yours, then delete the named lock file and retry. The start time alone does not determine whether a run has stopped.
 
 The lock coordinates processes sharing the same configuration directory. A container with a separate config directory has its own lock, even when it uses the same deployment ID and database.
 

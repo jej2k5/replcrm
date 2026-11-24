@@ -1,10 +1,8 @@
 {
-  "sourceCommit": "67c4036b0a4d9fe89ef396c8662ad39b56d94a40",
+  "sourceCommit": "462eae67a7ce6e9c746d779e0c2fe57ee0cb0048",
   "runtime": {
     "node": "26.4.0",
-    "platform": "darwin",
-    "architecture": "arm64",
-    "note": "Verified locally on Node 26; the supported baseline remains Node 22.x (engines, .nvmrc, CI, Docker). CI on the pull request runs Node 22."
+    "note": "Supported baseline is Node 22.x (engines, .nvmrc, CI, Docker); CI on the release pull request runs Node 22."
   },
   "install": {
     "command": "npm ci",
@@ -13,9 +11,12 @@
     "dependenciesChangedSince0_1_0": "transitive only (compatible security updates)"
   },
   "checks": {
+    "install": {
+      "command": "npm ci",
+      "exitCode": 0
+    },
     "prismaGenerate": {
-      "exitCode": 0,
-      "clientVersion": "5.22.0"
+      "exitCode": 0
     },
     "typecheck": {
       "exitCode": 0
@@ -26,19 +27,16 @@
     "offlineSuite": {
       "command": "npm test",
       "exitCode": 0,
-      "tests": 234,
-      "passed": 234,
-      "failed": 0
+      "tests": 347
     },
     "smokeTest": {
       "command": "npm run smoke-test",
       "exitCode": 0,
-      "checks": 5,
-      "passed": 5
+      "checks": 5
     }
   },
   "sourcePreservation": {
-    "filesIdenticalToPrivateCheckpoint": 106,
+    "filesIdenticalToPrivateCheckpoint": 127,
     "publicAdaptedFiles": 16,
     "publicOnlyFiles": 8
   },
@@ -62,20 +60,9 @@
     "Hosted GitHub fork CI execution",
     "Historical development credential reuse outside reviewed archive"
   ],
-  "release": "0.2.0",
+  "release": "0.3.0",
   "audit": {
     "command": "npm audit",
-    "remaining": [
-      {
-        "package": "esbuild",
-        "severity": "low",
-        "scope": "tsx dev toolchain, Windows dev server only, not shipped"
-      }
-    ],
-    "resolved": [
-      "websocket-driver (critical)",
-      "form-data (high)",
-      "csv-parse (moderate)"
-    ]
+    "remaining": []
   }
 }

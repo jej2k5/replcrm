@@ -1,8 +1,10 @@
+import { changeStatuses, type ConsoleWriteback } from "./writeback.js";
+import { processToken } from "./runs.js";
 import type { ConsoleStatus } from "./status.js";
 
 function escapeHtml(value: string | number): string {
   const entities: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-  return String(value).replace(/[&<>"']/g, (character) => entities[character]!);
+  return String(value).replaceAll(processToken, "[redacted]").replace(/[&<>"']/g, (character) => entities[character]!);
 }
 
 const numberFormat = new Intl.NumberFormat("en-US");
@@ -42,14 +44,17 @@ const icons = `<svg width="0" height="0" class="sprite" aria-hidden="true"><defs
 const honaMark = `<svg viewBox="0 0 78 104" width="11" height="15" aria-hidden="true"><path fill="var(--hona-grey)" d="M0 0 H47 V44 H31 V16 H16 V88 H0 Z"/><path fill="#00A0CA" d="M78 16 H62 V88 H47 V60 H31 V104 H78 Z"/></svg>`;
 
 
-function sidebar(current: "replicas" | "setup"): string {
+function sidebar(current: "replicas" | "setup" | "objects" | "changes", deployment?: string, review = 0): string {
+  const query = deployment ? "?deployment=" + encodeURIComponent(deployment) : "";
   const here = (name: string) => (current === name ? ' aria-current="page"' : "");
   return `<aside class="side">
   <a class="side-brand" href="/"><svg aria-hidden="true"><use href="#i-logo"/></svg><span><b>ReplCRM</b><small>console</small></span></a>
   <nav aria-label="Console">
     <span class="label">Operate</span>
-    <a href="/"${here("replicas")}><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg>Replicas</a>
-    <a href="/#problems"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>Problems <span class="muted" id="nav-problems-count"></span></a>
+    <a href="/${query}"${here("replicas")}><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg>Replicas</a>
+    ${deployment ? `<a href="/objects${query}"${here("objects")}><svg class="icon" aria-hidden="true"><use href="#i-discover"/></svg>Objects</a>
+    <a href="/changes${query}"${here("changes")}><svg class="icon" aria-hidden="true"><use href="#i-reconstruct"/></svg>Changes <span class="muted" id="nav-changes-count" aria-label="Needs review">${review || ""}</span></a>` : ""}
+    <a href="/${query}#problems"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>Problems <span class="muted" id="nav-problems-count"></span></a>
     <span class="label">Setup</span>
     <a href="/setup"${here("setup")}><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Add replica</a>
   </nav>
@@ -520,6 +525,12 @@ const script = `
   }
 
   function renderDetail(status) {
+    if (status.writeback && byId("writeback-pending")) {
+      byId("writeback-pending").textContent = status.writeback.pending;
+      byId("writeback-review").textContent = status.writeback.needsReview;
+      byId("writeback-failed").textContent = status.writeback.failed;
+      byId("nav-changes-count").textContent = status.writeback.needsReview || "";
+    }
     const t = totals(status);
     tick(byId("fact-records"), t.store);
     byId("fact-match").textContent = t.objects ? t.matches + " of " + t.objects + " objects match" : "No objects yet";
@@ -616,7 +627,7 @@ const actionsScript = (token: string) => `
   let lastFinished;
   let submission = 0;
   const disableRuns = (disabled) => runButtons.forEach((control) => { control.disabled = disabled; });
-  const stageWords = { metadata: "Discovering objects", users: "Reconstructing users", records: "Copying records", projections: "Building views", full: "Starting" };
+  const stageWords = { changes: "Processing changes", metadata: "Discovering objects", users: "Reconstructing users", records: "Copying records", projections: "Building views", full: "Starting" };
 
   function renderRun(run) {
     runStates.set(selected, run);
@@ -694,7 +705,7 @@ const actionsScript = (token: string) => `
   setInterval(pollRun, 2000);
 `;
 
-export function renderConsolePage(status: ConsoleStatus, nonce: string, token?: string, running = false): string {
+export function renderConsolePage(status: ConsoleStatus & { writeback?: WritebackCounts }, nonce: string, token?: string, running = false): string {
   let store = 0;
   let matches = 0;
   let last: Date | null = null;
@@ -738,7 +749,7 @@ export function renderConsolePage(status: ConsoleStatus, nonce: string, token?: 
 <body data-deployment="${id}">
 ${icons}
 <div class="shell">
-${sidebar("replicas")}
+${sidebar("replicas", status.writeback && status.deploymentId, status.writeback?.needsReview)}
 <main>
   <div class="page-head">
     <div><h1>Replicas</h1><p class="prose">Each replica copies one CRM org into its own database. Open one to see its objects.</p></div>
@@ -749,6 +760,7 @@ ${sidebar("replicas")}
     <div><dt class="label">Replicas</dt><dd id="health-replicas">—</dd></div>
     <div><dt class="label">Records</dt><dd><span class="counter" id="health-records">—</span></dd></div>
     <div><dt class="label">Need attention</dt><dd id="health-attention">—</dd></div>
+    ${status.writeback ? writebackHealth(status.writeback) : ""}
   </dl>
   <section aria-label="Replica pipelines">
     <div class="pipes" id="pipes"><div class="pipe" aria-current="true"><div class="pipe-name"><b>${id}</b><small>Reading counts…</small></div></div></div>
@@ -1111,4 +1123,193 @@ ${sidebar("setup")}
 <script nonce="${nonce}">${themeToggle}${setupScript(token)}</script>
 </body>
 </html>`;
+}
+
+type WritebackCounts = Awaited<ReturnType<ConsoleWriteback["counts"]>>;
+type ChangeRow = Awaited<ReturnType<ConsoleWriteback["changes"]>>["changes"][number];
+type WritebackPage =
+  | { objects: Awaited<ReturnType<ConsoleWriteback["objects"]>>; counts: WritebackCounts }
+  | (Awaited<ReturnType<ConsoleWriteback["changes"]>> & { filter: string | null; id: string | undefined });
+
+function writebackHealth(counts: WritebackCounts): string {
+  return [
+    ["Pending writes", "pending", counts.pending],
+    ["Needs review", "review", counts.needsReview],
+    ["Failed writes (24h)", "failed", counts.failed],
+  ].map(([label, id, value]) => `<div><dt class="label">${label}</dt><dd id="writeback-${id}">${value}</dd></div>`).join("");
+}
+
+function writebackObjects(objects: Awaited<ReturnType<ConsoleWriteback["objects"]>>): string {
+  return `<div class="detail table-scroll"><table>
+    <thead><tr><th scope="col">Object</th><th scope="col">Write-back</th></tr></thead>
+    <tbody>${objects.map(({ entityKey, enabled, fields }) => `<tr>
+      <th scope="row">${escapeHtml(entityKey)}</th>
+      <td><form data-policy>
+        <input type="hidden" name="entityKey" value="${escapeHtml(entityKey)}">
+        <label><input type="checkbox" role="switch" data-on="enable" data-off="disable"${enabled ? " checked" : ""}> Write-back</label>
+      </form>
+      ${enabled ? `<p class="prose tone-warn">Changes made in the replica will be written to Salesforce as the signed-in user.</p>
+        ${fields.length ? `<table aria-label="Writable fields for ${escapeHtml(entityKey)}">
+          <thead><tr><th scope="col">Field</th><th scope="col">Update</th><th scope="col">Create</th><th scope="col">Exclude</th></tr></thead>
+          <tbody>${fields.map(({ key, update, create, excluded }) => `<tr><th scope="row">${escapeHtml(key)}</th>
+            <td>${update ? "Yes" : "No"}</td><td>${create ? "Yes" : "No"}</td>
+            <td><form data-policy><input type="hidden" name="entityKey" value="${escapeHtml(entityKey)}">
+              <input type="hidden" name="field" value="${escapeHtml(key)}">
+              <input type="checkbox" aria-label="Exclude ${escapeHtml(key)}" data-on="exclude" data-off="include"${excluded ? " checked" : ""}>
+            </form></td></tr>`).join("")}</tbody>
+        </table>` : '<p class="prose">No writable fields.</p>'}` : ""}
+      </td></tr>`).join("") || '<tr><td colspan="2" class="empty">Run a full sync to load object metadata.</td></tr>'}</tbody>
+  </table></div>`;
+}
+
+function changeDetail(change: ChangeRow): string {
+  const button = (action: string, label: string) => `<button name="action" value="${action}" type="submit">${label}</button>`;
+  const operator = '<label>Operator label <input name="operator" type="text" required autocomplete="off"></label>';
+  const form = (content: string) => `<form class="controls" data-review><input type="hidden" name="id" value="${escapeHtml(change.id)}">${content}</form>`;
+  const value = (item: unknown) => escapeHtml(typeof item === "string" ? item : JSON.stringify(item) ?? "—");
+  switch (change.status) {
+    case "conflict":
+      return `<div class="table-scroll"><table aria-label="Conflict values">
+        <thead><tr><th scope="col">Field</th><th scope="col">Editor started from</th><th scope="col">Replica value</th><th scope="col">Salesforce current value</th></tr></thead>
+        <tbody>${Object.entries(change.conflictValues ?? {}).map(([key, { base, replicaValue, sourceValue }]) =>
+          `<tr><th scope="row">${escapeHtml(key)}</th><td>${value(base)}</td><td>${value(replicaValue)}</td><td>${value(sourceValue)}</td></tr>`).join("")}</tbody>
+      </table></div>${form(operator + button("replica", "Keep replica value") + button("salesforce", "Keep Salesforce value"))}`;
+    case "unknown":
+      return `<p class="prose">${change.operation === "create"
+        ? "Salesforce may or may not have created this record. Check Salesforce before resubmitting."
+        : "Salesforce may or may not have applied this update. Check the record before resubmitting."}</p>
+        ${form(operator + '<label>Existing record ID <input name="recordId" type="text" autocomplete="off"></label>'
+        + button("link", "Link to an existing record ID") + button("resubmit", "Resubmit") + button("abandon", "Abandon"))}`;
+    case "failed":
+    case "rejected":
+      return `<pre>${escapeHtml(change.sourceError?.message ?? change.statusDetail ?? "No message recorded.")}</pre>
+        ${change.sourceError?.fields?.length ? `<p>Fields named by Salesforce <b>${escapeHtml(change.sourceError.fields.join(", "))}</b></p>` : ""}
+        ${change.status === "failed" ? form(button("retry", "Retry")) : ""}`;
+    case "applied":
+      return `<p>Salesforce ID <b>${escapeHtml(change.resultingSourceId ?? "—")}</b> · Applied <time>${escapeHtml(change.appliedAt?.toISOString() ?? "—")}</time></p>`;
+    default:
+      return `<p class="prose">${escapeHtml(change.statusDetail ?? change.status)}</p>`;
+  }
+}
+
+function writebackChanges(page: Extract<WritebackPage, { changes: ChangeRow[] }>, deployment: string, now: Date): string {
+  const query = "/changes?deployment=" + encodeURIComponent(deployment);
+  const filtered = query + (page.filter ? "&status=" + encodeURIComponent(page.filter) : "");
+  const selected = page.changes.find(({ id }) => id === page.id);
+  const glyph = { pending: "○", sending: "↻", applied: "✓", conflict: "⚠", overridden: "↺", rejected: "×", failed: "!", unknown: "?" };
+  const statusLabel = (status: string) => status.charAt(0).toUpperCase() + status.slice(1);
+  const age = (createdAt: Date) => {
+    const minutes = Math.max(0, Math.floor((now.getTime() - createdAt.getTime()) / 60_000));
+    return minutes < 1 ? "Just now" : minutes < 60 ? minutes + "m ago" : minutes < 1440 ? Math.floor(minutes / 60) + "h ago" : Math.floor(minutes / 1440) + "d ago";
+  };
+  return `<nav class="change-filters" aria-label="Change status">${(["all", ...changeStatuses] as const).map((status) =>
+    `<a href="${escapeHtml(query + (status === "all" ? "" : "&status=" + status))}"${status === (page.filter || "all") ? ' aria-current="page"' : ""}>${statusLabel(status)} ${page.statusCounts[status]}</a>`).join("\n")}</nav>
+    <div class="detail table-scroll"><table>
+    <thead><tr><th scope="col">Object</th><th scope="col">Record</th><th scope="col">Operation</th><th scope="col">Author</th><th scope="col">Age</th><th scope="col">Status</th></tr></thead>
+    <tbody>${page.changes.map((change) => `<tr><th scope="row">${escapeHtml(change.entityKey)}</th>
+      <td><a class="text-link" href="${escapeHtml(filtered + "&id=" + encodeURIComponent(change.id))}#change-detail"${page.id === change.id ? ' aria-current="true"' : ""}>${escapeHtml(change.record ?? change.id)}</a></td>
+      <td>${change.operation}</td><td>${escapeHtml(change.authorLabel)} <small>(${change.authorKind})</small></td>
+      <td><time datetime="${change.createdAt.toISOString()}">${age(change.createdAt)}</time></td>
+      <td><span aria-hidden="true">${glyph[change.status]}</span> ${statusLabel(change.status)}</td></tr>`).join("")
+      || '<tr><td colspan="6" class="empty">No changes match this filter.</td></tr>'}</tbody></table></div>
+    ${selected ? `<section class="detail sync" id="change-detail" aria-label="Change details">
+      <h2>${selected.unlinkedCreate ? "" : escapeHtml(selected.entityKey) + " · "}${escapeHtml(selected.record ?? selected.id)}</h2>${changeDetail(selected)}</section>` : ""}`;
+}
+
+const writebackScript = (token: string) => `
+  const query = "?deployment=" + encodeURIComponent(document.body.dataset.deployment);
+  const feedback = document.getElementById("writeback-feedback");
+  const processButton = document.getElementById("process-now");
+  async function post(path, fields) {
+    const response = await fetch(path + query, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-ReplCRM-Token": ${JSON.stringify(token)} },
+      body: JSON.stringify(fields),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Write-back request failed");
+  }
+  for (const form of document.querySelectorAll("[data-policy]")) {
+    const toggle = form.querySelector("input[type=checkbox]");
+    toggle.addEventListener("change", async () => {
+      toggle.disabled = true;
+      feedback.textContent = "";
+      try {
+        await post("/api/objects", { ...Object.fromEntries(new FormData(form)), action: toggle.checked ? toggle.dataset.on : toggle.dataset.off });
+        location.reload();
+      } catch (error) {
+        toggle.checked = !toggle.checked;
+        feedback.textContent = error.message;
+      } finally {
+        toggle.disabled = false;
+      }
+    });
+  }
+  for (const form of document.querySelectorAll("[data-review]")) form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const fields = Object.fromEntries(new FormData(form, event.submitter));
+    const buttons = form.querySelectorAll("button");
+    for (const button of buttons) button.disabled = true;
+    feedback.textContent = "";
+    try {
+      await post("/api/changes", fields);
+      const next = new URL(location.href);
+      next.searchParams.delete("status");
+      location.href = next;
+    } catch (error) {
+      feedback.textContent = error.message;
+    } finally {
+      for (const button of buttons) button.disabled = false;
+    }
+  });
+  if (processButton) processButton.addEventListener("click", async () => {
+    processButton.disabled = true;
+    feedback.textContent = "Processing changes…";
+    try {
+      await post("/api/runs", { stage: "changes" });
+      for (;;) {
+        const response = await fetch("/api/runs/current" + query);
+        if (!response.ok) throw new Error("Unable to read processing progress.");
+        const run = await response.json();
+        if (run.stage !== "changes" || run.state === "succeeded") {
+          location.reload();
+          break;
+        }
+        if (run.state === "failed") throw new Error(run.lines.at(-1) || "Change processing failed.");
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    } catch (error) {
+      feedback.textContent = error.message;
+      processButton.disabled = false;
+    }
+  });
+`;
+
+export function renderWritebackPage(page: WritebackPage, deployment: string, nonce: string, token: string, canProcess: boolean, now: Date): string {
+  const objects = "objects" in page;
+  const title = objects ? "Objects" : "Changes";
+  return `<!doctype html><html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${title} · ReplCRM Console</title>
+  <script nonce="${nonce}">${themeBoot}</script><style nonce="${nonce}">${styles}
+    .writeback main { min-width: 0; }
+    .writeback .controls { flex-wrap: wrap; margin-block: 12px; }
+    .change-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+    .change-filters a { padding: 5px 10px; border: 1px solid var(--s600); border-radius: 3px; color: var(--t200); text-decoration: none; }
+    .change-filters a:hover { background: var(--s800); }
+    .change-filters a[aria-current="page"] { border-color: var(--accent); background: var(--accent-wash); color: var(--accent-hi); font-weight: 700; }
+    .writeback [aria-current="true"] { color: var(--t100); font-weight: 700; }
+    .writeback input[type="checkbox"] { accent-color: var(--accent); }
+    .writeback td { white-space: normal; overflow-wrap: anywhere; }
+    .writeback pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+  </style></head>
+  <body class="writeback" data-deployment="${escapeHtml(deployment)}">${icons}
+    <div class="shell">${sidebar(objects ? "objects" : "changes", deployment, page.counts.needsReview)}
+    <main><div class="page-head"><div><h1>${title}</h1><p class="prose">${escapeHtml(deployment)}</p></div>
+      ${canProcess ? '<button id="process-now" class="primary" type="button">Process now</button>' : ""}</div>
+      <dl class="strip" aria-label="Write-back health">${writebackHealth(page.counts)}</dl>
+      <p id="writeback-feedback" class="feedback" role="status"></p>
+      ${objects ? writebackObjects(page.objects) : writebackChanges(page, deployment, now)}
+    </main></div><script nonce="${nonce}">${themeToggle}${writebackScript(token)}</script>
+  </body></html>`;
 }

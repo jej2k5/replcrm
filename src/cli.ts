@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import type { PrismaClient } from "@prisma/client";
 import { buildStatus, findInterruptedRuns, type StatusStore } from "./console/status.js";
+import { createConsoleWriteback } from "./console/writeback.js";
+import { processBatch } from "./writeback/queue.js";
 import { createConsoleHandler } from "./console/handler.js";
 import { listenForConsole, type ConsoleListener } from "./console/listener.js";
 import { loadReplicationConfig, loadSourceAuth, required, type SourceAuth } from "./config.js";
@@ -28,6 +30,9 @@ import { verifyDeployment, type VerifyDeps } from "./cli-verify.js";
 import { parseReconcileArgs, reconcile, type ReconcileDeps } from "./cli-reconcile.js";
 
 import { loadSavedSelection, objectsUsage, parseEntityList, resolveSelection, runObjects, saveSelection, type ObjectsDeps } from "./cli-objects.js";
+import { changesUsage, runChanges, runWriteback, writebackUsage } from "./cli-writeback.js";
+import { ChangeRequestProcessor } from "./writeback/index.js";
+import type { WritebackStore } from "./writeback/requests.js";
 import { displayDatabaseUrl, planSetup, validateApp, validateDatabaseUrl, validateReplica, type SetupProbe, type SetupService } from "./setup/core.js";
 import { loadSavedApp, loadSavedDatabaseUrl, saveApp, saveDatabaseUrl } from "./setup/store.js";
 
@@ -44,6 +49,8 @@ export interface CliDeps {
   validateConsoleConfig?(): void;
   createConsoleHandler?(port: number, runs?: ConsoleRuns, runsFor?: (deploymentId: string) => ConsoleRuns | undefined, setup?: SetupService): ReturnType<typeof createConsoleHandler>;
   objects?: ObjectsDeps;
+  waitForChangesBatch?: (ms: number, signal: AbortSignal) => Promise<void>;
+  createWritebackStore?(): WritebackStore | Promise<WritebackStore>;
   setup?: SetupService;
   /** Terminal prompts for the setup wizard; tests inject scripted answers. */
   wizardIO?(): import("./setup/wizard.js").WizardIO & { close?(): void };
@@ -77,6 +84,8 @@ const commands = {
   projections: "Build wide-view projections [--entities a,b]",
   auth: authUsage,
   objects: objectsUsage,
+  writeback: writebackUsage,
+  changes: changesUsage,
   console: "console [--port N]",
   setup: "setup [--deployment <id>]\n  setup status [--deployment <id>] [--json]",
   counts: "counts [--entities a,b] [--json] [--store-only]",
@@ -188,6 +197,31 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<number> {
     if (command === "objects") {
       if (!deps.objects) throw new Error("Object selection dependencies are unavailable");
       await runObjects(argv.slice(1), baseConfig, deps.objects);
+      return 0;
+    }
+    if (command === "changes") {
+      deploymentId = baseConfig.deploymentId;
+      safeDeploymentFileName(deploymentId);
+      if (!deps.createWritebackStore) throw new Error("Write-back storage is unavailable");
+      const store = await deps.createWritebackStore();
+      const session = changeSession(baseConfig, deps, store);
+      try {
+        return await runChanges(argv.slice(1), deploymentId, store, {
+          acquire: (label) => {
+            if (!deps.acquireRunLock) throw new Error("Deployment run lock is unavailable");
+            return deps.acquireRunLock(baseConfig.deploymentId, label);
+          },
+          processor: session.processor,
+          onSignal: deps.onSignal,
+          wait: deps.waitForChangesBatch,
+        });
+      } finally {
+        await session.close();
+      }
+    }
+    if (command === "writeback") {
+      if (!deps.createWritebackStore) throw new Error("Write-back storage is unavailable");
+      await runWriteback(argv.slice(1), baseConfig.deploymentId, await deps.createWritebackStore());
       return 0;
     }
     if (command === "reconcile") {
@@ -322,6 +356,24 @@ async function executeReplication(
   console.log(`Replication complete for deployment ${config.deploymentId}.`);
 }
 
+function changeSession(config: ReplicationConfig, deps: Pick<CliDeps, "createSource" | "createStore">, store: WritebackStore) {
+  let source: CrmSource | undefined;
+  return {
+    processor: async (needsSource: boolean) => {
+      const replica = await deps.createStore(config);
+      if (needsSource) source ??= await deps.createSource(config);
+      return new ChangeRequestProcessor({
+        readEntity: store.readEntity.bind(store),
+        getWritebackPolicy: store.getWritebackPolicy.bind(store),
+        transitionChangeRequest: store.transitionChangeRequest.bind(store),
+        ...(store.ensureWritebackRecord && { ensureWritebackRecord: store.ensureWritebackRecord.bind(store) }),
+        persistRecords: replica.persistRecords.bind(replica),
+      }, source ?? {});
+    },
+    close: async () => { await source?.logout(); },
+  };
+}
+
 async function runConsole(args: string[], deps: CliDeps, baseConfig: ReplicationConfig): Promise<number> {
   const { values } = parseArgs({ args, options: { port: { type: "string" } } });
   const input = values.port ?? deps.consolePort ?? "4780";
@@ -344,9 +396,21 @@ async function runConsole(args: string[], deps: CliDeps, baseConfig: Replication
       wait: deps.waitForConsoleRun,
       acquire: async (stage) => {
         if (!deps.acquireRunLock) throw new Error("Console run lock is unavailable");
-        return deps.acquireRunLock(deploymentId, `console ${stage}`);
+        return deps.acquireRunLock(deploymentId, stage === "changes" ? "changes process" : `console ${stage}`);
       },
       run: async (stage, signal) => {
+        if (stage === "changes") {
+          if (!deps.createWritebackStore) throw new Error("Write-back storage is unavailable");
+          const store = await deps.createWritebackStore();
+          const session = changeSession({ ...baseConfig, deploymentId }, deps, store);
+          let worker: ChangeRequestProcessor | undefined;
+          try {
+            await processBatch({ store, deploymentId, signal, processor: async () => worker ??= await session.processor(true) });
+          } finally {
+            await session.close();
+          }
+          return;
+        }
         console.log(`[replication] Starting ${stage}`);
         const scoped = { ...baseConfig, deploymentId };
         const { entities } = await resolveSelection(scoped, deps.objects);
@@ -723,6 +787,18 @@ export function createProductionDeps(
     },
     createConsoleHandler: (port, runs, runsFor, setup) => createConsoleHandler({
       port, now, runs, runsFor, ...(setup && { setup }),
+      defaultDeployment: async () => env.DEPLOYMENT_ID || (await (await getStore()).listDeployments())[0]?.id,
+      writeback: async (deploymentId) => {
+        const store = await getStore();
+        return createConsoleWriteback({
+          deploymentId, store, now,
+          acquire: () => acquireLock(runLockPath(configDir(), safeDeploymentFileName(deploymentId)), {
+            command: "changes review", now,
+            ...(overrides?.runLockIsProcessAlive && { isProcessAlive: overrides.runLockIsProcessAlive }),
+          }),
+          session: () => changeSession(consoleConfig(deploymentId), { createSource, createStore: getStore }, store),
+        });
+      },
       listReplicas: async () => (await getStore()).listDeployments(),
       ...(runs && { interruptedRuns: async (deploymentId?: string) => {
         const id = deploymentId || env.DEPLOYMENT_ID || (await (await getStore()).listDeployments())[0]?.id;
@@ -753,7 +829,11 @@ export function createProductionDeps(
       ...overrides?.auth,
     },
     acquireRunLock: (deploymentId, command) => acquireLock(runLockPath(configDir(), deploymentId), {
-      command, now, ...(overrides?.runLockIsProcessAlive && { isProcessAlive: overrides.runLockIsProcessAlive }),
+      command, now,
+      ...(!command.startsWith("changes ") && {
+        waitForHolder: (holder) => holder.command === "changes process",
+      }),
+      ...(overrides?.runLockIsProcessAlive && { isProcessAlive: overrides.runLockIsProcessAlive }),
     }),
     onSignal: (signal, handler) => {
       process.on(signal, handler);
@@ -761,6 +841,7 @@ export function createProductionDeps(
     },
     exit: (code) => process.exit(code),
     objects,
+    createWritebackStore: getStore,
     loadConfig: () => loadReplicationConfig(env),
     validateSourceCredentials,
     createSource,
