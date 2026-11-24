@@ -32,6 +32,7 @@ export class LockHeldError extends Error {
 interface LockOptions {
   command: string;
   waitMs?: number;
+  waitForHolder?: (holder: LockHolder) => boolean;
   now?: () => Date;
   hostname?: string;
   pid?: number;
@@ -124,6 +125,10 @@ export async function acquireLock(path: string, options: LockOptions): Promise<F
       held = await readHolder(path);
     }
     if (held === undefined) continue;
+    if (held !== unreadable && held.hostname === host && options.waitForHolder?.(held) && alive(held.pid)) {
+      await pause(50);
+      continue;
+    }
     const remaining = deadline - now().getTime();
     if (waitMs <= 0 || remaining <= 0) throw refusal(path, held, host, alive);
     await pause(Math.min(50, remaining));

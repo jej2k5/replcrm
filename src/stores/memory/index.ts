@@ -4,13 +4,18 @@ import type { CanonicalEntity, CanonicalValue, ChangeBatch, SourceRecord, Source
 import type { Counts, PendingRun, Projection, ProjectionResult, ReplicaStore } from "../../core/replica-store.js";
 import { mergeEntity, validateMetadata } from "../../core/metadata.js";
 import { isReference, readTypedValue, toTypedValue } from "../../core/type-mapper.js";
+import { attributeCapabilities, defaultWritebackPolicy, editWritebackPolicy, type PolicyEdit, type WritebackPolicy } from "../../writeback/policy.js";
+import { advanceChangeRequest, newChangeRequest, type ChangeFilters, type ChangeRequest, type ChangeStatus, type ChangeTransition, type NewChangeRequest, type WritebackStore } from "../../writeback/requests.js";
 
 export interface MemoryRecord extends SourceRecord { id: string; deletedAt?: Date; resolvedReferences: Record<string, string | null> }
 interface MemoryRun { deploymentId: string; entityKey: string | null; status: "Running" | "Succeeded" | "Failed"; checkpoint: string | null; order: number; startedAt: Date; completedAt: Date | null; error?: string; counts?: Counts }
 const key = (...parts: string[]): string => JSON.stringify(parts);
 
 // Deliberately independent of database packages, generated clients and physical schemas.
-export class InMemoryReplicaStore implements ReplicaStore {
+export class InMemoryReplicaStore implements ReplicaStore, WritebackStore {
+  private writebackPolicies = new Map<string, WritebackPolicy>();
+  private changeRequests = new Map<string, ChangeRequest>();
+  private idempotentChanges = new Map<string, ChangeRequest["id"]>();
   private deployments = new Map<string, { name: string; sourceUrl?: string }>();
   private entities = new Map<string, CanonicalEntity>();
   private users = new Map<string, SourceUser>();
@@ -114,7 +119,13 @@ export class InMemoryReplicaStore implements ReplicaStore {
   async persistMetadata(deploymentId: string, entities: CanonicalEntity[]): Promise<void> {
     validateMetadata(entities);
     const next: Map<string, CanonicalEntity> = structuredClone(this.entities);
-    for (const entity of entities) next.set(key(deploymentId, entity.key), mergeEntity(next.get(key(deploymentId, entity.key)) ?? null, entity));
+    for (const entity of entities) {
+      const identity = key(deploymentId, entity.key);
+      next.set(identity, mergeEntity(next.get(identity) ?? null, {
+        ...entity,
+        attributes: entity.attributes.map((attr) => ({ ...attr, ...attributeCapabilities(attr) })),
+      }));
+    }
     this.entities = next;
   }
   async persistUsers(deploymentId: string, users: SourceUser[]): Promise<Counts> {
@@ -234,6 +245,79 @@ export class InMemoryReplicaStore implements ReplicaStore {
     const attributes: string[] = this.projectionAttributes.get(key(deploymentId, entityKey))!;
     return { deploymentId, entityKey, location: key(deploymentId, entityKey), attributeKeys: [...attributes] };
   }
+  async findWritebackRecord(deploymentId: string, entityKey: string, recordId: string) {
+    const record = this.writebackTarget(deploymentId, entityKey, recordId);
+    return record ? { recordId: record.id, sourceId: record.sourceId, isDeleted: record.isDeleted ?? false } : null;
+  }
+
+  private writebackTarget(deploymentId: string, entityKey: string, recordId: string) {
+    for (const [identity, record] of this.records) {
+      if (record.id === recordId && identity === key(deploymentId, entityKey, record.sourceId)) return record;
+    }
+    return this.records.get(key(deploymentId, entityKey, recordId));
+  }
+
+  async readWritebackValues(deploymentId: string, entityKey: string, recordId: string) {
+    return structuredClone(this.writebackTarget(deploymentId, entityKey, recordId)?.fields ?? null);
+  }
+
+  async ensureWritebackRecord(deploymentId: string, entityKey: string, sourceId: string): Promise<void> {
+    if (!this.entities.has(key(deploymentId, entityKey))) throw new Error("Metadata must be persisted first");
+    const identity = key(deploymentId, entityKey, sourceId);
+    if (!this.records.has(identity)) {
+      this.records.set(identity, { id: randomUUID(), sourceId, fields: {}, resolvedReferences: {} });
+    }
+  }
+
+  async getWritebackPolicy(deploymentId: string, entityKey: string): Promise<WritebackPolicy> {
+    return structuredClone(this.writebackPolicies.get(key(deploymentId, entityKey)) ?? defaultWritebackPolicy());
+  }
+
+  async editWritebackPolicy(deploymentId: string, entityKey: string, edit: PolicyEdit): Promise<WritebackPolicy> {
+    const identity = key(deploymentId, entityKey);
+    if (!this.entities.has(identity)) throw new Error(`Unknown object ${entityKey}`);
+    const policy = editWritebackPolicy(this.writebackPolicies.get(identity) ?? defaultWritebackPolicy(), edit);
+    this.writebackPolicies.set(identity, policy);
+    return structuredClone(policy);
+  }
+
+  async createChangeRequest(input: NewChangeRequest): Promise<ChangeRequest> {
+    const identity = input.idempotencyKey === null ? null : key(input.deploymentId, input.idempotencyKey);
+    const existingId = identity === null ? undefined : this.idempotentChanges.get(identity);
+    if (existingId !== undefined) return structuredClone(this.changeRequests.get(existingId)!);
+    if (!this.entities.has(key(input.deploymentId, input.entityKey))) throw new Error(`Unknown object ${input.entityKey}`);
+    const request = newChangeRequest(input, randomUUID());
+    this.changeRequests.set(request.id, request);
+    if (identity !== null) this.idempotentChanges.set(identity, request.id);
+    return structuredClone(request);
+  }
+
+  async getChangeRequest(deploymentId: string, id: string): Promise<ChangeRequest | null> {
+    const request = this.changeRequests.get(id);
+    return request?.deploymentId === deploymentId ? structuredClone(request) : null;
+  }
+
+  async findChangeRequestByIdempotencyKey(deploymentId: string, idempotencyKey: string): Promise<ChangeRequest | null> {
+    const id = this.idempotentChanges.get(key(deploymentId, idempotencyKey));
+    return id === undefined ? null : this.getChangeRequest(deploymentId, id);
+  }
+
+  async listChangeRequests(deploymentId: string, filters: ChangeFilters = {}): Promise<ChangeRequest[]> {
+    return structuredClone([...this.changeRequests.values()].filter((request) =>
+      request.deploymentId === deploymentId &&
+      (filters.entityKey === undefined || request.entityKey === filters.entityKey) &&
+      (filters.status === undefined || request.status === filters.status),
+    ).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime() || a.id.localeCompare(b.id)));
+  }
+
+  async transitionChangeRequest(deploymentId: string, id: string, expected: ChangeStatus, transition: ChangeTransition, expectedUpdatedAt?: Date): Promise<ChangeRequest> {
+    const current = this.changeRequests.get(id);
+    if (expectedUpdatedAt && current?.deploymentId === deploymentId && current.updatedAt.getTime() !== expectedUpdatedAt.getTime()) throw new Error("Change request was modified concurrently");
+    const next = advanceChangeRequest(current?.deploymentId === deploymentId ? current : null, expected, transition);
+    this.changeRequests.set(id, next);
+    return structuredClone(next);
+  }
+
   readEntity(deploymentId: string, entityKey: string): CanonicalEntity | null { return structuredClone(this.entities.get(key(deploymentId, entityKey)) ?? null); }
   readRecords(deploymentId: string, entityKey: string): MemoryRecord[] {
     return structuredClone([...this.records].filter(([identity]): boolean => {

@@ -1,15 +1,184 @@
 import type { FailedStatusRun, StatusRun } from "../status-runs.js";
-import { type PrismaClient, Prisma, SyncStatus } from "@prisma/client";
+import { randomUUID } from "node:crypto";
+import { type PrismaClient, type ChangeRequest as StoredChangeRequest, Prisma, SyncStatus } from "@prisma/client";
+import { readTypedValue, type TypedValue } from "../../core/type-mapper.js";
+import type { AttributeDataType } from "../../core/model.js";
 import type { CanonicalEntity, ChangeBatch, SourceUser } from "../../core/source.js";
 import type { Counts, PendingRun, Projection, ProjectionResult, ReplicaStore } from "../../core/replica-store.js";
 import { validateMetadata } from "../../core/metadata.js";
 import { syncMetadata } from "./metadata-sync.js";
 import { syncUsers } from "./user-sync.js";
 import { syncRecords, backfillReferences } from "./record-sync.js";
-import { resolveProjection, syncWideViews } from "./wide-view-sync.js";
+import { lockProjection, markSyncTransaction, resolveProjection, setProjectionEditTriggers, syncWideViews } from "./wide-view-sync.js";
+import { ChangeValidationError, type ChangeSubmission } from "../../writeback/index.js";
+import { defaultWritebackPolicy, editWritebackPolicy, type PolicyEdit, type WritebackPolicy } from "../../writeback/policy.js";
+import { advanceChangeRequest, type ChangeFilters, type ChangeRequest, type ChangeStatus, type ChangeTransition, type NewChangeRequest, type WritebackStore } from "../../writeback/requests.js";
 
-export class PostgresReplicaStore implements ReplicaStore {
+function readChangeRequest(row: StoredChangeRequest): ChangeRequest {
+  return {
+    ...row,
+    fields: row.fields as ChangeRequest["fields"],
+    conflictValues: row.conflictValues as ChangeRequest["conflictValues"],
+    sourceError: row.sourceError as unknown as ChangeRequest["sourceError"],
+    overrideDecision: row.overrideDecision as unknown as ChangeRequest["overrideDecision"],
+  };
+}
+
+export class PostgresReplicaStore implements ReplicaStore, WritebackStore {
   constructor(private readonly prisma: PrismaClient) {}
+
+  async readEntity(deploymentId: string, entityKey: string): Promise<CanonicalEntity | null> {
+    const entity = await this.prisma.entityDefinition.findUnique({ where: { deploymentId_key: { deploymentId, key: entityKey } } });
+    if (!entity) return null;
+    const attrs = await this.prisma.attributeDefinition.findMany({
+      where: { entityDefinitionId: entity.id }, orderBy: { key: "asc" },
+    });
+    return {
+      key: entity.key, label: entity.label, pluralLabel: entity.pluralLabel, isCustom: entity.isCustom,
+      attributes: attrs.map(({ referenceEntityKeys, dataType, ...attr }) => ({
+        ...attr, dataType,
+        ...((dataType === "Reference" || dataType === "Composition") ? {
+          relationship: {
+            targetEntityKeys: referenceEntityKeys,
+            kind: referenceEntityKeys.length === 1 && referenceEntityKeys[0] === entityKey ? "Hierarchy" as const : dataType,
+            name: attr.key, cascadeDelete: dataType === "Composition",
+          },
+        } : {}),
+      })),
+    };
+  }
+
+  async findWritebackRecord(deploymentId: string, entityKey: string, recordId: string) {
+    const record = await this.writebackTarget(deploymentId, entityKey, recordId);
+    return record ? { isDeleted: record.isDeleted, sourceId: record.sourceId } : null;
+  }
+
+  private async writebackTarget(deploymentId: string, entityKey: string, recordId: string) {
+    const where = { deploymentId, entityDefinition: { deploymentId, key: entityKey } };
+    return await this.prisma.record.findFirst({ where: { ...where, id: recordId } })
+      ?? this.prisma.record.findFirst({ where: { ...where, sourceId: recordId } });
+  }
+
+  async readWritebackValues(deploymentId: string, entityKey: string, recordId: string) {
+    const record = await this.writebackTarget(deploymentId, entityKey, recordId);
+    if (!record) return null;
+    const values = await this.prisma.$queryRaw<(TypedValue & { key: string; dataType: AttributeDataType })[]>`
+      SELECT a.key, a."dataType", v.*
+      FROM "AttributeValue" v JOIN "AttributeDefinition" a ON a.id = v."attributeDefinitionId"
+      WHERE v."recordId" = ${record.id}
+    `;
+    return Object.fromEntries(values.map((value) => [value.key, readTypedValue(value.dataType, {
+      ...value, numberValue: value.numberValue === null ? null : new Prisma.Decimal(value.numberValue),
+    })]));
+  }
+
+  async ensureWritebackRecord(deploymentId: string, entityKey: string, sourceId: string): Promise<void> {
+    const entity = await this.prisma.entityDefinition.findUnique({ where: { deploymentId_key: { deploymentId, key: entityKey } } });
+    if (!entity) throw new Error("Metadata must be persisted first");
+    await this.prisma.$queryRaw`
+      INSERT INTO "Record" ("id", "deploymentId", "entityDefinitionId", "sourceId", "updatedAt")
+      VALUES (${randomUUID()}, ${deploymentId}, ${entity.id}, ${sourceId}, ${new Date()})
+      ON CONFLICT ("deploymentId", "entityDefinitionId", "sourceId") DO NOTHING
+      RETURNING "id"
+    `;
+  }
+
+  async getWritebackPolicy(deploymentId: string, entityKey: string): Promise<WritebackPolicy> {
+    const row = await this.prisma.writebackPolicy.findUnique({ where: { deploymentId_entityKey: { deploymentId, entityKey } } });
+    return row ? { enabled: row.enabled, excludedAttributeKeys: row.excludedAttributeKeys } : defaultWritebackPolicy();
+  }
+
+  async editWritebackPolicy(deploymentId: string, entityKey: string, edit: PolicyEdit): Promise<WritebackPolicy> {
+    return this.prisma.$transaction(async (tx) => {
+      const entity = await tx.entityDefinition.findUnique({ where: { deploymentId_key: { deploymentId, key: entityKey } } });
+      if (!entity) throw new Error(`Unknown object ${entityKey}`);
+      await lockProjection(tx, entity.id);
+      await tx.$queryRaw`
+        INSERT INTO "WritebackPolicy" ("deploymentId", "entityKey") VALUES (${deploymentId}, ${entityKey})
+        ON CONFLICT ("deploymentId", "entityKey") DO NOTHING RETURNING "entityKey"
+      `;
+      const [current] = await tx.$queryRaw<WritebackPolicy[]>`
+        SELECT "enabled", "excludedAttributeKeys" FROM "WritebackPolicy"
+        WHERE "deploymentId" = ${deploymentId} AND "entityKey" = ${entityKey} FOR UPDATE
+      `;
+      const next = editWritebackPolicy(current!, edit);
+      await tx.writebackPolicy.update({ where: { deploymentId_entityKey: { deploymentId, entityKey } }, data: next });
+      if (next.enabled !== current!.enabled) await setProjectionEditTriggers(tx, deploymentId, entityKey, next.enabled);
+      return next;
+    });
+  }
+
+  async submitWritebackChange(input: ChangeSubmission): Promise<ChangeRequest> {
+    const [result] = await this.prisma.$queryRaw<{ change_request_id: string | null; messages: string[] }[]>`
+      INSERT INTO writeback.submissions (
+        deployment_id, entity_key, operation, record_id, fields, author_kind, author_label, reason, idempotency_key
+      ) VALUES (
+        ${input.deploymentId}, ${input.entityKey}, ${input.operation}, ${input.targetRecordId ?? null},
+        ${JSON.stringify(input.fields ?? null, (_key, value: unknown) => {
+          if (typeof value === "number" && !Number.isFinite(value)) throw new ChangeValidationError(["Expected a finite canonical number"]);
+          return value;
+        })}::jsonb, ${input.authorKind}, ${input.authorLabel}, ${input.reason ?? null}, ${input.idempotencyKey ?? null}
+      ) RETURNING change_request_id, messages
+    `;
+    if (!result?.change_request_id) throw new ChangeValidationError(result?.messages ?? ["Submission did not return an outcome"]);
+    const request = await this.getChangeRequest(input.deploymentId, result.change_request_id);
+    if (!request) throw new Error("Accepted change request could not be read");
+    return request;
+  }
+
+  async createChangeRequest(input: NewChangeRequest): Promise<ChangeRequest> {
+    const id = randomUUID();
+    const now = new Date();
+    const rows = await this.prisma.$queryRaw<{ id: string }[]>`
+      INSERT INTO "ChangeRequest" (
+        "id", "deploymentId", "entityKey", "operation", "targetRecordId", "targetSourceId", "fields",
+        "authorKind", "authorLabel", "reason", "idempotencyKey", "createdAt", "updatedAt"
+      ) VALUES (
+        ${id}, ${input.deploymentId}, ${input.entityKey}, ${input.operation}::"ChangeOperation",
+        ${input.targetRecordId}, ${input.targetSourceId}, ${JSON.stringify(input.fields)}::jsonb,
+        ${input.authorKind}::"ChangeAuthorKind", ${input.authorLabel}, ${input.reason}, ${input.idempotencyKey}, ${now}, ${now}
+      ) ON CONFLICT ("deploymentId", "idempotencyKey") DO NOTHING RETURNING "id"
+    `;
+    const request = rows.length
+      ? await this.getChangeRequest(input.deploymentId, id)
+      : await this.findChangeRequestByIdempotencyKey(input.deploymentId, input.idempotencyKey!);
+    if (!request) throw new Error("Change request could not be read after creation");
+    return request;
+  }
+
+  async getChangeRequest(deploymentId: string, id: string): Promise<ChangeRequest | null> {
+    const row = await this.prisma.changeRequest.findFirst({ where: { deploymentId, id } });
+    return row ? readChangeRequest(row) : null;
+  }
+
+  async findChangeRequestByIdempotencyKey(deploymentId: string, idempotencyKey: string): Promise<ChangeRequest | null> {
+    const row = await this.prisma.changeRequest.findUnique({ where: { deploymentId_idempotencyKey: { deploymentId, idempotencyKey } } });
+    return row ? readChangeRequest(row) : null;
+  }
+
+  async listChangeRequests(deploymentId: string, filters: ChangeFilters = {}): Promise<ChangeRequest[]> {
+    const rows = await this.prisma.changeRequest.findMany({
+      where: { deploymentId, ...filters }, orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    });
+    return rows.map(readChangeRequest);
+  }
+
+  async transitionChangeRequest(deploymentId: string, id: string, expected: ChangeStatus, transition: ChangeTransition, expectedUpdatedAt?: Date): Promise<ChangeRequest> {
+    const current = await this.getChangeRequest(deploymentId, id);
+    if (expectedUpdatedAt && current?.updatedAt.getTime() !== expectedUpdatedAt.getTime()) throw new Error("Change request was modified concurrently");
+    const next = advanceChangeRequest(current, expected, transition);
+    const { overrideDecision, sourceError, operatorResubmission: _operatorResubmission, ...changes } = transition;
+    const changed = await this.prisma.changeRequest.updateMany({
+      where: { deploymentId, id, status: expected, updatedAt: current!.updatedAt },
+      data: {
+        ...changes, statusDetail: next.statusDetail, updatedAt: next.updatedAt,
+        ...(sourceError !== undefined && { sourceError: sourceError ? { ...sourceError } : Prisma.DbNull }),
+        ...(overrideDecision && { overrideDecision: { ...overrideDecision } }),
+      },
+    });
+    if (changed.count !== 1) throw new Error("Change request was modified concurrently");
+    return next;
+  }
 
   async ensureDeployment(id: string, name: string, sourceUrl?: string): Promise<void> {
     try {
@@ -62,6 +231,7 @@ export class PostgresReplicaStore implements ReplicaStore {
     const deletedAt = new Date();
     // Bound the number of query parameters and commit all batches together.
     return this.prisma.$transaction(async (tx) => {
+      await markSyncTransaction(tx);
       let count = 0;
       for (let offset = 0; offset < sourceIds.length; offset += 10_000) {
         const result = await tx.record.updateMany({
@@ -133,6 +303,7 @@ export class PostgresReplicaStore implements ReplicaStore {
     validateMetadata(entities);
     // Validate every incoming stable key before publishing any metadata changes.
     await this.prisma.$transaction(async (tx: Prisma.TransactionClient): Promise<void> => {
+      await markSyncTransaction(tx);
       for (const entity of entities) {
         const current = await tx.entityDefinition.findUnique({ where: { deploymentId_key: { deploymentId, key: entity.key } } });
         if (!current) continue;
@@ -147,7 +318,10 @@ export class PostgresReplicaStore implements ReplicaStore {
     }, { timeout: 300000, maxWait: 10000 });
   }
   async persistUsers(deploymentId: string, users: SourceUser[]): Promise<Counts> {
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient): Promise<Counts> => ({ ...await syncUsers(tx, deploymentId, users), deleted: 0 }), { timeout: 300000, maxWait: 10000 });
+    return this.prisma.$transaction(async (tx: Prisma.TransactionClient): Promise<Counts> => {
+      await markSyncTransaction(tx);
+      return { ...await syncUsers(tx, deploymentId, users), deleted: 0 };
+    }, { timeout: 300000, maxWait: 10000 });
   }
   async persistRecords(deploymentId: string, definition: CanonicalEntity, batch: ChangeBatch): Promise<Counts> {
     const entity = await this.prisma.entityDefinition.findUnique({ where: { deploymentId_key: { deploymentId, key: definition.key } } });

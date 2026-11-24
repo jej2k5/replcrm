@@ -1,8 +1,9 @@
 import { assertApiName } from "./api-name.js";
-import type { CrmSource, CanonicalEntity, ChangeBatch, SourceUser } from "../../core/source.js";
+import type { CrmSource, CanonicalEntity, ChangeBatch, SourceUser, SourceChangeResult, ValidatedChange, SourceRecord as CanonicalRecord } from "../../core/source.js";
 import { normalizeMetadata } from "./metadata.js";
 import { normalizeRecord } from "./values.js";
 export { normalizeRecord } from "./values.js";
+import { failure, recordFilter, responseError, SalesforceResponseError, sendChange } from "./writer.js";
 import { streamRawRecords } from "./records.js";
 
 import type { WithRefreshLock } from "../../locks/refresh-lock.js";
@@ -149,6 +150,7 @@ type DescribeField = Pick<SourceFieldDescribe, RequiredDescribeField> & {
 
 export interface SourceConnection extends IdentityConnection {
   accessToken?: string | null | undefined;
+  version?: string;
   describeGlobal(): PromiseLike<{ sobjects: (SourceObjectListing & { keyPrefix?: string | null | undefined })[] }>;
   sobject(name: string): {
     describe(): PromiseLike<Omit<SourceObjectDescribe, "fields"> & { fields: DescribeField[] }>;
@@ -162,6 +164,7 @@ export interface SourceConnection extends IdentityConnection {
 export type ConnectionFactory = (options: ConnectionConfig) => SourceConnection;
 
 interface SourceClientOptions {
+  fetch?: typeof fetch;
   identity?: () => Promise<SalesforceIdentity>;
   connectionFactory?: ConnectionFactory | undefined;
   refresh?: (failedAccessToken: string) => Promise<{ accessToken: string; instanceUrl?: string }>;
@@ -169,6 +172,7 @@ interface SourceClientOptions {
 }
 
 function isExpiredSession(error: unknown): boolean {
+  if (error instanceof SalesforceResponseError) return error.expiredSession;
   if (!error || typeof error !== "object") return false;
   const { name, code, errorCode, statusCode, status } = error as Record<string, unknown>;
   return [name, code, errorCode].some((value) => value === "INVALID_SESSION_ID" || value === "ERROR_HTTP_401") ||
@@ -176,6 +180,7 @@ function isExpiredSession(error: unknown): boolean {
 }
 
 export class SourceClient implements CrmSource {
+  private attributionFields = new Map<string, string>();
   private readonly targetTypes: Map<string, string> = new Map();
   private readonly objectDescribes = new Map<string, Promise<SourceObjectDescribe>>();
   private objectListings: SourceObjectListing[] | null = null;
@@ -296,6 +301,10 @@ export class SourceClient implements CrmSource {
         precision: f.precision ?? null,
         scale: f.scale ?? null,
         nillable: f.nillable,
+        ...(f.nameField === true && { nameField: true }),
+        updateable: f.updateable === true,
+        createable: f.createable === true,
+        defaultedOnCreate: f.defaultedOnCreate === true,
         unique: f.unique,
         externalId: f.externalId ?? false,
         calculated: f.calculated ?? false,
@@ -325,8 +334,86 @@ export class SourceClient implements CrmSource {
     };
   }
 
+  async configureWriteback(objects: Readonly<Record<string, { writeback?: { attributionField?: string } }>>): Promise<void> {
+    const fields = new Map<string, string>();
+    for (const [object, config] of Object.entries(objects)) {
+      const name = config.writeback?.attributionField;
+      if (name === undefined) continue;
+      assertApiName(object);
+      assertApiName(name);
+      const { fields: attributes } = await this.describeObject(object);
+      if (!attributes.some((attr) => attr.name === name && attr.custom && !attr.calculated &&
+        ["string", "textarea"].includes(attr.type) && attr.updateable && attr.createable)) {
+        throw new Error(`Cannot enable attribution for ${object}.${name}: expected a custom text field writable on update and create`);
+      }
+      fields.set(object, name);
+    }
+    this.attributionFields = fields;
+  }
+
+  private async restRequest(path: string, init?: RequestInit): Promise<Response> {
+    let expiredResponse: SalesforceResponseError | undefined;
+    try {
+      return await this.call(async (connection) => {
+        expiredResponse = undefined;
+        const endpoint = connection.instanceUrl + "/services/data/v" + (connection.version ?? "50.0");
+        const response = await (this.seams.fetch ?? fetch)(endpoint + path, {
+          ...init,
+          redirect: "error",
+          signal: AbortSignal.timeout(30_000),
+          headers: { Authorization: `Bearer ${connection.accessToken}`, "Content-Type": "application/json" },
+        });
+        if (response.ok) return response;
+        const error = await responseError(response);
+        if (error.expiredSession) expiredResponse = error;
+        throw error;
+      });
+    } catch (error) {
+      // If refresh failed before replay, the expired session response still establishes that the write was refused.
+      throw expiredResponse ?? error;
+    }
+  }
+
+  async applyChange(change: ValidatedChange): Promise<SourceChangeResult> {
+    try {
+      await this.connect();
+      if (!this.getConnection().accessToken) throw new Error("Salesforce session has no access token");
+    } catch (error) {
+      return failure(error, false);
+    }
+    const result = await sendChange(change,
+      (path, init) => this.restRequest(path, init),
+      this.targetTypes, this.attributionFields.get(change.entity.key));
+    if (result.status !== "applied") return result;
+    try {
+      const record = await this.readRecord(change.entity, result.sourceId);
+      if (!record) throw new Error("Record is not visible");
+      return { ...result, record, modifiedAt: record.modifiedAt ?? null };
+    } catch (error) {
+      return { ...result, detail: `Salesforce confirmed the write. Replica refresh failed: ${String(error)}` };
+    }
+  }
+
+  async readRecord(entity: CanonicalEntity, sourceId: string): Promise<CanonicalRecord | null> {
+    const { fields, systemColumns } = recordColumns(entity);
+    if (entity.attributes.some((attr) => (attr.relationship?.targetEntityKeys.length ?? 0) > 1)) {
+      await this.describeGlobal();
+    }
+    for await (const rows of streamRawRecords(this, entity.key, fields, systemColumns, recordFilter(sourceId), 1)) {
+      if (rows[0]) return normalizeRecord(rows[0], entity, this.targetTypes);
+    }
+    return null;
+  }
+
   async queryPage(soql: string, includeDeleted: boolean, nextRecordsUrl?: string): Promise<QueryResult<SourceRecord>> {
     await this.connect();
+    if (this.seams.fetch) {
+      const path = nextRecordsUrl
+        ? nextRecordsUrl.replace(/^\/services\/data\/v[\d.]+/, "")
+        : `/${includeDeleted ? "queryAll" : "query"}?q=${encodeURIComponent(soql)}`;
+      const response = await this.restRequest(path);
+      return await response.json() as QueryResult<SourceRecord>;
+    }
     if (nextRecordsUrl) {
       return this.call((connection) => connection.queryMore(nextRecordsUrl), "queryMore");
     }
@@ -404,15 +491,10 @@ export class SourceClient implements CrmSource {
   }
 
   async *fetchChanges(entity: CanonicalEntity, checkpoint: string | null, batchSize: number): AsyncGenerator<ChangeBatch> {
-    assertApiName(entity.key);
-    const attributeKeys = new Set(entity.attributes.map(({ key }) => key));
-    attributeKeys.forEach(assertApiName);
-    const since: string | null = decodeCheckpoint(checkpoint);
-    const hasArchived = attributeKeys.has("IsArchived");
-    let watermark: string | null = since;
-    const optionalColumns = ["IsDeleted", "OwnerId", "CreatedById", "LastModifiedById"];
-    const systemColumns = ["SystemModstamp", ...optionalColumns.filter((key) => attributeKeys.has(key))];
-    const fields = ["Id", ...[...attributeKeys].filter((key) => key !== "Id" && !systemColumns.includes(key))];
+    const { fields, systemColumns } = recordColumns(entity);
+    const since = decodeCheckpoint(checkpoint);
+    const hasArchived = fields.includes("IsArchived");
+    let watermark = since;
     const incrementalFilter = since ? `WHERE SystemModstamp > ${since}` : "";
     const filters = hasArchived && since && checkpoint && !hasArchivedBackfill(checkpoint)
       ? [`WHERE IsArchived = true AND SystemModstamp <= ${since}`, incrementalFilter]
@@ -459,6 +541,16 @@ export class SourceClient implements CrmSource {
     }
     this.connected = false;
   }
+}
+
+function recordColumns(entity: CanonicalEntity) {
+  assertApiName(entity.key);
+  const keys = new Set(entity.attributes.map(({ key }) => key));
+  keys.forEach(assertApiName);
+  const optionalColumns = ["IsDeleted", "OwnerId", "CreatedById", "LastModifiedById"];
+  const systemColumns = ["SystemModstamp", ...optionalColumns.filter((key) => keys.has(key))];
+  const fields = ["Id", ...[...keys].filter((key) => key !== "Id" && !systemColumns.includes(key))];
+  return { fields, systemColumns };
 }
 
 function hasArchivedBackfill(checkpoint: string): boolean {

@@ -7,7 +7,7 @@ import { redactMessage } from "./status.js";
 
 export const processToken = randomBytes(32).toString("hex");
 
-export type ConsoleStage = "records" | "full";
+export type ConsoleStage = "records" | "full" | "changes";
 
 interface RunProgress {
   state: "running" | "succeeded" | "failed";
@@ -56,7 +56,7 @@ export function createConsoleRuns(deps: RunDeps) {
   let stopping = false;
   let revision = 0;
   let current: RunProgress | undefined;
-  let active: { done: Promise<void>; stop(): Promise<void> } | undefined;
+  let active: { done: Promise<void>; cancel(): void; stop(): Promise<void> } | undefined;
 
   async function acquire(stage: ConsoleStage) {
     try {
@@ -103,6 +103,7 @@ export function createConsoleRuns(deps: RunDeps) {
       });
       const run = {
         done,
+        cancel: () => abort.abort(new Error("console stopped")),
         stop: async () => {
           write("console stopped");
           finish("failed");
@@ -144,6 +145,11 @@ export function createConsoleRuns(deps: RunDeps) {
       await Promise.allSettled(starts);
       const run = active;
       if (!run) return;
+      if (current?.stage === "changes") {
+        run.cancel();
+        await run.done;
+        return;
+      }
       const timer = new AbortController();
       try {
         const finished = await Promise.race([run.done.then(() => true), wait(10_000, timer.signal).then(() => false)]);

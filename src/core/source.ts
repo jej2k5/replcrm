@@ -21,6 +21,12 @@ export interface CanonicalAttribute {
   isUnique?: boolean;
   isExternalKey?: boolean;
   isComputed?: boolean;
+  isUpdatable?: boolean;
+  isCreatable?: boolean;
+  isNullable?: boolean;
+  hasCreateDefault?: boolean;
+  isSystem?: boolean;
+  isNameField?: boolean;
   length?: number | null;
   precision?: number | null;
   scale?: number | null;
@@ -58,6 +64,26 @@ export interface SourceUser {
   role: string | null;
   isActive: boolean;
 }
+export interface ValidatedChange {
+  entity: CanonicalEntity;
+  operation: "update" | "create";
+  targetSourceId: string | null;
+  fields: Record<string, { base?: JsonValue; value: JsonValue }>;
+  authorKind: "person" | "app" | "agent";
+  authorLabel: string;
+  overrideConflict?: boolean;
+}
+export interface SourceChangeError {
+  code: string;
+  message: string;
+  fields?: string[];
+}
+export type SourceChangeResult =
+  | { status: "applied"; sourceId: string; modifiedAt: Date | null; record?: SourceRecord; detail?: string }
+  | { status: "conflict"; conflictValues: Record<string, { base: JsonValue; replicaValue: JsonValue; sourceValue: JsonValue }> }
+  | { status: "rejected"; error: SourceChangeError }
+  | { status: "failed"; detail: string; retryAfter?: string; error?: SourceChangeError }
+  | { status: "unknown"; detail: string };
 export interface CrmSource {
   connect(): Promise<void>;
   logout(): Promise<void>;
@@ -65,5 +91,7 @@ export interface CrmSource {
   describeEntity(entityKey: string): Promise<CanonicalEntity>;
   fetchChanges(entity: CanonicalEntity, checkpoint: string | null, batchSize: number): AsyncGenerator<ChangeBatch>;
   streamUsers(batchSize: number): AsyncGenerator<SourceUser[]>;
+  applyChange?(change: ValidatedChange): Promise<SourceChangeResult>;
+  readRecord?(entity: CanonicalEntity, sourceId: string): Promise<SourceRecord | null>;
   listSourceIds?(entityKey: string, batchSize: number): AsyncGenerator<string[]>;
 }

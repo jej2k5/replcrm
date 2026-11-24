@@ -2,6 +2,11 @@ import { AttributeDataType, RelationType } from "../../core/model.js";
 import type { SourceFieldDescribe, SourceObjectDescribe } from "./types.js";
 import type { CanonicalEntity, CanonicalAttribute } from "../../core/source.js";
 
+const systemFields = new Set([
+  "Id", "IsDeleted", "IsArchived", "SystemModstamp", "CreatedDate", "CreatedById",
+  "LastModifiedDate", "LastModifiedById", "OwnerId", "LastViewedDate", "LastReferencedDate",
+]);
+
 // Map an upstream field type string to our normalized AttributeDataType.
 export function mapDataType(field: SourceFieldDescribe): AttributeDataType {
   switch (field.type) {
@@ -63,6 +68,11 @@ export function normalizeMetadata(raw: SourceObjectDescribe): CanonicalEntity {
       key: field.name, label: field.label, dataType: mapDataType(field),
       isCustom: field.custom, isRequired: !field.nillable, isUnique: field.unique,
       isExternalKey: field.externalId, isComputed: field.calculated,
+      isUpdatable: !field.calculated && field.updateable === true,
+      isCreatable: !field.calculated && field.createable === true,
+      isNullable: field.nillable === true, hasCreateDefault: field.defaultedOnCreate === true,
+      isSystem: systemFields.has(field.name) || field.type === "id",
+      ...(field.nameField === true && { isNameField: true }),
       length: field.length, precision: field.precision, scale: field.scale,
       expression: field.defaultValueFormula, helpText: field.inlineHelpText,
       enumOptions: field.picklistValues.map((value, index: number) => ({

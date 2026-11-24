@@ -2,6 +2,7 @@ import { Prisma, type AttributeDefinition, type EntityDefinition, type PrismaCli
 import type { CanonicalEntity, SourceRecord, RecordReference } from "../../core/source.js";
 import { isReference, toTypedValue, type TypedValue } from "../../core/type-mapper.js";
 import { loadUserIdMap, resolveOwnershipFks } from "./user-sync.js";
+import { markSyncTransaction } from "./wide-view-sync.js";
 
 export interface RecordSyncResult { processed: number; created: number; updated: number; deleted: number; checkpoint: string | null }
 export function referenceKey(ref: RecordReference): string { return JSON.stringify([ref.entityKey, ref.sourceId]); }
@@ -36,6 +37,7 @@ export async function syncRecords(prisma: PrismaClient, deploymentId: string, en
     }));
     const resolved: Map<string, string> = await resolveReferences(prisma, deploymentId, refs);
     await prisma.$transaction(async (tx: Prisma.TransactionClient): Promise<void> => {
+      await markSyncTransaction(tx);
       for (const row of batch.records) {
         for (const key of Object.keys(row.fields)) if (!declared.has(key)) throw new Error(`Undeclared canonical attribute: ${entity.key}/${key}`);
         if (typeof row.sourceId !== "string" || !row.sourceId) throw new Error("Nonempty source record ID required");
@@ -80,6 +82,7 @@ export async function backfillReferences(prisma: PrismaClient, deploymentId: str
     const refs: RecordReference[] = rows.flatMap((row): RecordReference[] => isReference(row.jsonValue) ? [row.jsonValue] : []);
     const resolved: Map<string, string> = await resolveReferences(prisma, deploymentId, refs);
     await prisma.$transaction(async (tx: Prisma.TransactionClient): Promise<void> => {
+      await markSyncTransaction(tx);
       for (const row of rows) {
         if (!isReference(row.jsonValue)) continue;
         const target: string | null = resolved.get(referenceKey(row.jsonValue)) ?? null;

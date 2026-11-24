@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "67c4036b0a4d9fe89ef396c8662ad39b56d94a40",
+  "sourceCommit": "86fb02874eb5e8d25db2bac05096a9595f4da98e",
   "authorization": "Rights holder authorized Apache-2.0 distribution of ReplCRM-owned implementation; third-party terms remain independent.",
   "selectedInputs": [
     {
@@ -120,7 +120,7 @@
     {
       "path": "README.md",
       "origin": "public-adapted",
-      "sha256": "ad254000627379d71b4e82ab1bb281266265410ea0de9d6f098bf2231b2d893b"
+      "sha256": "bb0ef0f75a7d2dcbb6cc71c2b64daf5a2033ded82c13da7328dd07f3b38a275c"
     },
     {
       "path": "ROADMAP.md",
@@ -165,12 +165,12 @@
     {
       "path": "docs/dependency-license-inventory.json",
       "origin": "public-adapted",
-      "sha256": "ce08354108009ffe29fc4992cdfb0468d056c2a994025736487987f70e730df0"
+      "sha256": "153113bbaedd0f8f240263c496384be830a8c9208f44de564d99c0289cc875d6"
     },
     {
       "path": "docs/migration-runbook.md",
       "origin": "private-checkpoint",
-      "sha256": "fa3b8f5d2d7b2218f0e6748eda38f919e41678520e419e75a9600be7e2346b28"
+      "sha256": "291aa9ca28941de2c82eafb005da5bf7d18632aae6ac162cdf0d28fda98dc53e"
     },
     {
       "path": "docs/oss-clean-release-readiness.md",
@@ -180,7 +180,7 @@
     {
       "path": "docs/oss-publication-manifest.md",
       "origin": "public-only",
-      "sha256": "1423346ea1026292858f7b5dc0cbe5803c93b413c1032b3b6cff711c8c8a7e58"
+      "sha256": "45faa225e6f8d0383ff6f29a1e179e3d4232b2f8d0438d5f2dbdcd64e1443f04"
     },
     {
       "path": "docs/replica-store-semantic-hardening.md",
@@ -195,17 +195,22 @@
     {
       "path": "docs/verification-evidence.json",
       "origin": "public-only",
-      "sha256": "0285539d1094a452989ac5a50c792aba6a62f51bb1c8595818976f56ba117ffb"
+      "sha256": "ddfc4f4123fd40e771cb566a791c7d3d817bca7a621ab3d7d06214169cb70885"
+    },
+    {
+      "path": "docs/write-back.md",
+      "origin": "private-checkpoint",
+      "sha256": "85e4e4227b4219c19928013837e2feb73c0875a4bf637c16f7330ddc4d431c68"
     },
     {
       "path": "package-lock.json",
       "origin": "public-adapted",
-      "sha256": "f68d5b670897f125df6132cd4c018ec1da3e72a654fa08960077e130b6f4d285"
+      "sha256": "c233d0eb8135fe40bcf3afd90fa03abd6b03a7ac7797ba66a775f253c2a5be50"
     },
     {
       "path": "package.json",
       "origin": "public-adapted",
-      "sha256": "1996d5f114a71d1d2aec024f551a48f9f7da142389f4835810cd1cd9a39f755a"
+      "sha256": "4f94265695ae217da6f3f50d6282a3a1fef0d37900aef98e1722e8a919e4f03e"
     },
     {
       "path": "prisma/migrations/20260428_init/migration.sql",
@@ -223,6 +228,31 @@
       "sha256": "fbb2eeaca9bc0ea2a5f4e42acda8e48176b92cd9489f40f339d771503c9ad041"
     },
     {
+      "path": "prisma/migrations/20261123_writeback_foundations/migration.sql",
+      "origin": "private-checkpoint",
+      "sha256": "d2c04f2818ae145d6c2e2c9148b3eee40a37488984fdeef8537ad7efa289ebc7"
+    },
+    {
+      "path": "prisma/migrations/20261124_salesforce_writer/migration.sql",
+      "origin": "private-checkpoint",
+      "sha256": "d43e2a69db7c8d75ef50a51e74d1e753c7e0a6b0ca795a4984553d666bb639d1"
+    },
+    {
+      "path": "prisma/migrations/20261125_writeback_queue/migration.sql",
+      "origin": "private-checkpoint",
+      "sha256": "700e3628b9cf2d7e6eaee4112a3f2a3cc496bf5b4eca98c17172230598ecc71c"
+    },
+    {
+      "path": "prisma/migrations/20261126_console_record_name/migration.sql",
+      "origin": "private-checkpoint",
+      "sha256": "a749100946c9372b9512de92cf75863cffdec71eeb850e2f46da886d2285c486"
+    },
+    {
+      "path": "prisma/migrations/20261127_direct_sql_edits/migration.sql",
+      "origin": "private-checkpoint",
+      "sha256": "352ef2d372765f9780261d7caccbad4bd168d2669c2373ff79cc3bbebd8e9cfc"
+    },
+    {
       "path": "prisma/migrations/migration_lock.toml",
       "origin": "private-checkpoint",
       "sha256": "99836963713b4f5b269ad49af0ed3d7b0b2e336115c2f92dc9ac683d139d0900"
@@ -230,7 +260,7 @@
     {
       "path": "prisma/schema.prisma",
       "origin": "private-checkpoint",
-      "sha256": "8e6262da8ec4245b05a15c86674aecf25abac7640305b356607f3f72a7246fe8"
+      "sha256": "807d070e13e4eed22426e015324623b789a43c40f67a46f3d8c7cce0e366c3da"
     },
     {
       "path": "scripts/offline-suite.mjs",
@@ -273,9 +303,14 @@
       "sha256": "53914b2c8f8c3e0a23f9d0429afe172c7559ec0f6e4cbbdfb74f200a41efcf49"
     },
     {
+      "path": "src/cli-writeback.ts",
+      "origin": "private-checkpoint",
+      "sha256": "893a2d267a508ca629ae4ed0954be5193af2fbe666194aea656c1efbf8004630"
+    },
+    {
       "path": "src/cli.ts",
       "origin": "private-checkpoint",
-      "sha256": "bb2611e7d7c357a2dba4cfd5b1e93ee17f188816bc2bfccc3a31dc82d7b975ff"
+      "sha256": "f9665dab010d07ff02f0df9ec8586e76bff9b7ea105b1c04acaf31c326aa7d56"
     },
     {
       "path": "src/config.ts",
@@ -295,7 +330,7 @@
     {
       "path": "src/console/handler.ts",
       "origin": "private-checkpoint",
-      "sha256": "1837f145ef715e9630696900582a5ee9f7c6ea40ab0145950e530b72e6bf1b19"
+      "sha256": "45a48f640dd61ee39d3fc116cfb384d1552d590dd9ebe4499ec7b3d852eba140"
     },
     {
       "path": "src/console/listener.ts",
@@ -305,17 +340,22 @@
     {
       "path": "src/console/page.ts",
       "origin": "private-checkpoint",
-      "sha256": "eb583056c8b5e971185afb55f5cf88f90c0f850f40d9ebf5e04f652d4934b2c6"
+      "sha256": "0dfc0eb95cead2005bddb37909b464294ae9adaef08ce28cb27c17a719429163"
     },
     {
       "path": "src/console/runs.ts",
       "origin": "private-checkpoint",
-      "sha256": "af5a591fb4096f473673e86e96c28010280ea0265de630a58f12fc1b9e75e291"
+      "sha256": "63ec0cfb57775978623cde0acc986d8f7a68735b09c07454f26e840adb9cd219"
     },
     {
       "path": "src/console/status.ts",
       "origin": "private-checkpoint",
       "sha256": "3f454e9240b7b57db8882716d653270537301b62006a23798b6a84784bbb05e7"
+    },
+    {
+      "path": "src/console/writeback.ts",
+      "origin": "private-checkpoint",
+      "sha256": "cb7e7e288121dcae2ad375c7e0ec9c8b51d2edaf136d99c899724b3039587102"
     },
     {
       "path": "src/core/config.ts",
@@ -350,7 +390,7 @@
     {
       "path": "src/core/source.ts",
       "origin": "private-checkpoint",
-      "sha256": "b952c9f233d0b82b55945b20188b2bcd9245a7d3b5a285697757297808cedbb8"
+      "sha256": "070020be272061a6d360f58ab8c5a3ccc1651ad269a11f794cf52c083a4c04ad"
     },
     {
       "path": "src/core/type-mapper.ts",
@@ -360,7 +400,7 @@
     {
       "path": "src/locks/file-lock.ts",
       "origin": "private-checkpoint",
-      "sha256": "690c99f5afe9e815f7ee1d05a60d7a330db9b431c0e17ee2563ff2ac60aa67d3"
+      "sha256": "9b1d911abfc71e9924a24303262de53163e1143819df7cb4747188b3dc59e714"
     },
     {
       "path": "src/locks/refresh-lock.ts",
@@ -415,12 +455,12 @@
     {
       "path": "src/sources/salesforce/client.ts",
       "origin": "private-checkpoint",
-      "sha256": "e6d0c6c4807550a63f8c8bed109810fbca0e87109a471b92d20b341925bf8fc1"
+      "sha256": "9e0d20dbdf1319926c9ea8b6ccf8311a9f482fe1bb5026b8f2284d8c22b6266e"
     },
     {
       "path": "src/sources/salesforce/metadata.ts",
       "origin": "private-checkpoint",
-      "sha256": "60169335d55f08ec379897f1c1eb019225bfc46c2eb26bccc7cc26c4e4a5996b"
+      "sha256": "32a9f36b97c8e76623db95e69e9fcafa70b38111339a97ca434fa21f8d39a22d"
     },
     {
       "path": "src/sources/salesforce/records.ts",
@@ -430,32 +470,37 @@
     {
       "path": "src/sources/salesforce/types.ts",
       "origin": "private-checkpoint",
-      "sha256": "875d5d9871e8ce3bdb3dddb1a18136e8423f0f8c6865770e940f8ba5d0021cf4"
+      "sha256": "9af408c30c8faf89935805b6aa8a718ca51ce53279e98b80172180291db72c9b"
     },
     {
       "path": "src/sources/salesforce/values.ts",
       "origin": "private-checkpoint",
-      "sha256": "bb5cb5750926263b2b754d5eb8f0559ac773fc39dbe6b8f88f0316956c86f6ca"
+      "sha256": "6f55ae311200fdc8daeb81beb0c6382d02f7ac3b2a0ec2686250c9adc7400e96"
+    },
+    {
+      "path": "src/sources/salesforce/writer.ts",
+      "origin": "private-checkpoint",
+      "sha256": "82bf1242449558221fe686a59c6982e4d4c6ba0756a0adc23767260ef4f58638"
     },
     {
       "path": "src/stores/memory/index.ts",
       "origin": "private-checkpoint",
-      "sha256": "e9e561486f7537797fbcaac163627a716e70e336c20159f8764364bb47530ee7"
+      "sha256": "00757e1f4f60f66a6665cb2bd9d2a42b003f004d5f1b1716ca8aa58217529ec4"
     },
     {
       "path": "src/stores/postgres/index.ts",
       "origin": "private-checkpoint",
-      "sha256": "ec4aac6d77fcb4fbf4fe232594731a7cad46edd8a89913409b2952572740a8c2"
+      "sha256": "20bf670d22594491ecf5d60f4e50508083d8d9f0e83ff7811cb7e880917e508a"
     },
     {
       "path": "src/stores/postgres/metadata-sync.ts",
       "origin": "private-checkpoint",
-      "sha256": "33c16fa67ab47d16a96a70759f37e052ac919b1ca315d485111bab882ed2aae7"
+      "sha256": "8e66a648467e8e9a8bc893b8bbf7abd5a38608df8046c6108b536c8d77d5708d"
     },
     {
       "path": "src/stores/postgres/record-sync.ts",
       "origin": "private-checkpoint",
-      "sha256": "1fbcbb7748d4ddda6d4a555fde180fbf94925d494b84180e8c3d2028a6de9cf4"
+      "sha256": "ba1cef07e065abef25c89bd3a94c5beedbd1c324bb983952ea705e71686ad14b"
     },
     {
       "path": "src/stores/postgres/user-sync.ts",
@@ -465,12 +510,37 @@
     {
       "path": "src/stores/postgres/wide-view-sync.ts",
       "origin": "private-checkpoint",
-      "sha256": "da32573d30331d3b720b5342671c8a998729b1cff6e91fc8d52e2e52c1698dbe"
+      "sha256": "70fb4465649021e9d0fac617bed730722e85d1c88611dd3030e8fb3a674729c3"
     },
     {
       "path": "src/stores/status-runs.ts",
       "origin": "private-checkpoint",
       "sha256": "efd1844e27e3a84de7908e5eb711e9757d8a201e0513435d0d5083659a88750d"
+    },
+    {
+      "path": "src/writeback/index.ts",
+      "origin": "private-checkpoint",
+      "sha256": "ea5b9daacc01b37821b0ad520e12149fb1485893c5b60ad3abac635c31215486"
+    },
+    {
+      "path": "src/writeback/policy.ts",
+      "origin": "private-checkpoint",
+      "sha256": "b64c455365466830e731d91ad9febee3f68d62342ffb36dd6d7b44b5c0b64b7f"
+    },
+    {
+      "path": "src/writeback/processor.ts",
+      "origin": "private-checkpoint",
+      "sha256": "935d5a552d6b52afaf4e873d673ef4c499eca54f0cd0aa6afafd1c0a15c9ed0b"
+    },
+    {
+      "path": "src/writeback/queue.ts",
+      "origin": "private-checkpoint",
+      "sha256": "1f9202e849752d84a32c79125da3bd37cc1a376122d51382cdd4b6bbcb14f96a"
+    },
+    {
+      "path": "src/writeback/requests.ts",
+      "origin": "private-checkpoint",
+      "sha256": "b59fda508968e03ad509be3b360c6e58e20473ee24c239b60046312158f8ed42"
     },
     {
       "path": "tests/architecture.test.ts",
@@ -483,6 +553,11 @@
       "sha256": "935ddda6b8d9fe915d301cb75e2854ecc7c640c7ea078a980e022d9a815188fc"
     },
     {
+      "path": "tests/change-requests.test.ts",
+      "origin": "private-checkpoint",
+      "sha256": "80743042fc6fcd6374191b1b36f7f7cdcb371182c93477794b619c4de3ad5a2d"
+    },
+    {
       "path": "tests/cli-stages.test.ts",
       "origin": "private-checkpoint",
       "sha256": "5c0b334ab45a092d21a4c9aae8c199df0d674926fdc71e12257dd44c640b51e7"
@@ -490,7 +565,7 @@
     {
       "path": "tests/cli.test.ts",
       "origin": "private-checkpoint",
-      "sha256": "0efacfbf4fd732e01dd94d26d1761847ddd1d14f18a4002b20d54828417c541b"
+      "sha256": "f0d5b2c844486dc84bf914a74a1f8d8674b09318bf34c1538c5ae04d02165e12"
     },
     {
       "path": "tests/console-actions.test.ts",
@@ -511,6 +586,11 @@
       "path": "tests/console-status.test.ts",
       "origin": "private-checkpoint",
       "sha256": "febcd88a2937bcc7875b92badaff58f13d679a3f500f537b200c781e74777d2d"
+    },
+    {
+      "path": "tests/console-writeback.test.ts",
+      "origin": "private-checkpoint",
+      "sha256": "a4e10aeb0e76cae6c3de9e4112f9087007e2aae9c123ce1e062d8f0201068c60"
     },
     {
       "path": "tests/counts.test.ts",
@@ -550,7 +630,7 @@
     {
       "path": "tests/helpers/database.ts",
       "origin": "private-checkpoint",
-      "sha256": "f13b6862f9059134e6e847c931b4bdc46adcfd492a9d8a9b5d4440c4a5336ad9"
+      "sha256": "fb773e387b9e5e18111d05d8cc4ca0f52115da8974a93dde7d1f7b5b782b9a53"
     },
     {
       "path": "tests/helpers/no-db-loader.mjs",
@@ -566,6 +646,11 @@
       "path": "tests/helpers/salesforce-fixture.ts",
       "origin": "private-checkpoint",
       "sha256": "7f2eb90ac85a41a3327cefd544a290b67cf11561426b0b681677271c0cd9817d"
+    },
+    {
+      "path": "tests/helpers/writeback.ts",
+      "origin": "private-checkpoint",
+      "sha256": "59c7e8cd8c128c46511e590b22bd2f3c9e5683beab98534b1f8a2c1548044c45"
     },
     {
       "path": "tests/oauth-login-mode.test.ts",
@@ -613,6 +698,11 @@
       "sha256": "fe5ef8c0a404b0a3122ccae4a37da9da01f9c42e49415c75c77aa710c07aa15f"
     },
     {
+      "path": "tests/salesforce-writer.test.ts",
+      "origin": "private-checkpoint",
+      "sha256": "ea7f53f59813622f4b1ad4cf64e2bc426f2577e143b21d4ee966807a03cd767e"
+    },
+    {
       "path": "tests/salesforce.test.ts",
       "origin": "private-checkpoint",
       "sha256": "3e8ccf1bb2aa47ef738b194a1e5585e99b435f708cc0d32da37200f6699d8c1c"
@@ -640,7 +730,22 @@
     {
       "path": "tests/suite-guard.test.ts",
       "origin": "public-adapted",
-      "sha256": "bd83985f1e624b0970e061e591a5dc4d0efb3bb804eca517dbcfc7b7afde771e"
+      "sha256": "207fdc8870495da64232a07d81bff11bba897b53fb11971ff6fd46e26312dd12"
+    },
+    {
+      "path": "tests/writeback-policy.test.ts",
+      "origin": "private-checkpoint",
+      "sha256": "ac2452680ea11574910d269270eab8ea8161a01d647473cb48be8db23dd89d0c"
+    },
+    {
+      "path": "tests/writeback-queue.test.ts",
+      "origin": "private-checkpoint",
+      "sha256": "caaae6703c811f65301eec7ad1e7b3789f2c8bc6d3a4dc75f37316d30e01afde"
+    },
+    {
+      "path": "tests/writeback-sql.test.ts",
+      "origin": "private-checkpoint",
+      "sha256": "26398b1f6ec83476de5a90cc8bfec6f141d036c1b5979efa70d02a5947087360"
     },
     {
       "path": "tsconfig.json",
@@ -669,6 +774,6 @@
     "docs/open-source-readiness-audit.md (private audit; oss-clean-release-readiness.md is the public record)",
     "private history, local configuration, credentials, node_modules, dist, caches, design sketches and captures"
   ],
-  "release": "0.2.0",
+  "release": "0.3.0",
   "previousSourceCommit": "67be373d5afb16091f617898ee466acdf1dd3d78"
 }

@@ -5,6 +5,35 @@ export const WIDE_SCHEMA: string = "wide";
 const REGISTRY: string = '"wide"."__replcrm_projections"';
 const HOUSEKEEPING: string[] = ["record_id", "source_id", "is_deleted", "source_modified_at", "owner_id", "owner_username", "created_by_id", "last_modified_by_id"];
 export interface WideViewResult { entityKey: string; tableName: string; rowsLoaded: number; columns: number; attributeColumns: Record<string, string> }
+interface ProjectionLocation { schema: string; object: string; attributeColumns: Record<string, string> }
+
+// Serialize policy toggles with rebuilds while allowing request foreign-key checks.
+export async function lockProjection(tx: Prisma.TransactionClient, entityId: string): Promise<void> {
+  await tx.$queryRawUnsafe('SELECT id FROM "EntityDefinition" WHERE id = $1 FOR NO KEY UPDATE', entityId);
+}
+
+export async function markSyncTransaction(tx: Prisma.TransactionClient): Promise<void> {
+  await tx.$executeRawUnsafe("SET LOCAL replcrm.sync = 'on'");
+}
+
+export async function setProjectionEditTriggers(
+  tx: Prisma.TransactionClient, deploymentId: string, entityKey: string, enabled: boolean,
+): Promise<void> {
+  const location = await projectionLocation(tx, deploymentId, entityKey);
+  if (!location) return;
+  const table = [location.schema, location.object].map(quoteIdentifier).join(".");
+  const args = [deploymentId, entityKey, JSON.stringify(location.attributeColumns)]
+    .map((value) => "E'" + value.replaceAll("\\", "\\\\").replaceAll("'", "''") + "'").join(", ");
+  for (const event of ["INSERT", "UPDATE", "DELETE"]) {
+    const trigger = quoteIdentifier("replcrm_edit_" + event.toLowerCase());
+    if (enabled) {
+      await tx.$executeRawUnsafe(`CREATE OR REPLACE TRIGGER ${trigger} BEFORE ${event} ON ${table}
+        FOR EACH ROW EXECUTE FUNCTION writeback.capture_projection_edit(${args})`);
+    } else {
+      await tx.$executeRawUnsafe(`DROP TRIGGER IF EXISTS ${trigger} ON ${table}`);
+    }
+  }
+}
 
 export function quoteIdentifier(value: string): string {
   if (!value || value.includes("\0") || Buffer.byteLength(value, "utf8") > 63) throw new Error("Invalid physical SQL identifier");
@@ -124,19 +153,23 @@ async function rebuildWideTable(prisma: PrismaClient, deploymentId: string, enti
     WHERE r."entityDefinitionId" = $${parameters.length - 1} AND r."deploymentId" = $${parameters.length}
     GROUP BY r.id, r."sourceId", r."isDeleted", r."sourceModifiedAt", r."ownerId", u.username, r."createdById", r."lastModifiedById"`;
   const rowsLoaded: number = await prisma.$transaction(async (tx: Prisma.TransactionClient): Promise<number> => {
+    await markSyncTransaction(tx);
+    await lockProjection(tx, entity.id);
     // The unique physical-name registry rejects a digest collision instead of aliasing two identities.
     await tx.$executeRawUnsafe(`INSERT INTO ${REGISTRY} (deployment_id, entity_key, table_name, column_map)
       VALUES ($1, $2, $3, $4::jsonb) ON CONFLICT (deployment_id, entity_key)
       DO UPDATE SET table_name = EXCLUDED.table_name, column_map = EXCLUDED.column_map`, deploymentId, entity.key, tableName, JSON.stringify(attributeColumns));
     await tx.$executeRawUnsafe(`DROP TABLE IF EXISTS ${fqTable}`);
     await tx.$executeRawUnsafe(`CREATE TABLE ${fqTable} (${columnDefs.join(", ")})`);
+    const policy = await tx.writebackPolicy.findUnique({ where: { deploymentId_entityKey: { deploymentId, entityKey: entity.key } } });
+    if (policy?.enabled) await setProjectionEditTriggers(tx, deploymentId, entity.key, true);
     return tx.$executeRawUnsafe(sql, ...parameters);
   }, { timeout: 300000, maxWait: 10000 });
   return { entityKey: entity.key, tableName, rowsLoaded, columns: columnDefs.length, attributeColumns };
 }
 
 // Discovery reads the published registry, never reconstructs physical names.
-export async function resolveProjection(prisma: PrismaClient, deploymentId: string, entityKey: string): Promise<import("../../core/replica-store.js").Projection | null> {
+async function projectionLocation(prisma: Prisma.TransactionClient, deploymentId: string, entityKey: string): Promise<ProjectionLocation | null> {
   const registry = await prisma.$queryRawUnsafe<Array<{ present: string | null }>>('SELECT to_regclass($1)::text AS present', 'wide.__replcrm_projections');
   if (!registry[0]?.present) return null;
   const rows = await prisma.$queryRawUnsafe<Array<{ table_name: string; column_map: Record<string, string> }>>(`SELECT table_name, column_map FROM ${REGISTRY} WHERE deployment_id = $1 AND entity_key = $2`, deploymentId, entityKey);
@@ -144,5 +177,10 @@ export async function resolveProjection(prisma: PrismaClient, deploymentId: stri
   if (!row) return null;
   const object = await prisma.$queryRawUnsafe<Array<{ present: string | null }>>('SELECT to_regclass($1)::text AS present', `${quoteIdentifier(WIDE_SCHEMA)}.${quoteIdentifier(row.table_name)}`);
   if (!object[0]?.present) throw new Error("Published projection is unavailable");
-  return { deploymentId, entityKey, location: { schema: WIDE_SCHEMA, object: row.table_name, attributeColumns: row.column_map }, attributeKeys: Object.keys(row.column_map).sort() };
+  return { schema: WIDE_SCHEMA, object: row.table_name, attributeColumns: row.column_map };
+}
+
+export async function resolveProjection(prisma: PrismaClient, deploymentId: string, entityKey: string): Promise<import("../../core/replica-store.js").Projection | null> {
+  const location = await projectionLocation(prisma, deploymentId, entityKey);
+  return location && { deploymentId, entityKey, location: { ...location }, attributeKeys: Object.keys(location.attributeColumns).sort() };
 }

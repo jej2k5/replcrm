@@ -1972,23 +1972,6 @@
       "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
     },
     {
-      "name": "string_decoder",
-      "version": "1.3.0",
-      "license": "MIT",
-      "direct": false,
-      "scope": "runtime-transitive",
-      "optional": false,
-      "installedLocally": true,
-      "notices": [
-        {
-          "path": "licenses/11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b.txt",
-          "sha256": "11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b",
-          "origin": "node_modules/string_decoder/LICENSE"
-        }
-      ],
-      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
-    },
-    {
       "name": "string-width",
       "version": "4.2.3",
       "license": "MIT",
@@ -2001,6 +1984,23 @@
           "path": "licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt",
           "sha256": "48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0",
           "origin": "node_modules/string-width/license"
+        }
+      ],
+      "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
+    },
+    {
+      "name": "string_decoder",
+      "version": "1.3.0",
+      "license": "MIT",
+      "direct": false,
+      "scope": "runtime-transitive",
+      "optional": false,
+      "installedLocally": true,
+      "notices": [
+        {
+          "path": "licenses/11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b.txt",
+          "sha256": "11f2aafb37d06b3ee5bdaf06e9811141d0da05263c316f3d627f45c20d43261b",
+          "origin": "node_modules/string_decoder/LICENSE"
         }
       ],
       "licenseEvidence": "published lockfile/package declaration; legal text verified where locally installed"
