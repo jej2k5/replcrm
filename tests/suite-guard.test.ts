@@ -12,6 +12,7 @@ const minimums = {
   "console-page.test.ts": 8,
   "console-actions.test.ts": 11,
   "console-replicas.test.ts": 6,
+  "console-writeback.test.ts": 20,
   "setup.test.ts": 11,
   "setup-wizard.test.ts": 6,
   "deletions.test.ts": 9,
@@ -27,9 +28,14 @@ const minimums = {
   "replica-store-adversarial.test.ts": 30,
   "replica-store.test.ts": 5,
   "salesforce.test.ts": 3,
+  "salesforce-writer.test.ts": 28,
   "scripts-reachability.test.ts": 2,
   "semantic-contract.test.ts": 7,
   "suite-guard.test.ts": 5,
+  "writeback-policy.test.ts": 11,
+  "change-requests.test.ts": 15,
+  "writeback-queue.test.ts": 19,
+  "writeback-sql.test.ts": 19,
 };
 
 function parse(name: string, text: string): ts.SourceFile {

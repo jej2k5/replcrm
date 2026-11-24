@@ -130,7 +130,8 @@ sync's new, updated and deleted totals. **Run records sync** and **Run full sync
 replica's saved selection. **Change objects** reopens object selection.
 
 The console and CLI share one run lock per deployment when they use the same configuration
-directory. A second start is refused immediately and names the lock holder. Running entries
+directory. A sync waits for an active local write-back batch to finish. Other competing sync
+starts are refused with the lock holder named. Running entries
 without a lock appear as interrupted syncs. Each replica uses its own stored Salesforce
 sign-in; password variables apply only to `DEPLOYMENT_ID`. The page refreshes every 15
 seconds; **Refresh counts** asks for a fresh snapshot. Light and dark themes follow the

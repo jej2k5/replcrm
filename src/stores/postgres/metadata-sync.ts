@@ -1,5 +1,6 @@
 import { type EntityDefinition, type PrismaClient, type Prisma } from "@prisma/client";
 import type { CanonicalEntity, CanonicalAttribute } from "../../core/source.js";
+import { attributeCapabilities } from "../../writeback/policy.js";
 
 export interface MetadataSyncResult { entities: Map<string, EntityDefinition>; definitions: Map<string, CanonicalEntity> }
 
@@ -30,6 +31,7 @@ async function persistAttribute(prisma: PrismaClient | Prisma.TransactionClient,
     label: attr.label, dataType: attr.dataType, isCustom: attr.isCustom ?? false,
     isRequired: attr.isRequired ?? false, isUnique: attr.isUnique ?? false,
     isExternalKey: attr.isExternalKey ?? false, isComputed: attr.isComputed ?? false,
+    ...attributeCapabilities(attr), isNameField: attr.isNameField === true,
     length: attr.length ?? null, precision: attr.precision ?? null, scale: attr.scale ?? null,
     expression: attr.expression ?? null, helpText: attr.helpText ?? null,
     referenceEntityId: target?.id ?? null, referenceEntityKeys: targets,

@@ -1,5 +1,38 @@
-import type { CanonicalEntity, CanonicalValue, SourceRecord as CanonicalRecord, JsonValue } from "../../core/source.js";
+import type { CanonicalAttribute, CanonicalEntity, CanonicalValue, SourceRecord as CanonicalRecord, JsonValue } from "../../core/source.js";
+import { isReference, toTypedValue } from "../../core/type-mapper.js";
+import { Decimal } from "decimal.js";
 import type { SourceRecord } from "./types.js";
+
+export function toSourceValue(attr: CanonicalAttribute, value: CanonicalValue): JsonValue {
+  if (value === null) return null;
+  const canonical = attr.dataType === "DateTime" && typeof value === "string" &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value) && Number.isFinite(Date.parse(value)) &&
+    new Date(value).toISOString() === value ? new Date(value) : value;
+  const typed = toTypedValue(attr.dataType, canonical, () => null);
+  switch (attr.dataType) {
+    case "Number": case "Currency": case "Percent": {
+      const number = typed.numberValue!.toNumber();
+      if (!new Decimal(number).eq(new Decimal(value as string | number))) throw new Error("Number cannot be represented without losing precision");
+      return number;
+    }
+    case "Date": return typed.dateValue!.toISOString().slice(0, 10);
+    case "DateTime": return typed.dateTimeValue!.toISOString();
+    case "Time": return `${typed.textValue}Z`;
+    case "MultiEnum": {
+      const values = value as string[];
+      if (values.some((item) => !item || item.includes(";"))) throw new Error("Invalid multi-value option");
+      return values.join(";");
+    }
+    case "Boolean": return typed.booleanValue;
+    case "Reference": case "Composition":
+      if (!isReference(value) || !value.sourceId.trim() || !attr.relationship?.targetEntityKeys.includes(value.entityKey)) {
+        throw new Error("Reference must identify a permitted source record");
+      }
+      return value.sourceId;
+    case "Address": case "Geolocation": return typed.jsonValue;
+    default: return typed.textValue;
+  }
+}
 
 export function normalizeRecord(row: SourceRecord, entity: CanonicalEntity, targetTypes: ReadonlyMap<string, string> = new Map()): CanonicalRecord {
   const fields: Record<string, CanonicalValue> = {};

@@ -81,6 +81,8 @@ model EntityDefinition {
   outgoingRelations     RelationDefinition[]  @relation("FromEntity")
   incomingRelations     RelationDefinition[]  @relation("ToEntity")
   referencingAttributes AttributeDefinition[] @relation("AttributeReferenceTarget")
+  writebackPolicy       WritebackPolicy?
+  changeRequests        ChangeRequest[]
 
   @@unique([deploymentId, key])
 }
@@ -98,6 +100,12 @@ model AttributeDefinition {
   isUnique           Boolean           @default(false)
   isExternalKey      Boolean           @default(false)
   isComputed         Boolean           @default(false)
+  isUpdatable        Boolean           @default(false)
+  isCreatable        Boolean           @default(false)
+  isNameField        Boolean           @default(false)
+  isNullable         Boolean           @default(false)
+  hasCreateDefault   Boolean           @default(false)
+  isSystem           Boolean           @default(false)
   length             Int?
   precision          Int?
   scale              Int?
@@ -310,4 +318,64 @@ enum SyncStatus {
   Succeeded
   Failed
   PartialSuccess
+}
+
+model WritebackPolicy {
+  deploymentId          String
+  entityKey             String
+  enabled               Boolean          @default(false)
+  excludedAttributeKeys String[]         @default([])
+  entity                EntityDefinition @relation(fields: [deploymentId, entityKey], references: [deploymentId, key], onDelete: Cascade)
+
+  @@id([deploymentId, entityKey])
+}
+
+enum ChangeOperation {
+  update
+  create
+}
+
+enum ChangeAuthorKind {
+  person
+  app
+  agent
+}
+
+enum ChangeStatus {
+  pending
+  sending
+  applied
+  conflict
+  overridden
+  rejected
+  failed
+  unknown
+}
+
+model ChangeRequest {
+  id                String           @id @default(uuid())
+  deploymentId      String
+  entityKey         String
+  operation         ChangeOperation
+  targetRecordId    String?
+  targetSourceId    String?
+  fields            Json
+  authorKind        ChangeAuthorKind
+  authorLabel       String
+  reason            String?
+  idempotencyKey    String?
+  status            ChangeStatus     @default(pending)
+  statusDetail      String?
+  conflictValues    Json?
+  resultingSourceId String?
+  overrideDecision  Json?
+  sourceError       Json?
+  sourceModifiedAt  DateTime?
+  retryAfter        String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  entity            EntityDefinition @relation(fields: [deploymentId, entityKey], references: [deploymentId, key], onDelete: Restrict)
+
+  @@unique([deploymentId, idempotencyKey])
+  @@index([deploymentId, entityKey, status])
 }

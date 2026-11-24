@@ -8,13 +8,13 @@ import { Prisma, type PrismaClient } from "@prisma/client";
 type Row = Record<string, unknown>;
 interface QueryArgs { where?: Row; data?: Row; create?: Row; update?: Row; orderBy?: Row | Row[]; take?: number; select?: Row; include?: Row }
 interface Executor { query<T extends Row = Row>(query: string, params?: unknown[]): Promise<{ rows: T[]; affectedRows?: number }> }
-const TABLES: Record<string, string> = { deployment: "Deployment", entityDefinition: "EntityDefinition", attributeDefinition: "AttributeDefinition", enumOption: "EnumOption", relationDefinition: "RelationDefinition", record: "Record", attributeValue: "AttributeValue", user: "User", syncRun: "SyncRun" };
+const TABLES: Record<string, string> = { deployment: "Deployment", entityDefinition: "EntityDefinition", attributeDefinition: "AttributeDefinition", enumOption: "EnumOption", relationDefinition: "RelationDefinition", record: "Record", attributeValue: "AttributeValue", user: "User", syncRun: "SyncRun", writebackPolicy: "WritebackPolicy", changeRequest: "ChangeRequest" };
 const UPDATED: Set<string> = new Set(["Deployment", "EntityDefinition", "AttributeDefinition", "Record", "AttributeValue", "User"]);
 function quote(value: string): string { return `"${value.replace(/"/g, '""')}"`; }
 function parameter(value: unknown, column: string): unknown {
   if (value === Prisma.DbNull || value === Prisma.JsonNull) return null;
   if (value instanceof Date) return value.toISOString();
-  if (column === "jsonValue") return value === null ? null : JSON.stringify(value);
+  if (["jsonValue", "conflictValues", "overrideDecision", "sourceError"].includes(column)) return value === null ? null : JSON.stringify(value);
   if (value instanceof Prisma.Decimal) return value.toString();
   return value;
 }
