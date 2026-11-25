@@ -31,6 +31,7 @@ model Deployment {
   users             User[]
   entityVariants    EntityVariant[]
   syncRuns          SyncRun[]
+  schedule          DeploymentSchedule?
 }
 
 // User in the source CRM. Used for ownership and audit fields.
@@ -258,6 +259,7 @@ model Record {
   @@index([deploymentId, entityDefinitionId, isDeleted])
   @@index([deploymentId, entityDefinitionId, externalKey])
   @@index([deploymentId, entityDefinitionId, sourceModifiedAt])
+  @@index([ownerId])
 }
 
 // EAV row: one (record, attribute) pair. Exactly one typed column
@@ -378,4 +380,50 @@ model ChangeRequest {
 
   @@unique([deploymentId, idempotencyKey])
   @@index([deploymentId, entityKey, status])
+}
+
+model DeploymentSchedule {
+  deploymentId       String @id
+  deployment         Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  inboundMs          Int @default(300000)
+  outboundMs         Int @default(10000)
+  metadataMs         Int @default(86400000)
+  overrides          Json @default("{}")
+  paused             Boolean @default(false)
+  budget             Int @default(50)
+  heartbeatAt        DateTime?
+  inboundPausedUntil DateTime?
+  units              Json @default("{}")
+  discoveredKeys     Json?
+  runs               ScheduledRun[]
+  eventKeys          Json @default("[]")
+  changeStates       ObjectChangeState[]
+}
+
+model ScheduledRun {
+  id           BigInt @id @default(autoincrement())
+  deploymentId String
+  schedule     DeploymentSchedule @relation(fields: [deploymentId], references: [deploymentId], onDelete: Cascade)
+  unit         String
+  finishedAt   DateTime
+  calls        Int?
+  used         Int?
+  dailyLimit   Int?
+
+  @@index([deploymentId, finishedAt])
+}
+
+model ObjectChangeState {
+  deploymentId String
+  schedule     DeploymentSchedule @relation(fields: [deploymentId], references: [deploymentId], onDelete: Cascade)
+  objectKey    String
+  position     String?
+  connected    Boolean @default(false)
+  lastEventAt  DateTime?
+  dueAt        DateTime?
+  generation   Int @default(0)
+  catchUp      Boolean @default(false)
+  catchUpPolls Int @default(0)
+
+  @@id([deploymentId, objectKey])
 }

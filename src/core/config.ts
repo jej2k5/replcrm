@@ -5,4 +5,5 @@ export interface ReplicationConfig {
   entityKeys: string[];
   entityDenyKeys: string[];
   buildWideViews?: boolean;
+  replicaViewSchema?: string;
 }

@@ -36,6 +36,10 @@ const minimums = {
   "change-requests.test.ts": 15,
   "writeback-queue.test.ts": 19,
   "writeback-sql.test.ts": 19,
+  "projection-in-place.test.ts": 14,
+  "replica-views.test.ts": 17,
+  "schedule.test.ts": 18,
+  "change-events.test.ts": 17,
 };
 
 function parse(name: string, text: string): ts.SourceFile {

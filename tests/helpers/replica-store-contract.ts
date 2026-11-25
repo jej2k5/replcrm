@@ -11,6 +11,7 @@ export interface ContractFixture {
   records(scope: string, entity: string): Promise<ContractRecord[]>;
   projectionRows(projection: Projection): Promise<number>;
   metadataOptions(scope: string, entityKey: string, attributeKey: string): Promise<NonNullable<CanonicalAttribute["enumOptions"]>>;
+  evolvesProjectionSchema?: boolean;
   close(): Promise<void>;
 }
 export const CONTRACT_CASES: number = 15;
@@ -34,7 +35,7 @@ function delegate(inner: ReplicaStore): ReplicaStore {
 const result = (checkpoint: string | null): PendingRun["result"] => ({ processed: 0, created: 0, updated: 0, deleted: 0, checkpoint });
 const batch = (fields: Record<string, CanonicalValue> = {}): ChangeBatch => ({ records: [{ sourceId: "123", fields }], nextCheckpoint: "page-token::abc123" });
 
-// Same assertions, backend-specific observation only; a future store supplies another fixture.
+// Shared assertions include the optional PostgreSQL projection evolution behavior.
 export function replicaStoreContractTests(name: string, create: () => Promise<ContractFixture>): void {
   function contract(title: string, action: (fixture: ContractFixture) => Promise<void>): void {
     test(`${name} contract: ${title}`, async (): Promise<void> => {
@@ -87,15 +88,25 @@ export function replicaStoreContractTests(name: string, create: () => Promise<Co
     await f.store.persistMetadata(config.deploymentId, [after]);
     await f.store.persistMetadata(config.deploymentId, [after]);
     await f.store.ensureProjections(config.deploymentId, [after]);
-    assert.deepEqual((await f.store.resolveProjection(config.deploymentId, before.key))!.attributeKeys, ["name", "renamed", "tags"]);
+    assert.deepEqual((await f.store.resolveProjection(config.deploymentId, before.key))!.attributeKeys,
+      f.evolvesProjectionSchema ? ["renamed"] : ["name", "renamed", "tags"]);
     assert.equal((await f.records(config.deploymentId, before.key))[0]!.fields.name, "retained");
     await assert.rejects(f.store.persistRecords(config.deploymentId, after, batch({ name: "not in current source definition" })), /Undeclared/);
   });
-  contract("incompatible canonical type change rejects without coercion or metadata mutation", async (f): Promise<void> => {
+  contract("type changes follow the store's schema evolution contract", async (f): Promise<void> => {
     const before: CanonicalEntity = entity("type.change");
     await f.store.persistMetadata(config.deploymentId, [before]);
     await f.store.persistRecords(config.deploymentId, before, batch({ name: "42" }));
     const changed: CanonicalEntity = { ...before, attributes: [{ key: "name", label: "Name", dataType: "Number" }, { key: "new", label: "New", dataType: "Text" }] };
+    if (f.evolvesProjectionSchema) {
+      await f.store.ensureProjections(config.deploymentId, [before]);
+      await f.store.persistMetadata(config.deploymentId, [changed]);
+      assert.equal((await f.store.ensureProjections(config.deploymentId, [changed]))[0]?.rebuildReason, undefined);
+      assert.deepEqual((await f.store.resolveProjection(config.deploymentId, before.key))!.attributeKeys, ["name", "new"]);
+      await f.store.persistRecords(config.deploymentId, changed, batch({ name: "43" }));
+      assert.equal((await f.records(config.deploymentId, before.key))[0]!.fields.name, "43");
+      return;
+    }
     await assert.rejects(f.store.persistMetadata(config.deploymentId, [changed]), /Incompatible attribute type/);
     await f.store.ensureProjections(config.deploymentId, [before]);
     assert.deepEqual((await f.store.resolveProjection(config.deploymentId, before.key))!.attributeKeys, ["name", "tags"]);

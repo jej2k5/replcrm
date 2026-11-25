@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "462eae67a7ce6e9c746d779e0c2fe57ee0cb0048",
+  "sourceCommit": "11d7867d08c04da9f47fdd53434b232f930c8581",
   "runtime": {
     "node": "26.4.0",
     "note": "Supported baseline is Node 22.x (engines, .nvmrc, CI, Docker); CI on the release pull request runs Node 22."
@@ -27,7 +27,7 @@
     "offlineSuite": {
       "command": "npm test",
       "exitCode": 0,
-      "tests": 347
+      "tests": 413
     },
     "smokeTest": {
       "command": "npm run smoke-test",
@@ -36,7 +36,7 @@
     }
   },
   "sourcePreservation": {
-    "filesIdenticalToPrivateCheckpoint": 127,
+    "filesIdenticalToPrivateCheckpoint": 146,
     "publicAdaptedFiles": 16,
     "publicOnlyFiles": 8
   },
@@ -60,7 +60,7 @@
     "Hosted GitHub fork CI execution",
     "Historical development credential reuse outside reviewed archive"
   ],
-  "release": "0.3.0",
+  "release": "0.4.0",
   "audit": {
     "command": "npm audit",
     "remaining": []

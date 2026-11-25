@@ -64,3 +64,7 @@ export async function readPrivateJson(path: string): Promise<unknown> {
     await file.close();
   }
 }
+
+export function schedulerLockPath(configDir: string, deploymentId: string): string {
+  return join(configDir, "locks", `${safeDeploymentFileName(deploymentId)}.scheduler.lock`);
+}

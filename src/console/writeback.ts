@@ -42,7 +42,10 @@ export function createConsoleWriteback({ deploymentId, store, acquire, session, 
   return {
     counts: async () => counts(await list(), now()),
     objects: async () => {
-      const keys = await store.listPersistedEntityKeys(deploymentId);
+      const [keys, views] = await Promise.all([
+        store.listPersistedEntityKeys(deploymentId), store.listReplicaViews?.(deploymentId),
+      ]);
+      const byKey = new Map(views?.map(({ entityKey, view }) => [entityKey, view]));
       return Promise.all(keys.sort().map(async (entityKey) => {
         const [entity, policy] = await Promise.all([store.readEntity(deploymentId, entityKey), store.getWritebackPolicy(deploymentId, entityKey)]);
         const available = { ...policy, excludedAttributeKeys: [] };
@@ -51,6 +54,7 @@ export function createConsoleWriteback({ deploymentId, store, acquire, session, 
         const excluded = new Set(policy.excludedAttributeKeys);
         return {
           entityKey, enabled: policy.enabled,
+          ...(byKey.has(entityKey) && { view: byKey.get(entityKey)! }),
           fields: policy.enabled ? (entity?.attributes ?? []).filter(({ key }) => update.has(key) || create.has(key) || excluded.has(key))
             .map(({ key }) => ({
               key, excluded: excluded.has(key), update: update.has(key) && !excluded.has(key), create: create.has(key) && !excluded.has(key),

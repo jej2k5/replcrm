@@ -1,5 +1,7 @@
+import { eventName, streamChanges, StreamCookies, type Frame } from "./change-events.js";
+import type { ChangeSubscription } from "../../core/source.js";
 import { assertApiName } from "./api-name.js";
-import type { CrmSource, CanonicalEntity, ChangeBatch, SourceUser, SourceChangeResult, ValidatedChange, SourceRecord as CanonicalRecord } from "../../core/source.js";
+import type { CrmSource, CanonicalEntity, ChangeBatch, SourceUser, SourceChangeResult, SourceApiUsage, ValidatedChange, SourceRecord as CanonicalRecord } from "../../core/source.js";
 import { normalizeMetadata } from "./metadata.js";
 import { normalizeRecord } from "./values.js";
 export { normalizeRecord } from "./values.js";
@@ -86,8 +88,8 @@ function isRetryable(err: unknown): boolean {
   if (isExpiredSession(err)) return false;
   const code: string | undefined = e.errorCode ?? e.code ?? e.name;
   const status: number | undefined = e.statusCode ?? e.status;
+  if (code === "REQUEST_LIMIT_EXCEEDED") return false;
   if (status === 429 || status === 503 || status === 502 || status === 504) return true;
-  if (code === "REQUEST_LIMIT_EXCEEDED") return false; // daily quota — DON'T spin
   if (code === "ETIMEDOUT" || code === "ECONNRESET" || code === "ECONNREFUSED") return true;
   if (typeof e.message === "string" && /timeout|temporarily unavailable/i.test(e.message)) {
     return true;
@@ -113,7 +115,7 @@ async function withRetry<T>(op: () => Promise<T>, label: string): Promise<T> {
       const ceiling: number = Math.min(RETRY_BASE_MS * 2 ** (attempt - 1), RETRY_MAX_MS);
       const sleepMs: number = Math.floor(Math.random() * ceiling);
       console.warn(
-        `[source-retry] ${label} attempt ${attempt}/${RETRY_MAX_ATTEMPTS - 1} failed; sleeping ${sleepMs}ms (${(err as Error).message ?? String(err)})`,
+        `[source-retry] ${label} attempt ${attempt}/${RETRY_MAX_ATTEMPTS - 1} failed; sleeping ${sleepMs}ms`,
       );
       await new Promise((r) => setTimeout(r, sleepMs));
     }
@@ -151,6 +153,7 @@ type DescribeField = Pick<SourceFieldDescribe, RequiredDescribeField> & {
 export interface SourceConnection extends IdentityConnection {
   accessToken?: string | null | undefined;
   version?: string;
+  limitInfo?: { apiUsage?: { used: number; limit: number } };
   describeGlobal(): PromiseLike<{ sobjects: (SourceObjectListing & { keyPrefix?: string | null | undefined })[] }>;
   sobject(name: string): {
     describe(): PromiseLike<Omit<SourceObjectDescribe, "fields"> & { fields: DescribeField[] }>;
@@ -165,6 +168,7 @@ export type ConnectionFactory = (options: ConnectionConfig) => SourceConnection;
 
 interface SourceClientOptions {
   fetch?: typeof fetch;
+  eventFetch?: typeof fetch;
   identity?: () => Promise<SalesforceIdentity>;
   connectionFactory?: ConnectionFactory | undefined;
   refresh?: (failedAccessToken: string) => Promise<{ accessToken: string; instanceUrl?: string }>;
@@ -180,6 +184,22 @@ function isExpiredSession(error: unknown): boolean {
 }
 
 export class SourceClient implements CrmSource {
+  private readonly usage: SourceApiUsage = { calls: 0 };
+
+  apiUsage(): SourceApiUsage {
+    return { ...this.usage };
+  }
+
+  private captureLimit(error: unknown): void {
+    if (error && typeof error === "object") {
+      const { name, code, errorCode } = error as Record<string, unknown>;
+      if ([name, code, errorCode].includes("REQUEST_LIMIT_EXCEEDED") ||
+        (error instanceof SalesforceResponseError && error.errors.some(({ code }) => code === "REQUEST_LIMIT_EXCEEDED"))) {
+        this.usage.limitExceeded = true;
+      }
+    }
+  }
+
   private attributionFields = new Map<string, string>();
   private readonly targetTypes: Map<string, string> = new Map();
   private readonly objectDescribes = new Map<string, Promise<SourceObjectDescribe>>();
@@ -221,7 +241,21 @@ export class SourceClient implements CrmSource {
     let failedAccessToken: string | null | undefined;
     const invoke = async () => {
       failedAccessToken = connection.accessToken;
-      return operation(connection);
+      const before = connection.limitInfo?.apiUsage;
+      this.usage.calls++;
+      try {
+        return await operation(connection);
+      } catch (error) {
+        this.captureLimit(error);
+        throw error;
+      } finally {
+        // jsforce decodes the sforce-limit-info header for its native requests.
+        const current = connection.limitInfo?.apiUsage;
+        if (current && current !== before) {
+          this.usage.used = current.used;
+          this.usage.dailyLimit = current.limit;
+        }
+      }
     };
     try {
       return await (retryLabel ? withRetry(invoke, retryLabel) : invoke());
@@ -235,7 +269,44 @@ export class SourceClient implements CrmSource {
       if (session.instanceUrl) connection.instanceUrl = session.instanceUrl;
     };
     await (withRefreshLock ? withRefreshLock(update) : update());
-    return operation(connection);
+    return invoke();
+  }
+
+  async availableChangeEvents(keys: string[]): Promise<string[]> {
+    if (this.credentials.mode !== "oauth" || !keys.length) return [];
+    const names = keys.map((key) => { assertApiName(key); return "'" + eventName(key) + "'"; });
+    const query = "SELECT SelectedEntity FROM PlatformEventChannelMember WHERE EventChannel = 'ChangeEvents'" +
+      " AND SelectedEntity IN (" + names.join(",") + ")";
+    const response = await this.restRequest("/tooling/query?q=" + encodeURIComponent(query), undefined, this.seams.eventFetch);
+    const { records } = await response.json() as { records: Array<{ SelectedEntity: string }> };
+    const enabled = new Set(records.map((record) => record.SelectedEntity));
+    return keys.filter((key) => enabled.has(eventName(key)));
+  }
+
+  subscribeToChanges(subscription: ChangeSubscription) {
+    if (this.credentials.mode !== "oauth") throw new Error("Change events require OAuth sign-in.");
+    const cookies = new StreamCookies();
+    return streamChanges(subscription, (message, signal) => this.call(async (connection) => {
+      const endpoint = connection.instanceUrl + "/cometd/" + (connection.version ?? "50.0");
+      const cookie = cookies.header(endpoint, Date.now());
+      const response = await (this.seams.eventFetch ?? this.seams.fetch ?? fetch)(endpoint, {
+        method: "POST", redirect: "error", signal,
+        headers: { Authorization: `Bearer ${connection.accessToken}`, "Content-Type": "application/json",
+          ...(cookie && { Cookie: cookie }) },
+        body: JSON.stringify([message]),
+      });
+      if (!response.ok) {
+        await response.body?.cancel();
+        throw Object.assign(new Error("Change event request failed."), { status: response.status });
+      }
+      cookies.remember(endpoint, response.headers, Date.now());
+      const messages = await response.json() as Frame[];
+      if (!Array.isArray(messages)) throw new Error("Invalid change event response.");
+      if (messages.some((frame) => frame?.error?.startsWith("401::"))) {
+        throw Object.assign(new Error("Change event authentication expired."), { status: 401 });
+      }
+      return messages;
+    }));
   }
 
   async identity(): Promise<SalesforceIdentity> {
@@ -351,18 +422,23 @@ export class SourceClient implements CrmSource {
     this.attributionFields = fields;
   }
 
-  private async restRequest(path: string, init?: RequestInit): Promise<Response> {
+  private async restRequest(path: string, init?: RequestInit, request = this.seams.fetch ?? fetch): Promise<Response> {
     let expiredResponse: SalesforceResponseError | undefined;
     try {
       return await this.call(async (connection) => {
         expiredResponse = undefined;
         const endpoint = connection.instanceUrl + "/services/data/v" + (connection.version ?? "50.0");
-        const response = await (this.seams.fetch ?? fetch)(endpoint + path, {
+        const response = await request(endpoint + path, {
           ...init,
           redirect: "error",
           signal: AbortSignal.timeout(30_000),
           headers: { Authorization: `Bearer ${connection.accessToken}`, "Content-Type": "application/json" },
         });
+        const usage = /api-usage=(\d+)\/(\d+)/i.exec(response.headers.get("sforce-limit-info") ?? "");
+        if (usage) {
+          this.usage.used = Number(usage[1]);
+          this.usage.dailyLimit = Number(usage[2]);
+        }
         if (response.ok) return response;
         const error = await responseError(response);
         if (error.expiredSession) expiredResponse = error;

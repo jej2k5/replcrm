@@ -1,3 +1,5 @@
+import type { ScheduleService } from "../cli-schedule.js";
+import { ScheduleInputError } from "../scheduler/schedule.js";
 import { LockHeldError } from "../locks/file-lock.js";
 import { changeStatuses, WritebackInputError, type ConsoleWriteback } from "./writeback.js";
 import type { ChangeStatus } from "../writeback/requests.js";
@@ -24,6 +26,7 @@ export interface ConsoleHandlerDeps {
   listReplicas?(): Promise<ReplicaSummary[]>;
   now?: () => Date;
   defaultDeployment?(): Promise<string | undefined>;
+  schedule?(deploymentId: string): Promise<ScheduleService>;
   writeback?(deploymentId: string): Promise<ConsoleWriteback>;
   /** Runs for the default deployment. */
   runs?: ConsoleRuns | undefined;
@@ -156,6 +159,28 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
       };
     }
 
+    if (path === "/api/schedule") {
+      if (method !== "GET" && method !== "POST") return json(405, { error: "Method not allowed" }, { Allow: "GET, POST" });
+      if (method === "POST" && !tokenValid()) return json(403, { error: "Invalid console token" });
+      if (!deps.schedule) return json(404, { error: "Schedule is unavailable" });
+      try {
+        const deployment = requested ?? await deps.defaultDeployment?.();
+        if (!deployment || !(await isKnown(deployment))) return json(404, { error: "Unknown deployment" });
+        const service = await deps.schedule(deployment);
+        if (method === "POST") {
+          const fields = await readFields();
+          const action = fields?.action;
+          if (action !== "set" && action !== "clear" && action !== "pause" && action !== "resume") {
+            return json(400, { error: "Invalid schedule action" });
+          }
+          await service.edit({ action, fields: fields! });
+        }
+        return json(200, await service.status());
+      } catch (error) {
+        if (error instanceof ScheduleInputError) return json(400, { error: error.message });
+        return json(500, { error: method === "GET" ? "Unable to read schedule" : "Unable to update schedule" });
+      }
+    }
     const setupPage = () => html((nonce) => renderSetupPage(nonce, processToken, requested));
     const defaultDeployment = async () => deps.defaultDeployment ? deps.defaultDeployment() : (await getStatus(undefined, false)).deploymentId;
     const objectsPage = path === "/objects" || path === "/api/objects";
@@ -272,11 +297,12 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
     }
     async function getStatusWithWarnings(id: string | undefined, refresh: boolean) {
       const status = await getStatus(id, refresh);
-      const [interruptedRuns, writeback] = await Promise.all([
+      const [interruptedRuns, writeback, schedule] = await Promise.all([
         deps.interruptedRuns ? (id ? deps.interruptedRuns(id) : deps.interruptedRuns()) : undefined,
         deps.writeback ? deps.writeback(status.deploymentId).then((service) => service.counts()) : undefined,
+        deps.schedule ? deps.schedule(status.deploymentId).then((service) => service.status()) : undefined,
       ]);
-      return { ...status, ...(interruptedRuns && { interruptedRuns }), ...(writeback && { writeback }) };
+      return { ...status, ...(interruptedRuns && { interruptedRuns }), ...(writeback && { writeback }), ...(schedule && { schedule }) };
     }
     if (path === "/api/status") {
       if (method !== "GET") return json(405, { error: "Method not allowed" }, { Allow: "GET" });
@@ -294,7 +320,7 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
         if (!(await isKnown(requested))) return json(404, { error: "Unknown deployment" });
         const status = await getStatusWithWarnings(requested, false);
         const runs = runsFor(requested);
-        return html((nonce) => renderConsolePage(status, nonce, runs && processToken, runs?.current().state === "running"));
+        return html((nonce) => renderConsolePage(status, nonce, runs && processToken, runs?.current().state === "running", processToken));
       } catch {
         if (deps.setup && !requested) return setupPage();
         return json(500, { error: "Unable to read console status" });

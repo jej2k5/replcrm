@@ -14,6 +14,7 @@ export interface UnresolvedReference {
 export type CanonicalValue = JsonValue | Date | RecordReference | UnresolvedReference;
 export interface CanonicalAttribute {
   key: string;
+  displayKey?: string;
   label: string;
   dataType: AttributeDataType;
   isCustom?: boolean;
@@ -27,6 +28,7 @@ export interface CanonicalAttribute {
   hasCreateDefault?: boolean;
   isSystem?: boolean;
   isNameField?: boolean;
+  recordRole?: "owner" | "creator" | "lastModifier" | "deletionFlag";
   length?: number | null;
   precision?: number | null;
   scale?: number | null;
@@ -37,6 +39,7 @@ export interface CanonicalAttribute {
 }
 export interface CanonicalEntity {
   key: string;
+  displayKey?: string;
   label: string;
   pluralLabel: string;
   isCustom?: boolean;
@@ -84,7 +87,17 @@ export type SourceChangeResult =
   | { status: "rejected"; error: SourceChangeError }
   | { status: "failed"; detail: string; retryAfter?: string; error?: SourceChangeError }
   | { status: "unknown"; detail: string };
+export interface SourceApiUsage {
+  calls: number;
+  used?: number;
+  dailyLimit?: number;
+  limitExceeded?: boolean;
+}
+
 export interface CrmSource {
+  availableChangeEvents?(keys: string[]): Promise<string[]>;
+  subscribeToChanges?(subscription: ChangeSubscription): AsyncIterable<ChangeNotification>;
+  apiUsage?(): SourceApiUsage;
   connect(): Promise<void>;
   logout(): Promise<void>;
   listEntities(): Promise<string[]>;
@@ -94,4 +107,17 @@ export interface CrmSource {
   applyChange?(change: ValidatedChange): Promise<SourceChangeResult>;
   readRecord?(entity: CanonicalEntity, sourceId: string): Promise<SourceRecord | null>;
   listSourceIds?(entityKey: string, batchSize: number): AsyncGenerator<string[]>;
+}
+
+export interface ChangeNotification {
+  objectKey: string;
+  recordIds: string[];
+  kind: "create" | "update" | "delete" | "restore" | "catch-up" | "resume-unavailable";
+  position: string | null;
+}
+
+export interface ChangeSubscription {
+  positions: ReadonlyMap<string, string | null>;
+  signal: AbortSignal;
+  connectionChanged(connected: boolean): Promise<void>;
 }

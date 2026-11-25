@@ -3,7 +3,20 @@ import type { CanonicalEntity, ChangeBatch, SourceUser, JsonValue } from "./sour
 export interface Counts { processed: number; created: number; updated: number; deleted: number }
 export interface RecordSyncResult extends Counts { checkpoint: string | null }
 export interface PendingRun { id: string; result: RecordSyncResult }
-export interface ProjectionResult { entityKey: string; rowsLoaded: number }
+export interface ProjectionResult { entityKey: string; rowsLoaded: number; rebuildReason?: string }
+
+export interface ReplicaViewColumn {
+  sourceField: string;
+  column: string;
+  suffixed: boolean;
+}
+
+export interface ReplicaView {
+  entityKey: string;
+  view: string;
+  suffixed: boolean;
+  columns: ReplicaViewColumn[];
+}
 
 export interface Projection {
   deploymentId: string;
@@ -26,6 +39,7 @@ export interface Projection {
  * See docs/replica-store.md for recovery, evolution and publication guarantees.
  */
 export interface ReplicaStore {
+  listReplicaViews?(deploymentId: string): Promise<ReplicaView[]>;
   resolveProjection(deploymentId: string, entityKey: string): Promise<Projection | null>;
   persistMetadata(deploymentId: string, entities: CanonicalEntity[]): Promise<void>;
   persistUsers(deploymentId: string, users: SourceUser[]): Promise<Counts>;
@@ -34,5 +48,5 @@ export interface ReplicaStore {
   beginRun(deploymentId: string, entityKey: string | null): Promise<{ id: string; checkpoint: string | null }>;
   completeRuns(runs: PendingRun[]): Promise<void>;
   failRun(id: string, message: string): Promise<void>;
-  ensureProjections(deploymentId: string, entities: CanonicalEntity[]): Promise<ProjectionResult[]>;
+  ensureProjections(deploymentId: string, entities: CanonicalEntity[], options?: { rebuild?: boolean; replicaViewSchema?: string }): Promise<ProjectionResult[]>;
 }

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { setImmediate } from "node:timers/promises";
+import { setImmediate, setTimeout as delay } from "node:timers/promises";
 import { test } from "node:test";
 import { createProductionDeps, runCli, type CliDeps } from "../src/cli.js";
 import { runLockPath, writePrivateJson } from "../src/cli-config-dir.js";
@@ -110,14 +110,15 @@ async function fixture(dir: string) {
     state: string; stage: string; lines: string[]; finishedAt?: string;
   };
   async function finished(state: string) {
-    for (let attempt = 0; attempt < 1000; attempt++) {
+    const deadline = Date.now() + 10_000;
+    for (let attempt = 0; Date.now() < deadline; attempt++) {
       const run = await progress();
       if (run.state !== "running") {
         assert.equal(run.state, state);
         assert.ok(run.finishedAt);
         return run;
       }
-      await setImmediate();
+      await (attempt < 1000 ? setImmediate() : delay(10));
     }
     assert.fail("Run did not finish");
   }
@@ -297,7 +298,8 @@ test("captured stdout and stderr keep the last 200 lines and strip bearer values
   assert.equal((await f.post("records")).status, 202);
   const run = await f.finished("succeeded");
   assert.equal(run.lines.length, 200);
-  assert.equal(run.lines[0], "line 12");
+  assert.equal(run.lines[0], "line 13");
   assert.ok(run.lines.includes("request failed:"));
+  assert.ok(run.lines.includes("[replication] projections"));
   assert.ok(!run.lines.join("\n").includes("fixture-access"));
 }));

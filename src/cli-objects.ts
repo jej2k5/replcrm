@@ -2,6 +2,7 @@ import { unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { readPrivateJson, safeDeploymentFileName, writePrivateJson } from "./cli-config-dir.js";
+import type { ReplicaView } from "./core/replica-store.js";
 import type { ReplicationConfig } from "./core/config.js";
 import { selectEntityKeys } from "./core/orchestrator.js";
 import type { SourceObjectListing } from "./sources/salesforce/client.js";
@@ -13,6 +14,7 @@ interface ObjectSource {
 }
 
 export interface ObjectsDeps {
+  listViews?(deploymentId: string): Promise<ReplicaView[]>;
   configDir(): string;
   fallbackSource(): "SYNC_ENTITIES" | "default";
   createSource(): ObjectSource | Promise<ObjectSource>;
@@ -71,6 +73,7 @@ export async function saveSelection(deps: ObjectsDeps, deploymentId: string, ent
 export const objectsUsage = [
   "objects available [--json]",
   "objects list [--entities a,b] [--json]",
+  "objects columns <Object> [--json]",
   "objects set a,b | objects add a[,b] | objects remove a[,b] | objects clear",
 ].join("\n  ");
 
@@ -102,7 +105,27 @@ export async function runObjects(args: string[], config: ReplicationConfig, deps
     const { values } = parseArgs({ args: rest, options: { json: { type: "boolean" }, entities: { type: "string" } } });
     const selection = await resolveSelection(config, deps,
       values.entities === undefined ? undefined : parseEntityList(values.entities));
-    console.log(values.json ? JSON.stringify(selection) : `${selection.source}: ${selection.entities.join(",") || "(none)"}`);
+    const views = (await deps.listViews?.(config.deploymentId) ?? [])
+      .filter(({ entityKey }) => selection.entities.includes("*") || selection.entities.includes(entityKey));
+    console.log(values.json ? JSON.stringify({ ...selection, ...(views.length && { views }) }) : [
+      `${selection.source}: ${selection.entities.join(",") || "(none)"}`,
+      ...views.map(({ entityKey, view, suffixed, columns }) => [
+        `${entityKey}\t${view}${suffixed ? " (suffixed)" : ""}`,
+        ...columns.filter((column) => column.suffixed).map(({ sourceField, column }) => `  ${sourceField}\t${column}`),
+      ].join("\n")),
+    ].join("\n"));
+    return;
+  }
+  if (command === "columns") {
+    const { values, positionals } = parseArgs({ args: rest, allowPositionals: true, options: { json: { type: "boolean" } } });
+    if (positionals.length !== 1) throw new Error("Usage: replcrm objects columns <Object> [--json]");
+    const [key] = positionals;
+    const views = await deps.listViews?.(config.deploymentId) ?? [];
+    const view = views.find(({ entityKey }) => entityKey === key);
+    if (!view) throw new Error(`No published replica view for ${key}.`);
+    console.log(values.json ? JSON.stringify(view) : [
+      view.view, "Source field\tColumn", ...view.columns.map(({ sourceField, column }) => `${sourceField}\t${column}`),
+    ].join("\n"));
     return;
   }
   const path = selectionPath(deps, config.deploymentId);
