@@ -4,7 +4,7 @@ ReplCRM is an independent Apache-2.0 project: **Discover. Reconstruct. Replicate
 
 ## Get started
 
-Use Node 22.x for development and a checkout you are authorized to access. Install with `npm ci`, then run `npm run prisma:generate`. Never put real credentials or customer data in examples, fixtures or issue reports. No live CRM or operator database is needed for the normal suite.
+Use Node 22.x for development. Install with `npm ci`, then run `npm run prisma:generate`. Never put real credentials or customer data in examples, fixtures or issue reports. No live CRM or operator database is needed for the normal suite.
 
 Before a PR:
 

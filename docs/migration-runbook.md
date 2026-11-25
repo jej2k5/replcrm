@@ -10,7 +10,7 @@ idempotent, but the prep steps are not.
 
 - You have admin access to the target Salesforce org (or a dedicated integration user with API access on every object in scope).
 - You can provision a Postgres 14+ database and reach it from the host that will run the migration.
-- You have Node 20+ and `npm` installed.
+- You have Node 22.x and `npm` installed. `package.json` requires Node `>=22 <23`.
 - The migration host has outbound HTTPS to `*.salesforce.com` (or your org's My Domain).
 
 ---
@@ -21,7 +21,7 @@ Run all of these before touching anything else. If any fails, **stop** and resol
 
 | Check | Command / action | Expected |
 | --- | --- | --- |
-| Node version | `node --version` | `v20.x` or higher |
+| Node version | `node --version` | `v22.x` |
 | Postgres reachable | `psql "$DATABASE_URL" -c 'select 1'` | `1` |
 | Postgres has `CREATE` permission | `psql "$DATABASE_URL" -c 'create table _probe(); drop table _probe;'` | no error |
 | Disk headroom | `df -h` on the DB host | ≥ 3× the est. size of source data (EAV expands row count) |

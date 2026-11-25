@@ -2,6 +2,53 @@
 
 Changes will be recorded here for future releases. This file does not assert that a tagged or published release exists.
 
+## 0.4.0 (2026-11-25)
+
+### Live replica
+
+- Flat tables in the `wide` schema update in place from a durable per-object watermark: changed rows are upserted and tombstones set `is_deleted`. A new attribute adds a column and backfills it; a PostgreSQL-castable type change alters the column in place.
+- Rebuilds happen only on first publication, the first refresh of a legacy table, an uncastable type change or `projections --rebuild`. They build a replacement table and swap it in one transaction, keeping valid indexes, grants, comments, compatible dependent views and write-back triggers. The CLI and console run log name the object and the reason.
+- Readable views per object, such as `replica.opportunity`, with snake_case column names. `REPLICA_VIEW_SCHEMA` sets the schema; `objects columns <Object>` maps source fields to view columns; the console Objects page shows each view with a copyable query. Inserts and updates through a view follow the write-back policy.
+- The first refresh after upgrading removes duplicate owner, creator, last-modifier and deletion-flag aliases from readable views.
+
+### Scheduling
+
+- `npm start -- run` runs scheduled inbound record sync (default every 5 minutes), write-back (10 seconds) and metadata refresh (24 hours) for one deployment, with per-object inbound overrides. It shares the deployment run lock with manual runs; Ctrl+C or SIGTERM finishes the active unit and exits with code 130.
+- `schedule show|set|clear|pause|resume`, schedule details in `deployment status`, and a Schedule section in the console.
+- API budget guard, defaulting to 50% of the org's reported daily limit. Settings whose projected daily calls exceed the budget are rejected, and due inbound work waits when reported usage reaches it or Salesforce reports a limit error.
+
+### Change Data Capture
+
+- Opt-in live updates per object with `schedule set --events` or a switch per object in the console. Objects must be selected under Salesforce Setup → Change Data Capture and the deployment must use OAuth sign-in.
+- Uses the Salesforce Streaming API (CometD) over the existing HTTP client, with no new dependencies. Notifications for an object are coalesced for two seconds and then trigger an incremental records sync under the same run lock and API budget.
+- Replay position and pending refresh work are stored in PostgreSQL. An expired replay position, gap or overflow queues a catch-up poll. Scheduled polling continues, and a failed subscription retries with back-off up to one minute.
+
+### Upgrade
+
+- New migrations: `20261128_projection_watermarks`, `20261129_readable_replica_views`, `20261130_deployment_schedule` and `20261201_change_events`. See [Live replica](docs/live-replica.md).
+
+## 0.3.0 (2026-11-24)
+
+### Write-back
+
+- Change requests for updates and creates, stored in the replica database and sent to Salesforce by a processor. Salesforce remains the system of record. Deletes are refused.
+- Write-back is disabled per object until enabled. `writeback status|enable|disable|exclude|include` manage objects and excluded fields. Each submitted field must have the matching create or update capability in Salesforce metadata; computed, system and replica housekeeping fields are always excluded.
+- Submission paths: the `submitChange` API with `person`, `app` or `agent` authors and optional idempotency keys; inserts into `writeback.submissions` in SQL; direct SQL edits on wide projection tables; and `changes submit|list|show` in the CLI.
+- `changes process` sends one batch, and `--watch --interval N` polls (default 10 seconds) under the shared deployment lock. An update is sent only when Salesforce still holds the editor's base values; otherwise the request becomes a `conflict` with the base, proposed and current values. `changes override`, `changes retry` and `changes resolve` handle conflicts, failures and unknown outcomes.
+- Optional attribution: a configured custom text field records the author kind and label on each write.
+
+### Console
+
+- Objects page for per-object write-back policy and field exclusions, and a Changes page with status tabs and counts per deployment.
+- Conflict, rejected, failed and unknown requests can be resolved in the console with an operator label.
+- New records are labeled with the object and submitted name, for example **New Contact: Priya Shah**. Contacts and Leads fall back to first and last name.
+
+### Maintenance
+
+- tsx upgraded to 4.23.15 (esbuild 0.28.2), resolving the low esbuild dev-server advisory in the development toolchain.
+- A console test now waits by elapsed time instead of event-loop turns, removing a timing failure seen in CI.
+- New migrations: `20261123_writeback_foundations`, `20261124_salesforce_writer`, `20261125_writeback_queue`, `20261126_console_record_name` and `20261127_direct_sql_edits`. See [Write-back](docs/write-back.md).
+
 ## 0.2.0 (2026-11-23)
 
 ### Console and setup

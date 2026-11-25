@@ -4,15 +4,26 @@
 
 **Discover. Reconstruct. Replicate.**
 
-Open-source, metadata-driven CRM replication with source-neutral adapters and pluggable replica stores.
+ReplCRM copies a Salesforce org into PostgreSQL and keeps the copy current. It reads objects, fields and relationships from Salesforce metadata, so custom objects need no hand-written mapping. You query the replica with plain SQL, and you can send reviewed edits back to Salesforce.
 
-ReplCRM discovers CRM metadata, reconstructs a canonical model, and incrementally replicates records and relationships into an independent replica store.
+> **Status:** early open-source project, version 0.4.0. Salesforce is the only implemented source and PostgreSQL the only production store. Live replication has been exercised against a Salesforce Developer Edition org, not certified on production orgs. See the [changelog](CHANGELOG.md).
 
-> **Status:** first public source release, 2026-11-23. Salesforce is the only implemented source and PostgreSQL the only production store. See the [release notes](docs/open-source-readiness-audit.md#release-decision-2026-11-23) for what was reviewed before publishing.
+## What it does today
+
+- **Replicates Salesforce into PostgreSQL.** Metadata discovery, incremental record sync, relationship repair, recycle-bin deletions and purge reconcile. Each selected object is also published as a readable view such as `replica.opportunity`. See [Live replica](docs/live-replica.md).
+- **Signs in without a Connected App.** OAuth through a Salesforce External Client App with PKCE and no client secret. Password login remains available. See [Salesforce sign-in](#salesforce-sign-in).
+- **Stays current on a schedule.** `npm start -- run` runs inbound sync, metadata refresh and write-back at intervals you set, within a daily Salesforce API budget.
+- **Ships a local console.** A loopback-only web console with guided setup and per-object count reconciliation: the count in your database against the count in Salesforce, shown as `MATCH` or `Off by N`. See [Console](#console).
+
+## Write-back and Change Data Capture
+
+**Write-back.** Salesforce remains the system of record. Edits submitted from the CLI, through SQL (including inserts and updates on the readable views), or by apps and agents through the `submitChange` API are stored as change requests. Each request is checked against the field's create or update permission. An update is sent only if Salesforce still holds the value the editor started from; otherwise it stops as a conflict for an operator to resolve. Write-back is off for every object until you enable it, and deletes are refused. The console manages per-object policy and the change queue. See [Write-back](docs/write-back.md).
+
+**Change Data Capture.** For objects that need updates within seconds, select them under Salesforce Setup → Change Data Capture and opt in with `npm start -- schedule set --events Opportunity`. ReplCRM subscribes through the Salesforce Streaming API and runs a small incremental sync for each burst of changes. Scheduled polling keeps running as the safety net, and a gap in the event stream triggers a catch-up poll. See [Live updates per object](docs/live-replica.md#live-updates-per-object).
 
 ## Why ReplCRM
 
-CRM metadata changes. ReplCRM discovers entities, attributes and relationships rather than requiring a fixed model per customer. Source-specific representations are normalized before entering core, and storage implementations sit behind a ReplCRM-owned semantic contract.
+CRM schemas change. ReplCRM discovers entities, attributes and relationships from metadata rather than requiring a fixed model per customer. New fields arrive as new columns without code changes, and the flat tables update in place, so indexes, grants and views you add survive later syncs. Source-specific representations are normalized before entering core, and storage implementations sit behind a ReplCRM-owned semantic contract.
 
 The goal is an independently usable replica, with qualified record identity, preserved collections and references, opaque source checkpoints and convergent replay.
 
@@ -33,7 +44,7 @@ ReplicaStore
     └── InMemoryReplicaStore → database-free reference/testing
 ```
 
-Core imports no concrete source/store implementation, Prisma or database driver. Source adapters interpret native CRM semantics. Replica stores choose their own drivers, physical schemas, indexes, batching and projection mechanisms while preserving the same logical guarantees. See [architecture principles](docs/oss-architecture-principles.md) and the [ReplicaStore contract](docs/replica-store.md).
+Core imports no concrete source/store implementation, Prisma or database driver. Source adapters interpret native CRM semantics. Replica stores choose their own drivers, physical schemas, indexes, batching and projection mechanisms while preserving the same logical guarantees. See [architecture principles](docs/architecture-principles.md) and the [ReplicaStore contract](docs/replica-store.md).
 
 ## Current capabilities
 
@@ -47,6 +58,10 @@ Core imports no concrete source/store implementation, Prisma or database driver.
 | Metadata discovery, incremental records and relationship repair | Implemented |
 | Opaque checkpoints and ordered at-least-once replay | Implemented; one writer per deployment |
 | Projection readiness and consumer discovery | Implemented |
+| Readable `replica.*` views and in-place projection refresh | Implemented |
+| Write-back of updates and creates to Salesforce | Implemented; off by default per object; deletes refused |
+| Scheduled sync and Change Data Capture | Implemented; CDC is opt-in per object and polling continues |
+| Local console with guided setup | Implemented; loopback only |
 | Snowflake ReplicaStore | Planned, not implemented |
 | SQL Server / Azure SQL ReplicaStore | Planned, not implemented |
 | Oracle ReplicaStore | Planned, not implemented |
@@ -57,9 +72,7 @@ ReplCRM replicates CRM metadata and data, not a complete Salesforce org configur
 
 ## Installation and a first replication
 
-Use Node.js and npm, PostgreSQL, and a Salesforce API-enabled integration account for the current CLI. The code currently targets Node 20+; Node 22+ is recommended for new development. The existing Docker image baseline still needs a supported-runtime review before public image publication. The memory tests require no CRM account or external database.
-
-From a checkout you are authorized to access:
+Use Node.js 22 and npm, PostgreSQL, and a Salesforce API-enabled integration account for the current CLI. Node 22 is the supported baseline in `package.json`, `.nvmrc`, CI and every Dockerfile stage. The Docker image build is not yet verified in CI, and no image has been published. The memory tests require no CRM account or external database.
 
 ```sh
 git clone https://github.com/jej2k5/replcrm.git
@@ -187,14 +200,14 @@ npm test
 
 Running `npx prisma validate` separately requires a syntactically valid disposable `DATABASE_URL`. CI supplies a non-secret placeholder. The offline suite uses fake sources and embedded disposable databases. The same ReplicaStore contract runs against embedded PostgreSQL and memory, including persisted-state reopen and failure-injection cases. An import guard also checks that a fake source can replicate through compiled core and memory without loading database modules.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for DCO sign-off, testing and extension proposals. The [Python prototype](python/README.md) is historical feasibility research, not the runtime or the selected portability strategy.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for DCO sign-off, testing and extension proposals.
 
 ## Project status and community
 
-This is an independently maintained early project. See the [roadmap](ROADMAP.md), [changelog](CHANGELOG.md), [governance](GOVERNANCE.md), [code of conduct](CODE_OF_CONDUCT.md) and [security policy](SECURITY.md). Private reporting contacts and the [public-readiness gate](docs/open-source-readiness-audit.md) must be completed before publication. Do not post vulnerabilities or sensitive logs in public issues.
+This is an independently maintained early project. See the [roadmap](ROADMAP.md), [changelog](CHANGELOG.md), [governance](GOVERNANCE.md), [code of conduct](CODE_OF_CONDUCT.md) and [security policy](SECURITY.md). Report vulnerabilities privately through GitHub's private vulnerability reporting, as described in the security policy. Do not post vulnerabilities or sensitive logs in public issues. The [release readiness record](docs/oss-clean-release-readiness.md) lists what was reviewed before publication.
 
 ## License and names
 
-Licensed under the **Apache License, Version 2.0**. See [LICENSE](LICENSE), [NOTICE](NOTICE) and the [dependency license audit](docs/dependency-license-audit.md). Third-party components retain their own licenses and notices. The [IP/provenance audit](docs/open-source-readiness-audit.md) records permissions still requiring confirmation before public distribution.
+Licensed under the **Apache License, Version 2.0**. See [LICENSE](LICENSE), [NOTICE](NOTICE) and the [dependency license audit](docs/dependency-license-audit.md). Third-party components retain their own licenses and notices. The [publication manifest](docs/oss-publication-manifest.md) records the provenance and licensing decisions for this distribution.
 
 ReplCRM is an independent project, not an Apache Software Foundation project or affiliate. Technology names identify integrations or plans; they do not imply sponsorship or endorsement by their owners. No third-party logo is used in this README.

@@ -4,7 +4,7 @@
 
 ## 1. Problems addressed
 
-The [Snowflake adversarial review](snowflake-replica-store-adversarial-review.md) found that the persistence boundary was structurally correct but under-specified. This change makes durable completion, retry/progress ordering, metadata evolution and projection readiness/discovery explicit and runs one shared suite against both stores. Historical review observations remain in the review; its resolution appendix records the changes.
+An adversarial review for a planned Snowflake store, which is not part of this distribution, found that the persistence boundary was structurally correct but under-specified. This change makes durable completion, retry/progress ordering, metadata evolution and projection readiness/discovery explicit and runs one shared suite against both stores.
 
 ## 2. Final durable-completion definition
 
