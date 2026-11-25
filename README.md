@@ -70,6 +70,19 @@ Core imports no concrete source/store implementation, Prisma or database driver.
 
 ReplCRM replicates CRM metadata and data, not a complete Salesforce org configuration such as Apex, Flow, permission sets or page layouts.
 
+## Try the demo
+
+See the console on a fictional Salesforce org in about 30 seconds. You need Node.js 22 and npm, and nothing else: no Salesforce account, no database and no credentials.
+
+```sh
+git clone https://github.com/jej2k5/replcrm.git
+cd replcrm
+npm ci
+npm run demo
+```
+
+The demo opens [http://127.0.0.1:4790](http://127.0.0.1:4790) (use `npm run demo -- --port 4999` to change it). It replicates about 180 fictional records into an in-memory replica, with one object deliberately out of step so the count check has something to show. **Run records sync** and **Run full sync** work against the fictional org, and the **Changes** page holds write-back requests you can process into applied, conflict and rejected outcomes. Every page is labeled as demo data. The demo ignores `DATABASE_URL`, Salesforce settings and your ReplCRM configuration directory, listens on loopback only, and deletes its temporary files when you press Ctrl+C. Adding a replica and Salesforce sign-in are turned off.
+
 ## Installation and a first replication
 
 Use Node.js 22 and npm, PostgreSQL, and a Salesforce API-enabled integration account for the current CLI. Node 22 is the supported baseline in `package.json`, `.nvmrc`, CI and every Dockerfile stage. The Docker image build is not yet verified in CI, and no image has been published. The memory tests require no CRM account or external database.

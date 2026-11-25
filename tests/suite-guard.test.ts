@@ -40,6 +40,7 @@ const minimums = {
   "replica-views.test.ts": 17,
   "schedule.test.ts": 18,
   "change-events.test.ts": 17,
+  "demo.test.ts": 6,
 };
 
 function parse(name: string, text: string): ts.SourceFile {

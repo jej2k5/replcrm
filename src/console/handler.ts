@@ -35,6 +35,8 @@ export interface ConsoleHandlerDeps {
   interruptedRuns?(deploymentId?: string): Promise<{ entityKey: string | null; startedAt: Date }[]>;
   /** The setup engine; enables the Add replica flow and lets the console start before anything is configured. */
   setup?: SetupService;
+  /** A strip shown on every page, and the explanation shown in place of setup, for consoles serving demo data. */
+  notice?: { banner: string; setupUnavailable: string };
 }
 
 interface ConsoleResponse {
@@ -52,6 +54,24 @@ function setupMessage(error: unknown): string {
   return text.replace(/postgres(?:ql)?:\/\/[^\s"'`]+/gi, "[database]").slice(0, 300) || "Setup step failed";
 }
 const idlePlaceholder = { state: "idle", stage: null, startedAt: null, lines: [] };
+
+function escapeText(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => `&#${character.charCodeAt(0)};`);
+}
+
+function noticeStrip(text: string, nonce: string): string {
+  return `<style nonce="${nonce}">.console-notice{position:sticky;top:0;z-index:50;margin:0;padding:8px 16px;`
+    + `font:600 13px/1.4 var(--sans,system-ui,sans-serif);color:inherit;border-bottom:1px solid var(--warn,#b7791f);`
+    + `background:color-mix(in srgb,var(--warn,#b7791f) 16%,Canvas)}</style>`
+    + `<p class="console-notice" role="status">${escapeText(text)}</p>`;
+}
+
+function unavailablePage(nonce: string, text: string): string {
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">`
+    + `<title>ReplCRM demo</title><style nonce="${nonce}">body{margin:0;font:15px/1.5 system-ui,sans-serif;background:Canvas;color:CanvasText}`
+    + `main{max-width:40rem;padding:32px 16px}a{color:LinkText}</style></head><body>`
+    + `<main><h1>Not available in the demo</h1><p>${escapeText(text)}</p><p><a href="/">Back to the console</a></p></main></body></html>`;
+}
 const deploymentPattern = /^[A-Za-z0-9._-]{1,128}$/;
 
 export function createConsoleHandler(deps: ConsoleHandlerDeps) {
@@ -155,7 +175,7 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
           "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'; font-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'`,
           "X-Frame-Options": "DENY",
         },
-        body: render(nonce),
+        body: deps.notice ? render(nonce).replace(/<body\b[^>]*>/, (tag) => tag + noticeStrip(deps.notice!.banner, nonce)) : render(nonce),
       };
     }
 
@@ -271,6 +291,10 @@ export function createConsoleHandler(deps: ConsoleHandlerDeps) {
     }
     if (path === "/setup") {
       if (method !== "GET") return json(405, { error: "Method not allowed" }, { Allow: "GET" });
+      if (!deps.setup && deps.notice) {
+        const text = deps.notice.setupUnavailable;
+        return html((nonce) => unavailablePage(nonce, text));
+      }
       if (!deps.setup) return json(404, { error: "Setup is unavailable" });
       return setupPage();
     }

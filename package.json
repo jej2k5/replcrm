@@ -22,6 +22,7 @@
     "replicate:reconcile": "tsx src/cli.ts reconcile",
     "auth": "tsx src/cli.ts auth",
     "console": "tsx src/cli.ts console",
+    "demo": "tsx src/demo/index.ts",
     "test": "node scripts/offline-suite.mjs",
     "test:offline": "node scripts/offline-suite.mjs",
     "smoke-test": "tsx scripts/smoke-test.ts"
