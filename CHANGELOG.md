@@ -2,9 +2,20 @@
 
 Changes will be recorded here for future releases. This file does not assert that a tagged or published release exists.
 
-## Next release (unreleased)
+## 0.4.1 (2026-11-25)
+
+### Try it without Salesforce
 
 - `npm run demo` opens the console on a fictional Salesforce org held in memory, with no credentials, database or network access. Syncs and write-back run against the fictional org; setup and sign-in are disabled; every page is labeled as demo data. Calls to the fictional org are paced so a sync's pipeline stages are visible.
+- The README opens with a recording of the demo console (`docs/assets/console-demo.gif`).
+
+### Container image
+
+- The runtime image no longer ships build-only packages (TypeScript, tsx, esbuild, PGlite). The Prisma CLI used by console setup is kept. Size on linux/arm64 dropped from 377 MB to 317 MB.
+
+### Documentation
+
+- The README leads with what ReplCRM does today and gives write-back and Change Data Capture their own section. Links to files outside this distribution were fixed or removed, Node 22 is stated consistently, and wording left over from before publication was removed.
 
 ## 0.4.0 (2026-11-25)
 
