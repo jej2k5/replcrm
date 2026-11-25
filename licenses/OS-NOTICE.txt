@@ -1,8 +1,8 @@
 ReplCRM container image: operating system and runtime notices
 
-The ReplCRM container image (ghcr.io/jej2k5/replcrm) is built on the
-official Node.js image node:22.23.5-alpine3.24, pinned by digest in the
-Dockerfile. Besides ReplCRM and its npm dependencies (see
+An image built from ReplCRM's Dockerfile is based on the official
+Node.js image node:22.23.5-alpine3.24, pinned by digest in the
+Dockerfile. ReplCRM does not publish a prebuilt image. Besides ReplCRM and its npm dependencies (see
 THIRD_PARTY_NOTICES.md and the other files in this directory), the image
 contains the Node.js runtime and Alpine Linux 3.24 packages. They are
 distributed unmodified, each under its own license. ReplCRM does not
