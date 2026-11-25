@@ -43,8 +43,13 @@ COPY licenses ./licenses
 # Prisma client (generated artifacts) lives under node_modules/.prisma —
 # already copied via node_modules above. Sanity check, including the CLI setup uses.
 RUN node -e "require.resolve('@prisma/client'); require.resolve('./node_modules/prisma/build/index.js')"
-# The shipped Node license must match the runtime.
-RUN test "$(node --version)" = "v22.23.5" && test -s licenses/NODEJS-22.23.5-LICENSE.txt
+# The shipped Node and OS license files must match the runtime and packages.
+RUN test "$(node --version)" = "v22.23.5" && test -s licenses/NODEJS-22.23.5-LICENSE.txt \
+ && apk info -e musl=1.2.6-r3 tini=0.19.0-r3 zlib=1.3.2-r1 >/dev/null
+# List every installed Alpine package with its version, license and source package (see licenses/OS-NOTICE.txt).
+RUN { printf 'package\tversion\tlicense\torigin\n'; \
+      awk '/^P:/{p=substr($0,3)} /^V:/{v=substr($0,3)} /^L:/{l=substr($0,3)} /^o:/{o=substr($0,3)} /^$/{if (p) print p"\t"v"\t"l"\t"o; p=""}' /lib/apk/db/installed | sort; \
+    } > licenses/OS-PACKAGES.txt
 
 USER replcrm
 
