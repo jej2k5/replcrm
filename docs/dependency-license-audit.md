@@ -51,4 +51,4 @@ Python research is excluded entirely, including psycopg and its binary/LGPL and 
 
 ## Remaining artifact/publication actions
 
-Verify final private reporting contacts and public repository metadata before publication. If distributing a Docker image or installed dependency tree later, inventory that exact artifact's bundled engine/OS/runtime notices and preserve the supplied legal files. This candidate does not claim Docker image publication/compliance verification. Root NOTICE records `Copyright 2026 HONA LLC` following explicit project-owner confirmation. This attribution covers ReplCRM-owned source and does not assert ownership of dependencies or other third-party material.
+If distributing a Docker image or installed dependency tree later, inventory that exact artifact's bundled engine/OS/runtime notices and preserve the supplied legal files. This candidate does not claim Docker image publication/compliance verification. Root NOTICE records `Copyright 2026 HONA LLC` following explicit project-owner confirmation. This attribution covers ReplCRM-owned source and does not assert ownership of dependencies or other third-party material.

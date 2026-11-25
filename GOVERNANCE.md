@@ -22,4 +22,4 @@ Add maintainers deliberately based on sustained review, reliability, architectur
 
 ## Conflicts and conduct
 
-Discuss technical disagreements with reproducible evidence and document the decision. Ask for reconsideration through an issue/PR when new evidence exists. Conduct concerns follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) and its private enforcement channel, which must be completed before publication. While the project has one maintainer, there is no independent appeals body; do not imply otherwise. A future expansion should establish an appropriate conflict-of-interest/appeal route.
+Discuss technical disagreements with reproducible evidence and document the decision. Ask for reconsideration through an issue/PR when new evidence exists. Conduct concerns follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) and its private reporting channel. While the project has one maintainer, there is no independent appeals body; do not imply otherwise. A future expansion should establish an appropriate conflict-of-interest/appeal route.
