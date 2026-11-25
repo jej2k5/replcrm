@@ -21,7 +21,7 @@ async function freePort(): Promise<number> {
 }
 
 async function withDemo(run: (demo: Demo, call: (path: string, init?: RequestInit) => Promise<Response>) => Promise<void>): Promise<void> {
-  const demo = await startDemo({ port: await freePort() });
+  const demo = await startDemo({ port: await freePort(), latencyMs: 0 });
   try {
     await run(demo, (path, init) => fetch(demo.url + path, init));
   } finally {
