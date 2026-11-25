@@ -1,5 +1,5 @@
 {
-  "sourceCommit": "11d7867d08c04da9f47fdd53434b232f930c8581",
+  "sourceCommit": "c36c3726e6c55a89ab9d133cf687db3239b205e9",
   "authorization": "Rights holder authorized Apache-2.0 distribution of ReplCRM-owned implementation; third-party terms remain independent.",
   "selectedInputs": [
     {
@@ -75,7 +75,7 @@
     {
       "path": "CHANGELOG.md",
       "origin": "public-adapted",
-      "sha256": "d283af8a4b41116d0014b8510e032ab7b3f737c214b8fff751d04c648413e1c3"
+      "sha256": "ed7089f7b8e728d6c6e85a780d16328738c138d8d163e598b1045dac6c60c632"
     },
     {
       "path": "CODE_OF_CONDUCT.md",
@@ -85,7 +85,7 @@
     {
       "path": "CONTRIBUTING.md",
       "origin": "public-adapted",
-      "sha256": "b6b7a4dabcb9789068c980b62ff3bc41f6a7f0268060475bc3075e329ccaba77"
+      "sha256": "e8cf8cb6df04599a36ca535d9911c89e592eeb9b19d66ae6f510f7c6a907f359"
     },
     {
       "path": "DESIGN.md",
@@ -95,12 +95,12 @@
     {
       "path": "Dockerfile",
       "origin": "public-adapted",
-      "sha256": "82137938295cda042bb9f7276070eb49caf86cbc197bec5c5070ec098fe52ac8"
+      "sha256": "ce66a66c604d5cd5b748f45ad10f49b2ceb19715f5c115b4f459cf9cd52ca4a1"
     },
     {
       "path": "GOVERNANCE.md",
       "origin": "public-adapted",
-      "sha256": "f2b73b0551caffc3c813774d8ddf3bb70b8796965f539143cdd88a305508608b"
+      "sha256": "bb263f3ee3ce30c613d47868d4cf533d00a8b6012b751b80d7228ed0acc96c54"
     },
     {
       "path": "LICENSE",
@@ -120,7 +120,7 @@
     {
       "path": "README.md",
       "origin": "public-adapted",
-      "sha256": "4f5ce60ac55a1979f5871d632cdbe860cb60a580f64a39373245ce5a06c56a27"
+      "sha256": "b20aba466e76f3c150c49ece1c0f7821fabd7cccc707a4ba79001a1b36285289"
     },
     {
       "path": "ROADMAP.md",
@@ -143,6 +143,16 @@
       "sha256": "57b9b0f8e666ea5a1e429cfca665c38a8bd01059decd87de56acf73038c320bb"
     },
     {
+      "path": "docs/assets/console-demo.gif",
+      "origin": "private-checkpoint",
+      "sha256": "d3004a9fc0b278a9ecc4c066df67c4afd3119af5be585164cb4a7451fa92a66a"
+    },
+    {
+      "path": "docs/assets/console-replica.png",
+      "origin": "private-checkpoint",
+      "sha256": "6e57a3fa0edb280b8fc919128a37fba54a00801652621b20d86bd60beb010d30"
+    },
+    {
       "path": "docs/assets/replcrm-banner.png",
       "origin": "public-only",
       "sha256": "1ce8070309086f04264342bbea5474de972fcb677839c07fe513783ba7fcaddd"
@@ -160,7 +170,7 @@
     {
       "path": "docs/dependency-license-audit.md",
       "origin": "public-adapted",
-      "sha256": "65057099959a913bf094c691a731920053d1cc0ddd4683da0e128c21cb01de1b"
+      "sha256": "fe45271a4a2f1c80297d7dc9d9aa4820d712b8dbe18bdfaf2f50ed077ea4a80f"
     },
     {
       "path": "docs/dependency-license-inventory.json",
@@ -175,7 +185,7 @@
     {
       "path": "docs/migration-runbook.md",
       "origin": "private-checkpoint",
-      "sha256": "291aa9ca28941de2c82eafb005da5bf7d18632aae6ac162cdf0d28fda98dc53e"
+      "sha256": "211d069be46b1aff2e28a35f92808c9077e57a726617e043f4eee223fa930aa7"
     },
     {
       "path": "docs/oss-clean-release-readiness.md",
@@ -190,7 +200,7 @@
     {
       "path": "docs/replica-store-semantic-hardening.md",
       "origin": "private-checkpoint",
-      "sha256": "8c14c5a3410665a4f05aafbc5261d77ed7d1ea3f23661adb6dcda3407ceda711"
+      "sha256": "042c3ed4a52e8761db70dd477bb39a9bc2b1c40ebfcae13c58a3dc0e2501f241"
     },
     {
       "path": "docs/replica-store.md",
@@ -200,7 +210,7 @@
     {
       "path": "docs/verification-evidence.json",
       "origin": "public-only",
-      "sha256": "d60546dcd65561be67a5eb3433546c4cc2bb12548fe63228da692bd2f2f2145d"
+      "sha256": "120dfb66c6f4d60c91ba41723266b1770bdcc30e816a4eb90d759e0613d763c2"
     },
     {
       "path": "docs/write-back.md",
@@ -210,12 +220,12 @@
     {
       "path": "package-lock.json",
       "origin": "public-adapted",
-      "sha256": "38d0cbb60fc595bb7f69bb2d609db8fc0f6ca481a9993f81ba6a1a01c28187f8"
+      "sha256": "9876caa6f2d1b835bd958e648b9a85852f34bbc3dd0cf55c0a255bfa2a98c5c7"
     },
     {
       "path": "package.json",
       "origin": "public-adapted",
-      "sha256": "f3e324044e60f25c4d5afedba6b0d849ebd49b26b06dce94d853baeb6ae77dc3"
+      "sha256": "dd7c251bf89e342a3e6222dc3f88f4b5702647329eec5ab8afbae0bfdea49a9a"
     },
     {
       "path": "prisma/migrations/20260428_init/migration.sql",
@@ -365,7 +375,7 @@
     {
       "path": "src/console/handler.ts",
       "origin": "private-checkpoint",
-      "sha256": "ec3c23f8ae4e16e6f984a9238cc54441a30fafe7b7051847e49e9f124e62f6ad"
+      "sha256": "486adafe3057c4014cab454312419266bd24128d6a2e038a89a212e2b75ceb43"
     },
     {
       "path": "src/console/listener.ts",
@@ -436,6 +446,21 @@
       "path": "src/core/type-mapper.ts",
       "origin": "private-checkpoint",
       "sha256": "8ae0a883ef76eec00e78c60207287ff985a2cd61c90a2b66abebae3c592f2bc8"
+    },
+    {
+      "path": "src/demo/console.ts",
+      "origin": "private-checkpoint",
+      "sha256": "5d86e82ba7fe3300ea0d86627fb47a62b588d9311d350938c509af8eb0303454"
+    },
+    {
+      "path": "src/demo/fake-org.ts",
+      "origin": "private-checkpoint",
+      "sha256": "6bf922da7bef82512afa8d9263b0573c0c491cdc49753e84ac24428ed56aaf52"
+    },
+    {
+      "path": "src/demo/index.ts",
+      "origin": "private-checkpoint",
+      "sha256": "5895a71ea892e6ee5e11c5ad8bede94057fc29aae89337c1f23036325d699be5"
     },
     {
       "path": "src/locks/file-lock.ts",
@@ -683,6 +708,11 @@
       "sha256": "4edd5d9e096c97538fc74a3b3261d7ecdae51c88782c1252854837e880da09d4"
     },
     {
+      "path": "tests/demo.test.ts",
+      "origin": "private-checkpoint",
+      "sha256": "957dcef716a6752f94e2172b8224fe9c44d0ec4d8fb37911cd99bf5a10d4bfb0"
+    },
+    {
       "path": "tests/deployment-init.test.ts",
       "origin": "private-checkpoint",
       "sha256": "313e194ec24fd6baec3e2084a1202adee19ee3431e7731386f7f7efa4330f593"
@@ -711,6 +741,11 @@
       "path": "tests/helpers/database.ts",
       "origin": "private-checkpoint",
       "sha256": "fb773e387b9e5e18111d05d8cc4ca0f52115da8974a93dde7d1f7b5b782b9a53"
+    },
+    {
+      "path": "tests/helpers/demo-loader.mjs",
+      "origin": "private-checkpoint",
+      "sha256": "8ebb69fbd3cf2f388e7299dde17f0abba9ec845761afa69e1c58a28dea4bfc46"
     },
     {
       "path": "tests/helpers/no-db-loader.mjs",
@@ -825,7 +860,7 @@
     {
       "path": "tests/suite-guard.test.ts",
       "origin": "public-adapted",
-      "sha256": "033bdb81423fb3e1d605fab481549cdfee1d4772fbbc1cff8f66654456112221"
+      "sha256": "bcfd6a61e9a7563e6cc8287e4719a8eb95dd4e49cbf19802dd7de9ef006faa14"
     },
     {
       "path": "tests/writeback-policy.test.ts",
@@ -869,6 +904,6 @@
     "docs/open-source-readiness-audit.md (private audit; oss-clean-release-readiness.md is the public record)",
     "private history, local configuration, credentials, node_modules, dist, caches, design sketches and captures"
   ],
-  "release": "0.4.0",
+  "release": "0.4.1",
   "previousSourceCommit": "67be373d5afb16091f617898ee466acdf1dd3d78"
 }

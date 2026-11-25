@@ -1,6 +1,6 @@
 {
   "name": "replcrm",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "description": "Metadata-driven CRM replication engine with source-neutral adapters and pluggable replica stores.",
   "type": "module",
