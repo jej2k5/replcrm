@@ -4,7 +4,7 @@
 
 **Dependency license compatibility: PASS** for the selected Node dependency closure. **Source-distribution attribution completeness: PASS** for the proposed root commit. No independently sourced proprietary implementation, unknown Node license declaration or known incompatible dependency is included.
 
-These conclusions apply to this source candidate and retained notices, not to an unbuilt binary image or an arbitrary copy of node_modules. Base-image/system-package and platform-specific binary distributions need their own inventory before publication. Nothing is relicensed merely because the project license is Apache-2.0.
+These conclusions apply to the source distribution and retained notices, not to an arbitrary copy of node_modules. The published container image has its own inventory and findings in [Container image (0.4.1)](#container-image-041). Nothing is relicensed merely because the project license is Apache-2.0.
 
 ## Selection and evidence
 
@@ -49,6 +49,40 @@ Project-owned source, tests, schema and documentation have explicit rights-holde
 
 Python research is excluded entirely, including psycopg and its binary/LGPL and research-build dependency surface. No Python dependency review remains necessary for this initial distribution because no Python implementation, manifest, wheel or research documentation is included.
 
+## Container image (0.4.1)
+
+`ghcr.io/jej2k5/replcrm:0.4.1` (also tagged `0.4` and `latest`) was published by `release.yml` from tag `v0.4.1` on 2026-11-25 for linux/amd64 and linux/arm64. The inventory below was taken from the published image (arm64 index digest `sha256:3343a04e905473e88b337497d4529e99d58831f84c62bc0642be9ced40f96c8b`); the amd64 image reports the same Alpine release (3.24.4) and the same OS package count (21). The base image is the official `node:22-alpine` tag, which is not pinned by digest, so a later rebuild can pick up newer Alpine and Node patch releases.
+
+**Application packages: COVERED.** The image's `/app/node_modules` holds 115 packages after `npm prune --omit=dev`; every one is in the [dependency inventory](dependency-license-inventory.json), and their legal texts ship in the image under `licenses/` with `THIRD_PARTY_NOTICES.md`, `LICENSE` and `NOTICE`. Declared licenses: MIT 91, Apache-2.0 13, ISC 6, BSD-3-Clause 2, BlueOak-1.0.0 1, 0BSD 1, (MIT OR CC0-1.0) 1.
+
+**Runtime from the base image.** Node.js 22.23.5 (MIT, with bundled V8 12.4, ICU 78.3, libuv and other components under their own permissive terms; it links Alpine's OpenSSL 3.5.9). The base image also carries npm 10.9.9 (Artistic-2.0, 197 bundled packages under permissive or CC terms, with their own license files), corepack 0.36.0 (MIT) and yarn 1.22.22 (BSD-2-Clause); ReplCRM does not use them at runtime.
+
+**OS packages (Alpine 3.24.4).** License expressions are Alpine's package metadata.
+
+| Package | Version | License | Origin |
+| --- | --- | --- | --- |
+| alpine-baselayout, alpine-baselayout-data | 3.7.2-r1 | GPL-2.0-only | alpine-baselayout |
+| alpine-keys | 2.6-r0 | MIT | alpine-keys |
+| alpine-release | 3.24.4-r0 | MIT | alpine-base |
+| apk-tools, libapk | 3.0.9-r0 | GPL-2.0-only | apk-tools |
+| busybox, busybox-binsh, ssl_client | 1.37.0-r31 | GPL-2.0-only | busybox |
+| ca-certificates-bundle | 20261020-r0 | MPL-2.0 AND MIT | ca-certificates |
+| libatomic, libgcc, libstdc++ | 15.2.0-r5 | GPL-2.0-or-later AND LGPL-2.1-or-later (GCC runtime library exception) | gcc |
+| libcrypto3, libssl3, openssl | 3.5.9-r1 | Apache-2.0 | openssl |
+| musl | 1.2.6-r3 | MIT | musl |
+| musl-utils | 1.2.6-r3 | MIT AND BSD-2-Clause AND GPL-2.0-or-later | musl |
+| scanelf | 1.3.9-r1 | GPL-2.0-only | pax-utils |
+| tini | 0.19.0-r3 | MIT | tini |
+| zlib | 1.3.2-r1 | Zlib | zlib |
+
+`tini` and `openssl` are added by the Dockerfile; the rest come from the base image.
+
+### Findings
+
+- **Copyleft OS components.** busybox, apk-tools, alpine-baselayout, scanelf and parts of musl-utils are GPL-2.0 binaries distributed unmodified inside the image. ReplCRM code does not link them; the GCC runtime libraries carry the runtime library exception. Distributing the image still carries the GPL's source-availability terms for those binaries. Corresponding source for each listed version is published by Alpine in the `aports` repository (branch `3.24-stable`) and its source mirrors. Whether a pointer to that source is sufficient, or a copy or written offer is needed, is a decision for the copyright holder, not something this audit concludes.
+- **Notice texts not in the image.** Alpine does not install license texts with its packages, and the official Node image does not include Node's `LICENSE` file (which reproduces the notices of V8, ICU, libuv and Node's other bundled components). npm and yarn ship their own `LICENSE` files. The image's `licenses/` bundle covers the application packages only.
+- **Recommended before the next image release:** add Node's `LICENSE` for the exact Node version and an OS package notice (this table plus the Alpine source location) to the image, and decide the GPL source approach above. Pinning `node:22-alpine` by digest would make this inventory exact for future builds.
+
 ## Remaining artifact/publication actions
 
-If distributing a Docker image or installed dependency tree later, inventory that exact artifact's bundled engine/OS/runtime notices and preserve the supplied legal files. This candidate does not claim Docker image publication/compliance verification. Root NOTICE records `Copyright 2026 HONA LLC` following explicit project-owner confirmation. This attribution covers ReplCRM-owned source and does not assert ownership of dependencies or other third-party material.
+The container image is published (see above) with the findings listed there still open. Root NOTICE records `Copyright 2026 HONA LLC` following explicit project-owner confirmation. This attribution covers ReplCRM-owned source and does not assert ownership of dependencies or other third-party material.
