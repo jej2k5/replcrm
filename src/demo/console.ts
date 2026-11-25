@@ -6,7 +6,7 @@ import { buildStatus } from "../console/status.js";
 import { createConsoleWriteback } from "../console/writeback.js";
 import type { ScheduleService } from "../cli-schedule.js";
 import type { ReplicationConfig } from "../core/config.js";
-import { describeEntities, runRecordsStage, runReplication, runWithSource, type OrchestratorDeps } from "../core/orchestrator.js";
+import { describeEntities, runMetadataStage, runRecordsStage, runReplication, runUsersStage, runWithSource, type OrchestratorDeps } from "../core/orchestrator.js";
 import type { FileLock } from "../locks/file-lock.js";
 import { editedSettings, defaults, projectedCalls, scheduleUnits, type Settings } from "../scheduler/schedule.js";
 import type { ScheduleStatus } from "../stores/postgres/schedule.js";
@@ -92,7 +92,8 @@ function scheduleService(org: FakeOrg): ScheduleService {
   };
 }
 
-export async function startDemo({ port, now = () => new Date() }: { port: number; now?: () => Date }): Promise<Demo> {
+/** `latencyMs` paces calls to the fictional org so the console's stage animation is visible during a sync. */
+export async function startDemo({ port, now = () => new Date(), latencyMs = 350 }: { port: number; now?: () => Date; latencyMs?: number }): Promise<Demo> {
   const org = new FakeOrg(now().getTime());
   const store = new InMemoryReplicaStore();
   store.ensureDeployment(demoDeployment, "Demo org (fictional data)");
@@ -106,6 +107,7 @@ export async function startDemo({ port, now = () => new Date() }: { port: number
   }
   release();
   await seedChanges(store, org);
+  org.latencyMs = latencyMs;
 
   const processor = async () => new ChangeRequestProcessor(store, org);
   const runs = createConsoleRuns({
@@ -119,8 +121,18 @@ export async function startDemo({ port, now = () => new Date() }: { port: number
       console.log(`[replication] Starting ${stage} (demo org)`);
       org.simulateActivity();
       const replication: OrchestratorDeps = { store, config, sourceClient: org };
-      if (stage === "full") await runReplication(replication);
-      else await runWithSource(replication, async () => runRecordsStage(replication, await describeEntities(org, keys)));
+      await runWithSource(replication, async () => {
+        if (stage === "full") {
+          const definitions = await runMetadataStage(replication);
+          await runUsersStage(replication);
+          console.log("[replication] records");
+          await runRecordsStage(replication, definitions);
+        } else {
+          const definitions = await describeEntities(org, keys);
+          console.log("[replication] records");
+          await runRecordsStage(replication, definitions);
+        }
+      });
       console.log(`Replication complete for deployment ${demoDeployment}.`);
     },
   });

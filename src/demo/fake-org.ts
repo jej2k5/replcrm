@@ -1,4 +1,5 @@
 // A fictional Salesforce org held in memory for `npm run demo`. It never opens a network connection.
+import { setTimeout as sleep } from "node:timers/promises";
 import type {
   CanonicalAttribute, CanonicalEntity, CanonicalValue, ChangeBatch, CrmSource, JsonValue,
   SourceChangeResult, SourceRecord, SourceUser, ValidatedChange,
@@ -78,6 +79,8 @@ export class FakeOrg implements CrmSource {
   private readonly counters = new Map<string, number>();
   private clock: number;
   apiCalls = 0;
+  /** Simulated API latency per call, so a sync takes long enough to watch. */
+  latencyMs = 0;
 
   constructor(now = Date.now()) {
     this.clock = now - 30 * 86_400_000;
@@ -192,6 +195,7 @@ export class FakeOrg implements CrmSource {
 
   async describeEntity(entityKey: string): Promise<CanonicalEntity> {
     this.apiCalls++;
+    await sleep(this.latencyMs);
     const entity = demoEntities.find(({ key }) => key === entityKey);
     if (!entity) throw new Error(`Unknown demo object ${entityKey}`);
     return structuredClone(entity);
@@ -210,6 +214,7 @@ export class FakeOrg implements CrmSource {
     const latest = changed.at(-1)?.modifiedAt.toISOString() ?? checkpoint;
     for (let start = 0; start < changed.length || start === 0; start += batchSize) {
       this.apiCalls++;
+      await sleep(this.latencyMs);
       const page = changed.slice(start, start + batchSize);
       yield { records: page.map((record) => this.toSource(entity, record)), nextCheckpoint: start + batchSize >= changed.length ? latest : checkpoint };
       if (!changed.length) break;
@@ -217,6 +222,7 @@ export class FakeOrg implements CrmSource {
   }
 
   async *streamUsers(): AsyncGenerator<SourceUser[]> {
+    await sleep(this.latencyMs);
     yield [{ sourceId: "005DEMO00000001", username: "demo.admin@example.com", email: "demo.admin@example.com",
       firstName: "Demo", lastName: "Admin", role: "System Administrator", isActive: true }];
   }

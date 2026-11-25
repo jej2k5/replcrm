@@ -4,6 +4,8 @@
 
 **Discover. Reconstruct. Replicate.**
 
+![The ReplCRM console in demo mode: the replica pipeline from Salesforce to Postgres, a per-object table where Case is off by 3, a full sync lighting up the Discover and Reconstruct stages, and every object matching afterwards](docs/assets/console-demo.gif)
+
 ReplCRM copies a Salesforce org into PostgreSQL and keeps the copy current. It reads objects, fields and relationships from Salesforce metadata, so custom objects need no hand-written mapping. You query the replica with plain SQL, and you can send reviewed edits back to Salesforce.
 
 > **Status:** early open-source project, version 0.4.0. Salesforce is the only implemented source and PostgreSQL the only production store. Live replication has been exercised against a Salesforce Developer Edition org, not certified on production orgs. See the [changelog](CHANGELOG.md).
