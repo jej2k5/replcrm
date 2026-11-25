@@ -87,7 +87,7 @@ The demo opens [http://127.0.0.1:4790](http://127.0.0.1:4790) (use `npm run demo
 
 ## Installation and a first replication
 
-Use Node.js 22 and npm, PostgreSQL, and a Salesforce API-enabled integration account for the current CLI. Node 22 is the supported baseline in `package.json`, `.nvmrc`, CI and every Dockerfile stage. The Docker image build is not yet verified in CI, and no image has been published. The memory tests require no CRM account or external database.
+Use Node.js 22 and npm, PostgreSQL, and a Salesforce API-enabled integration account for the current CLI. Node 22 is the supported baseline in `package.json`, `.nvmrc`, CI and every Dockerfile stage. No container image is published; build one from the Dockerfile with `docker build -t replcrm .`. CI does not run the image build. The memory tests require no CRM account or external database.
 
 ```sh
 git clone https://github.com/jej2k5/replcrm.git

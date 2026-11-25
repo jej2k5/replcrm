@@ -8,9 +8,9 @@ The [dependency inventory](docs/dependency-license-inventory.json) maps each ins
 
 MIT permission/copyright sections embedded in the csprng and sequin README files are retained. The esbuild root MIT text also covers the platform packages' matching upstream copyright/version.
 
-The container image's Node.js runtime is covered by [Node's own license](licenses/NODEJS-22.23.5-LICENSE.txt) for the pinned version, which includes the notices of its bundled components (V8, ICU, libuv and others).
+An image built from the Dockerfile contains the Node.js runtime, covered by [Node's own license](licenses/NODEJS-22.23.5-LICENSE.txt) for the pinned version, which includes the notices of its bundled components (V8, ICU, libuv and others).
 
-The image's Alpine Linux packages are described in [`licenses/OS-NOTICE.txt`](licenses/OS-NOTICE.txt), with their license texts and source locations; the image also carries a build-time list of the exact installed packages (`licenses/OS-PACKAGES.txt`).
+Its Alpine Linux packages are described in [`licenses/OS-NOTICE.txt`](licenses/OS-NOTICE.txt), with their license texts and source locations; such an image also carries a build-time list of the exact installed packages (`licenses/OS-PACKAGES.txt`).
 
 [PostgreSQL/PGlite upstream attribution](licenses/PGLITE-POSTGRES-LICENSE.txt) is retained in addition to PGlite's packaged Apache license. Installed/generated dependency notices remain intact; generated clients and native binaries are not committed as project source.
 
@@ -24,7 +24,7 @@ CODE_OF_CONDUCT is Contributor Covenant 2.1 with the reporting channel customize
 
 ## Distribution scope
 
-The clean root commit is a source distribution: no node_modules, dist, native dependency binary, Docker/OS layer, private integration or Python research is vendored. npm installs separately licensed packages according to the lockfile. Retain their legal files if redistributing an installed tree. The Dockerfile copies this notice and the license bundle into the image. The published image (`ghcr.io/jej2k5/replcrm`, from 0.4.1) also contains the Node.js runtime and Alpine Linux packages from the official `node:22-alpine` base image, including GPL-2.0 components such as busybox and apk-tools, under their own terms. Their inventory, source location and open notice items are in the [license audit](docs/dependency-license-audit.md#container-image-041).
+The clean root commit is a source distribution: no node_modules, dist, native dependency binary, Docker/OS layer, private integration or Python research is vendored. npm installs separately licensed packages according to the lockfile. Retain their legal files if redistributing an installed tree. No container image is distributed. The 0.4.1 image published to `ghcr.io/jej2k5/replcrm` was withdrawn the day it was released. The Dockerfile copies this notice and the license bundle into any image built from it; such an image also contains the Node.js runtime and Alpine Linux packages from the official Node.js base image, including GPL-2.0 components such as busybox and apk-tools, under their own terms. Their inventory and source locations are in the [license audit](docs/dependency-license-audit.md#container-image-041).
 
 Root NOTICE remains a minimal project notice; it is not an automatic list of dependencies. See the [license audit](docs/dependency-license-audit.md) for compatibility and attribution conclusions.
 

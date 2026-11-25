@@ -2,6 +2,11 @@
 
 Changes will be recorded here for future releases. This file does not assert that a tagged or published release exists.
 
+## Next release (unreleased)
+
+- The container image is no longer published. The 0.4.1 image (`ghcr.io/jej2k5/replcrm`) was withdrawn the day it was released, and the tag-triggered release workflow was removed. Build an image locally with `docker build -t replcrm .`.
+- The Dockerfile pins its Node.js base image by digest, and images built from it carry Node.js and Alpine license notices under `licenses/`.
+
 ## 0.4.1 (2026-11-25)
 
 ### Try it without Salesforce

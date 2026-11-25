@@ -1,13 +1,13 @@
 # Clean release readiness
 
-**Status: RELEASED, 0.4.1 (2026-11-25).** Current public release, with its container image published to GitHub Container Registry. Releases are snapshots of the private checkpoint without private history, assembled by the release script and merged through a reviewed pull request. ReplicaStore v1 names the persistence contract only; this is not a ReplCRM v1 release.
+**Status: RELEASED, 0.4.1 (2026-11-25).** Current public release, distributed as source. Its container image was published to GitHub Container Registry and withdrawn the same day. Releases are snapshots of the private checkpoint without private history, assembled by the release script and merged through a reviewed pull request. ReplicaStore v1 names the persistence contract only; this is not a ReplCRM v1 release.
 
 ## 0.3.0 to 0.4.1 summary
 
 - **0.3.0 (2026-11-24):** write-back to Salesforce. Release PR #4; verified locally with npm ci, typecheck, build, 347 tests, 5 smoke checks and a secret scan. tsx moved to 4.23.15, resolving the low esbuild dev-server advisory.
 - **0.4.0 (2026-11-25):** live replica (in-place projection refresh, readable views), scheduled sync and Change Data Capture. Release PR #5; 413 tests, 5 smoke checks, secret scan.
 - **0.4.1 (2026-11-25):** `npm run demo`, the README recording, launch documentation fixes and a runtime image without build-only packages. Release PR #11; 419 tests, 5 smoke checks, secret scan. Tag `v0.4.1` triggered `release.yml`, which published `ghcr.io/jej2k5/replcrm` as `0.4.1`, `0.4` and `latest` for linux/amd64 and linux/arm64.
-- **Container image:** pulls anonymously, runs as the non-root `replcrm` user and ships the project's legal bundle. Its OS and runtime inventory and open notice items are in the [license audit](dependency-license-audit.md#container-image-041).
+- **Container image: withdrawn.** The published image ran as the non-root `replcrm` user and shipped the project's legal bundle, but it also distributed GPL-2.0 Alpine binaries without a settled source approach, so it was withdrawn the same day and `release.yml` was removed. The Dockerfile remains for local builds. Inventory and findings are in the [license audit](dependency-license-audit.md#container-image-041).
 - **GitHub:** private vulnerability reporting enabled (rechecked 2026-11-25); `main` requires one approving review and the credential-free CI check, and force-pushes are blocked.
 - **Scope:** unchanged. The optional application destination and Python research remain excluded.
 - **Not certified:** live replication has been exercised against a Salesforce Developer Edition org only.
