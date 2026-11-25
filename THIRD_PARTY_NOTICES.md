@@ -20,7 +20,7 @@ CODE_OF_CONDUCT is Contributor Covenant 2.1 with the reporting channel customize
 
 ## Distribution scope
 
-The clean root commit is a source distribution: no node_modules, dist, native dependency binary, Docker/OS layer, private integration or Python research is vendored. npm installs separately licensed packages according to the lockfile. Retain their legal files if redistributing an installed tree. The Dockerfile copies this notice and the license bundle, but a binary image must additionally preserve base-image/system notices and undergo platform/security inventory review before publication. No binary image is shipped by this candidate.
+The clean root commit is a source distribution: no node_modules, dist, native dependency binary, Docker/OS layer, private integration or Python research is vendored. npm installs separately licensed packages according to the lockfile. Retain their legal files if redistributing an installed tree. The Dockerfile copies this notice and the license bundle into the image. The published image (`ghcr.io/jej2k5/replcrm`, from 0.4.1) also contains the Node.js runtime and Alpine Linux packages from the official `node:22-alpine` base image, including GPL-2.0 components such as busybox and apk-tools, under their own terms. Their inventory, source location and open notice items are in the [license audit](docs/dependency-license-audit.md#container-image-041).
 
 Root NOTICE remains a minimal project notice; it is not an automatic list of dependencies. See the [license audit](docs/dependency-license-audit.md) for compatibility and attribution conclusions.
 
