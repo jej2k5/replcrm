@@ -1,3 +1,5 @@
+import { renderSchedule, scheduleScript } from "./schedule.js";
+import type { ScheduleStatus } from "../stores/postgres/schedule.js";
 import { changeStatuses, type ConsoleWriteback } from "./writeback.js";
 import { processToken } from "./runs.js";
 import type { ConsoleStatus } from "./status.js";
@@ -165,6 +167,13 @@ const styles = `
 
   /* Pipelines: one per replica, drawn like the banner. */
   .pipes { display: grid; border: 1px solid var(--s700); border-radius: 4px; background: var(--s950); }
+  .schedule-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 12px; margin-bottom: 12px; }
+  .schedule-fields label { display: grid; gap: 4px; min-width: 0; }
+  .schedule-fields input { width: 100%; box-sizing: border-box; }
+  .schedule-table { overflow-x: auto; }
+  .schedule-table small { display: block; font-weight: normal; }
+  #schedule-objects [data-interval] { width: 7ch; }
+  #schedule-budget meter { width: 8rem; vertical-align: middle; accent-color: currentColor; }
   .pipe { display: grid; grid-template-columns: minmax(180px, 1fr) 5fr; gap: 18px; align-items: center; padding: 14px 16px; color: inherit; text-decoration: none; border-bottom: 1px solid var(--s700); position: relative; }
   .pipe:last-child { border-bottom: 0; }
   .pipe:hover { background: var(--s900); }
@@ -705,7 +714,7 @@ const actionsScript = (token: string) => `
   setInterval(pollRun, 2000);
 `;
 
-export function renderConsolePage(status: ConsoleStatus & { writeback?: WritebackCounts }, nonce: string, token?: string, running = false): string {
+export function renderConsolePage(status: ConsoleStatus & { writeback?: WritebackCounts; schedule?: ScheduleStatus }, nonce: string, token?: string, running = false, scheduleToken = token): string {
   let store = 0;
   let matches = 0;
   let last: Date | null = null;
@@ -798,6 +807,7 @@ ${sidebar("replicas", status.writeback && status.deploymentId, status.writeback?
     </div>
   </section>
 
+  ${status.schedule && scheduleToken ? renderSchedule(status.schedule, escapeHtml, Date.parse(status.generatedAt)) : ""}
   <section class="problems" id="problems" aria-labelledby="errors-title">
     <div class="detail-head"><h2 id="errors-title">Problems</h2></div>
     <ul class="attention" id="attention" aria-label="Replicas that need you"></ul>
@@ -806,7 +816,7 @@ ${sidebar("replicas", status.writeback && status.deploymentId, status.writeback?
   </section>
 </main>
 </div>
-<script nonce="${nonce}">${themeToggle}${script}${token ? actionsScript(token) : ""}</script>
+<script nonce="${nonce}">${themeToggle}${script}${token ? actionsScript(token) : ""}${status.schedule && scheduleToken ? scheduleScript(scheduleToken, status.deploymentId) : ""}</script>
 </body>
 </html>`;
 }
@@ -1142,8 +1152,11 @@ function writebackHealth(counts: WritebackCounts): string {
 function writebackObjects(objects: Awaited<ReturnType<ConsoleWriteback["objects"]>>): string {
   return `<div class="detail table-scroll"><table>
     <thead><tr><th scope="col">Object</th><th scope="col">Write-back</th></tr></thead>
-    <tbody>${objects.map(({ entityKey, enabled, fields }) => `<tr>
-      <th scope="row">${escapeHtml(entityKey)}</th>
+    <tbody>${objects.map(({ entityKey, enabled, fields, view }) => `<tr>
+      <th scope="row">${escapeHtml(entityKey)}
+        ${view ? `<br><code>${escapeHtml(view)}</code><br><code data-replica-query>SELECT * FROM ${escapeHtml(view)} LIMIT 10</code>
+          <button type="button" data-copy-query>Copy SQL</button>` : ""}
+      </th>
       <td><form data-policy>
         <input type="hidden" name="entityKey" value="${escapeHtml(entityKey)}">
         <label><input type="checkbox" role="switch" data-on="enable" data-off="disable"${enabled ? " checked" : ""}> Write-back</label>
@@ -1228,6 +1241,22 @@ const writebackScript = (token: string) => `
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Write-back request failed");
+  }
+  for (const button of document.querySelectorAll("[data-copy-query]")) {
+    button.addEventListener("click", async () => {
+      const sql = button.parentElement.querySelector("[data-replica-query]");
+      try {
+        await navigator.clipboard.writeText(sql.textContent);
+        feedback.textContent = "SQL copied.";
+      } catch {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(sql);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        feedback.textContent = "SQL selected. Use your copy shortcut.";
+      }
+    });
   }
   for (const form of document.querySelectorAll("[data-policy]")) {
     const toggle = form.querySelector("input[type=checkbox]");

@@ -1,3 +1,8 @@
+import { eventKeys, ScheduleInputError } from "./scheduler/schedule.js";
+import { printSchedule, runScheduleCommand, scheduleUsage, type ScheduleService } from "./cli-schedule.js";
+import { runScheduledDeployment } from "./cli-run.js";
+import type { SchedulerDeps } from "./scheduler/run.js";
+import type { ScheduleStore } from "./stores/postgres/schedule.js";
 import { createConsoleRuns, type ConsoleRuns } from "./console/runs.js";
 import { authUsage, listenForAuth, openAuthBrowser, runAuth, scheduleAuthTimeout, type AuthDeps } from "./cli-auth.js";
 import { existsSync, realpathSync } from "node:fs";
@@ -23,8 +28,8 @@ import { parseCountsArgs, reportCounts, type CountingSource, type CountingStore 
 import type { TokenStore } from "./sources/salesforce/auth/token-store.js";
 import type { CrmSource } from "./core/source.js";
 
-import { resolveConfigDir, runLockPath, safeDeploymentFileName } from "./cli-config-dir.js";
-import { acquireLock, LockHeldError, type FileLock } from "./locks/file-lock.js";
+import { resolveConfigDir, runLockPath, safeDeploymentFileName, schedulerLockPath } from "./cli-config-dir.js";
+import { acquireLock, localLockMatches, LockHeldError, type FileLock } from "./locks/file-lock.js";
 import { createRefreshLock } from "./locks/refresh-lock.js";
 import { verifyDeployment, type VerifyDeps } from "./cli-verify.js";
 import { parseReconcileArgs, reconcile, type ReconcileDeps } from "./cli-reconcile.js";
@@ -50,6 +55,12 @@ export interface CliDeps {
   createConsoleHandler?(port: number, runs?: ConsoleRuns, runsFor?: (deploymentId: string) => ConsoleRuns | undefined, setup?: SetupService): ReturnType<typeof createConsoleHandler>;
   objects?: ObjectsDeps;
   waitForChangesBatch?: (ms: number, signal: AbortSignal) => Promise<void>;
+  scheduleService?(config: ReplicationConfig): Promise<ScheduleService>;
+  scheduleRuntime?(config: ReplicationConfig): Promise<Pick<SchedulerDeps, "keys" | "store" | "now" | "wait" | "random"> & {
+    changeStore?: NonNullable<SchedulerDeps["changes"]>["store"];
+    acquireScheduler(): Promise<FileLock>;
+    rememberDiscovery(keys: string[]): Promise<void>;
+  }>;
   createWritebackStore?(): WritebackStore | Promise<WritebackStore>;
   setup?: SetupService;
   /** Terminal prompts for the setup wizard; tests inject scripted answers. */
@@ -81,16 +92,18 @@ const commands = {
   metadata: "Replicate entity metadata [--entities a,b]",
   users: "Replicate users",
   records: "Replicate records and repair references [--entities a,b]",
-  projections: "Build wide-view projections [--entities a,b]",
+  projections: "Build wide-view projections [--entities a,b] [--rebuild]",
   auth: authUsage,
   objects: objectsUsage,
   writeback: writebackUsage,
   changes: changesUsage,
+  schedule: scheduleUsage,
+  run: "Run the deployment scheduler until interrupted",
   console: "console [--port N]",
   setup: "setup [--deployment <id>]\n  setup status [--deployment <id>] [--json]",
   counts: "counts [--entities a,b] [--json] [--store-only]",
   reconcile: "reconcile [--entities a,b] [--json]\n  reconcile --apply [--allow-empty] [--allow-large] [--json]",
-  deployment: `${deploymentCommand}\n  ${verifyCommand}`,
+  deployment: `${deploymentCommand}\n  ${verifyCommand}\n  deployment status [--json]`,
   help: "Show this help (also --help)",
   "--help": "Show this help",
 } as const;
@@ -160,6 +173,14 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<number> {
     return !interrupted;
   }
   try {
+    if (command === "deployment" && argv[1] === "status") {
+      const { values } = parseArgs({ args: argv.slice(2), options: { json: { type: "boolean" } } });
+      const config = await deps.loadConfig();
+      await requireDeployment(deps, config.deploymentId);
+      if (!deps.scheduleService) throw new Error("Schedule storage is unavailable");
+      await printSchedule(await deps.scheduleService(config), values.json);
+      return 0;
+    }
     if (command === "deployment" && argv[1] === "verify") {
       const { values } = parseArgs({
         args: argv.slice(2),
@@ -194,6 +215,74 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<number> {
     }
     const countsOptions = command === "counts" ? parseCountsArgs(argv.slice(1)) : undefined;
     const baseConfig = await deps.loadConfig();
+    if (command === "schedule") {
+      await requireDeployment(deps, baseConfig.deploymentId);
+      if (!deps.scheduleService) throw new Error("Schedule storage is unavailable");
+      await runScheduleCommand(argv.slice(1), await deps.scheduleService(baseConfig));
+      return 0;
+    }
+    if (command === "run") {
+      parseArgs({ args: argv.slice(1) });
+      deploymentId = baseConfig.deploymentId;
+      const acquire = deps.acquireRunLock;
+      if (!deps.scheduleRuntime || !acquire || !deps.onSignal || !deps.createWritebackStore) {
+        throw new Error("Scheduler dependencies are unavailable");
+      }
+      await requireDeployment(deps, deploymentId);
+      const runtime = await deps.scheduleRuntime(baseConfig);
+      const writeback = await deps.createWritebackStore();
+      return await runScheduledDeployment({
+        ...runtime,
+        onSignal: deps.onSignal,
+        ...(runtime.changeStore && { changes: {
+          store: runtime.changeStore,
+          subscribe: async function* (request) {
+            const source = await deps.createSource(baseConfig);
+            if (!source.subscribeToChanges) throw new Error("Change events are unavailable.");
+            yield* source.subscribeToChanges(request);
+          },
+        } }),
+        acquire: (unit) => acquire(baseConfig.deploymentId, `run ${unit.kind}`),
+        perform: async (unit, observe) => {
+          if (unit.kind === "outbound") {
+            const session = changeSession(baseConfig, deps, writeback);
+            let worker: ChangeRequestProcessor | undefined;
+            try {
+              await processBatch({ store: writeback, deploymentId: baseConfig.deploymentId,
+                signal: new AbortController().signal, processor: async () => worker ??= await session.processor(true) });
+            } finally {
+              const usage = session.usage();
+              if (usage) observe(usage);
+              await session.close();
+            }
+            return;
+          }
+          const selection = unit.kind === "metadata" ? (await resolveSelection(baseConfig, deps.objects)).entities : unit.keys;
+          const config = { ...baseConfig, entityKeys: selection };
+          const store = await deps.createStore(config);
+          const sourceClient = await deps.createSource(config);
+          const replication = { config, store, sourceClient };
+          try {
+            await runWithSource(replication, async () => {
+              if (unit.kind === "metadata") {
+                const definitions = await runMetadataStage(replication);
+                if (config.buildWideViews) await runProjectionsStage(replication, definitions);
+                if (selection.length === 1 && selection[0] === "*") {
+                  await runtime.rememberDiscovery(definitions.map(({ key }) => key));
+                }
+              } else {
+                const definitions = await deps.hasEntityMetadata(config.deploymentId, selection)
+                  ? await describeEntities(sourceClient, selection) : await runMetadataStage(replication);
+                await runRecordsStage(replication, definitions);
+              }
+            });
+          } finally {
+            const usage = sourceClient.apiUsage?.();
+            if (usage) observe(usage);
+          }
+        },
+      });
+    }
     if (command === "objects") {
       if (!deps.objects) throw new Error("Object selection dependencies are unavailable");
       await runObjects(argv.slice(1), baseConfig, deps.objects);
@@ -244,6 +333,7 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<number> {
       return interrupted ? 130 : 0;
     }
     let config = baseConfig;
+    let rebuildProjections = false;
     if (command !== "users") {
       let flag = countsOptions?.entityKeys;
       if (!countsOptions) {
@@ -251,6 +341,7 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<number> {
           args: argv.slice(1),
           options: {
             entities: { type: "string" },
+            ...(command === "projections" ? { rebuild: { type: "boolean" } } : {}),
             ...(command === "metadata" || command === "records" ? { "legacy-migrate": { type: "boolean" } } : {}),
           },
         });
@@ -258,6 +349,7 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<number> {
           console.warn(`npm run migrate:${command} is deprecated. Use npm run replicate:${command}.`);
         }
         if (values.entities !== undefined) flag = parseEntityList(values.entities);
+        rebuildProjections = values.rebuild === true;
       }
       const { entities } = await resolveSelection(baseConfig, deps.objects, flag);
       config = { ...baseConfig, entityKeys: entities };
@@ -273,7 +365,7 @@ export async function runCli(argv: string[], deps: CliDeps): Promise<number> {
       await reportCounts(config, countsOptions, store, source);
       return 0;
     }
-    if (command !== "counts") await executeReplication(command, config, deps);
+    if (command !== "counts") await executeReplication(command, config, deps, undefined, rebuildProjections);
     return interrupted ? 130 : 0;
   } catch (error: unknown) {
     if (interrupted) return 130;
@@ -316,7 +408,7 @@ function guardStore(store: ReplicaStore, signal: AbortSignal): ReplicaStore {
 
 async function executeReplication(
   command: "metadata" | "users" | "records" | "projections" | "full",
-  config: ReplicationConfig, deps: CliDeps, signal?: AbortSignal,
+  config: ReplicationConfig, deps: CliDeps, signal?: AbortSignal, rebuildProjections = false,
 ): Promise<void> {
   signal?.throwIfAborted();
   const store = await deps.createStore(config);
@@ -345,8 +437,8 @@ async function executeReplication(
         }
         signal?.throwIfAborted();
         const definitions = await describeEntities(replication.sourceClient, keys);
-        const runStage = command === "records" ? runRecordsStage : runProjectionsStage;
-        await runStage(replication, definitions);
+        if (command === "records") await runRecordsStage(replication, definitions);
+        else await runProjectionsStage(replication, definitions, { rebuild: rebuildProjections });
       });
       break;
     case "full":
@@ -370,6 +462,7 @@ function changeSession(config: ReplicationConfig, deps: Pick<CliDeps, "createSou
         persistRecords: replica.persistRecords.bind(replica),
       }, source ?? {});
     },
+    usage: () => source?.apiUsage?.() ?? (source ? undefined : { calls: 0 }),
     close: async () => { await source?.logout(); },
   };
 }
@@ -412,7 +505,7 @@ async function runConsole(args: string[], deps: CliDeps, baseConfig: Replication
           return;
         }
         console.log(`[replication] Starting ${stage}`);
-        const scoped = { ...baseConfig, deploymentId };
+        const scoped = configForDeployment(baseConfig, deploymentId);
         const { entities } = await resolveSelection(scoped, deps.objects);
         const config = { ...scoped, entityKeys: entities };
         signal.throwIfAborted();
@@ -450,6 +543,12 @@ async function runConsole(args: string[], deps: CliDeps, baseConfig: Replication
   return 0;
 }
 
+function configForDeployment(config: ReplicationConfig, deploymentId: string): ReplicationConfig {
+  if (config.deploymentId === deploymentId) return config;
+  const { replicaViewSchema: _schema, ...shared } = config;
+  return { ...shared, deploymentId };
+}
+
 async function runSetupCommand(args: string[], deps: CliDeps): Promise<number> {
   const sub = args[0] && !args[0].startsWith("-") ? args[0] : undefined;
   const rest = sub ? args.slice(1) : args;
@@ -467,7 +566,7 @@ async function runSetupCommand(args: string[], deps: CliDeps): Promise<number> {
         setup: deps.setup,
         runFirstSync: async (deploymentId) => {
           const base = deps.loadConsoleConfig ? await deps.loadConsoleConfig() : await deps.loadConfig();
-          const scoped = { ...base, deploymentId };
+          const scoped = configForDeployment(base, deploymentId);
           const config = { ...scoped, entityKeys: (await resolveSelection(scoped, deps.objects)).entities };
           const lock = deps.acquireRunLock ? await deps.acquireRunLock(deploymentId, "setup full") : undefined;
           try {
@@ -591,12 +690,14 @@ export function createProductionDeps(
     const { deploymentId, tokens, clientId, clientSecret } = auth;
     return new SourceClient({ mode: "oauth", instanceUrl: tokens.instanceUrl, accessToken: tokens.accessToken }, {
       connectionFactory,
+      ...(overrides?.fetch && { eventFetch: overrides.fetch }),
       refresh: createStoredRefresh(tokenStore, deploymentId, { clientId, clientSecret, fetch: overrides?.fetch }),
       withRefreshLock: withRefreshLock(deploymentId),
     });
   }
 
   const objects: ObjectsDeps = {
+    listViews: async (deploymentId) => await databaseUrl() ? (await getStore()).listReplicaViews(deploymentId) : [],
     configDir, createSource, fallbackSource: () => env.SYNC_ENTITIES === undefined ? "default" : "SYNC_ENTITIES",
   };
 
@@ -605,6 +706,42 @@ export function createProductionDeps(
   let signIn: { done: Promise<number>; deploymentId: string } | undefined;
   let signInNotice: { deploymentId: string; message: string } | undefined;
   const consoleConfig = (deploymentId: string): ReplicationConfig => loadReplicationConfig({ ...env, DEPLOYMENT_ID: deploymentId });
+  async function scheduleKeys(config: ReplicationConfig, schedule: ScheduleStore): Promise<string[]> {
+    const { entities } = await resolveSelection(config, objects);
+    if (entities.length === 1 && entities[0] === "*") {
+      const { discoveredKeys } = await schedule.read();
+      const known = discoveredKeys ?? await (await getStore()).listPersistedEntityKeys(config.deploymentId);
+      return known.filter((key) => !config.entityDenyKeys.includes(key));
+    }
+    return entities.filter((key) => !config.entityDenyKeys.includes(key));
+  }
+
+  async function scheduleService(config: ReplicationConfig): Promise<ScheduleService> {
+    const id = safeDeploymentFileName(config.deploymentId);
+    const store: ScheduleStore = (await getStore()).schedule(id);
+    const keys = () => scheduleKeys(config, store);
+    return {
+      status: async () => store.status(await keys(), now().getTime(),
+        await localLockMatches(schedulerLockPath(configDir(), id), "run", overrides?.runLockIsProcessAlive),
+        await localLockMatches(runLockPath(configDir(), id), "run ", overrides?.runLockIsProcessAlive)),
+      edit: async (edit) => {
+        const selected = await keys();
+        const requested = edit.action === "set" ? eventKeys(edit.fields?.events) : [];
+        for (const key of requested) {
+          if (!selected.includes(key)) throw new ScheduleInputError(
+            `Select ${key} for replication and in Salesforce Setup → Change Data Capture before turning on live updates.`);
+        }
+        if (requested.length) {
+          const enabled: string[] = await createSource(config).then((source) => source.availableChangeEvents(requested)).catch(() => []);
+          const missing = requested.filter((key) => !enabled.includes(key));
+          if (missing.length) throw new ScheduleInputError(
+            `Live updates unavailable for ${missing.join(", ")}. Select the objects in Salesforce Setup → Change Data Capture. Your org limits how many objects you can select. Use OAuth sign-in with permission to view Salesforce Setup.`);
+        }
+        await store.edit(edit, selected, now().getTime());
+      },
+    };
+  }
+
   const safeReason = (error: unknown): string => {
     const text = error instanceof Error ? error.message : String(error);
     return text.replace(/postgres(?:ql)?:\/\/[^\s"'`]+/gi, "[database]").split("\n").find((line) => line.trim())?.trim().slice(0, 200) ?? "unknown error";
@@ -783,10 +920,11 @@ export function createProductionDeps(
       } catch {
         first = "";
       }
-      return { ...consoleConfig("setup"), deploymentId: first };
+      return configForDeployment(consoleConfig("setup"), first);
     },
     createConsoleHandler: (port, runs, runsFor, setup) => createConsoleHandler({
       port, now, runs, runsFor, ...(setup && { setup }),
+      schedule: (deploymentId) => scheduleService(consoleConfig(deploymentId)),
       defaultDeployment: async () => env.DEPLOYMENT_ID || (await (await getStore()).listDeployments())[0]?.id,
       writeback: async (deploymentId) => {
         const store = await getStore();
@@ -830,7 +968,7 @@ export function createProductionDeps(
     },
     acquireRunLock: (deploymentId, command) => acquireLock(runLockPath(configDir(), deploymentId), {
       command, now,
-      ...(!command.startsWith("changes ") && {
+      ...(!command.startsWith("changes ") && !command.startsWith("run ") && {
         waitForHolder: (holder) => holder.command === "changes process",
       }),
       ...(overrides?.runLockIsProcessAlive && { isProcessAlive: overrides.runLockIsProcessAlive }),
@@ -842,6 +980,18 @@ export function createProductionDeps(
     exit: (code) => process.exit(code),
     objects,
     createWritebackStore: getStore,
+    scheduleService,
+    scheduleRuntime: async (config) => {
+      const store = (await getStore()).schedule(config.deploymentId);
+      return {
+        store, changeStore: store, keys: () => scheduleKeys(config, store), now: () => now().getTime(),
+        rememberDiscovery: (keys) => store.rememberDiscovery(keys),
+        acquireScheduler: () => acquireLock(schedulerLockPath(configDir(), config.deploymentId), {
+          command: "run", now,
+          ...(overrides?.runLockIsProcessAlive && { isProcessAlive: overrides.runLockIsProcessAlive }),
+        }),
+      };
+    },
     loadConfig: () => loadReplicationConfig(env),
     validateSourceCredentials,
     createSource,

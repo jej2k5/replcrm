@@ -1,5 +1,5 @@
 import { setTimeout as sleep } from "node:timers/promises";
-import type { FileLock } from "../locks/file-lock.js";
+import { LockHeldError, type FileLock } from "../locks/file-lock.js";
 import type { ChangeRequestProcessor } from "./processor.js";
 import { retryDelayElapsed, type WritebackStore } from "./requests.js";
 
@@ -25,11 +25,20 @@ export async function processQueue(options: {
   const wait = options.wait ?? ((ms, signal) => sleep(ms, undefined, { signal }));
   let processor: ChangeRequestProcessor | undefined;
   while (!signal.aborted) {
-    const lock = await options.acquire();
+    let lock: FileLock | undefined;
     try {
-      await processBatch({ store, deploymentId, signal, processor: async () => processor ??= await options.processor() });
-    } finally {
-      await lock.release();
+      lock = await options.acquire();
+    } catch (error) {
+      // A watch can share the deployment with scheduled units by trying the next poll.
+      if (intervalMs === undefined || !(error instanceof LockHeldError) || !error.live ||
+          !error.holder?.command.startsWith("run ")) throw error;
+    }
+    if (lock) {
+      try {
+        await processBatch({ store, deploymentId, signal, processor: async () => processor ??= await options.processor() });
+      } finally {
+        await lock.release();
+      }
     }
     if (intervalMs === undefined || signal.aborted) return;
     try {

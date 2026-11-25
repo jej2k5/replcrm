@@ -1,3 +1,4 @@
+import { ScheduleStore } from "./schedule.js";
 import type { FailedStatusRun, StatusRun } from "../status-runs.js";
 import { randomUUID } from "node:crypto";
 import { type PrismaClient, type ChangeRequest as StoredChangeRequest, Prisma, SyncStatus } from "@prisma/client";
@@ -7,6 +8,7 @@ import type { CanonicalEntity, ChangeBatch, SourceUser } from "../../core/source
 import type { Counts, PendingRun, Projection, ProjectionResult, ReplicaStore } from "../../core/replica-store.js";
 import { validateMetadata } from "../../core/metadata.js";
 import { syncMetadata } from "./metadata-sync.js";
+import { listReplicaViews } from "./readable-views.js";
 import { syncUsers } from "./user-sync.js";
 import { syncRecords, backfillReferences } from "./record-sync.js";
 import { lockProjection, markSyncTransaction, resolveProjection, setProjectionEditTriggers, syncWideViews } from "./wide-view-sync.js";
@@ -26,6 +28,8 @@ function readChangeRequest(row: StoredChangeRequest): ChangeRequest {
 
 export class PostgresReplicaStore implements ReplicaStore, WritebackStore {
   constructor(private readonly prisma: PrismaClient) {}
+
+  schedule(deploymentId: string): ScheduleStore { return new ScheduleStore(this.prisma, deploymentId); }
 
   async readEntity(deploymentId: string, entityKey: string): Promise<CanonicalEntity | null> {
     const entity = await this.prisma.entityDefinition.findUnique({ where: { deploymentId_key: { deploymentId, key: entityKey } } });
@@ -310,7 +314,6 @@ export class PostgresReplicaStore implements ReplicaStore, WritebackStore {
         const attrs = await tx.attributeDefinition.findMany({ where: { entityDefinitionId: current.id } });
         for (const attr of entity.attributes) {
           const old = attrs.find((item): boolean => item.key === attr.key);
-          if (old && old.dataType !== attr.dataType) throw new Error(`Incompatible attribute type change: ${entity.key}/${attr.key}`);
           if (old && JSON.stringify([...old.referenceEntityKeys].sort()) !== JSON.stringify([...(attr.relationship?.targetEntityKeys ?? [])].sort())) throw new Error(`Incompatible relationship change: ${entity.key}/${attr.key}`);
         }
       }
@@ -375,14 +378,15 @@ export class PostgresReplicaStore implements ReplicaStore, WritebackStore {
       await tx.syncRun.updateMany({ where: { id, status: SyncStatus.Running }, data: { status: SyncStatus.Failed, completedAt: new Date(), errorMessage: message } });
     });
   }
-  async ensureProjections(deploymentId: string, definitions: CanonicalEntity[]): Promise<ProjectionResult[]> {
+  async ensureProjections(deploymentId: string, definitions: CanonicalEntity[], options?: { rebuild?: boolean; replicaViewSchema?: string }): Promise<ProjectionResult[]> {
     const entities = [];
     for (const definition of definitions) {
       const entity = await this.prisma.entityDefinition.findUnique({ where: { deploymentId_key: { deploymentId, key: definition.key } } });
       if (!entity) throw new Error(`Missing persisted entity: ${definition.key}`);
       entities.push(entity);
     }
-    return syncWideViews(this.prisma, deploymentId, entities);
+    return syncWideViews(this.prisma, deploymentId, entities, definitions, options?.rebuild ?? false, options?.replicaViewSchema);
   }
+  async listReplicaViews(deploymentId: string) { return listReplicaViews(this.prisma, deploymentId); }
   async resolveProjection(deploymentId: string, entityKey: string): Promise<Projection | null> { return resolveProjection(this.prisma, deploymentId, entityKey); }
 }

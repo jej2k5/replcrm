@@ -22,7 +22,7 @@ async function fixture(t: TestContext, { enabled = true, entity = account } = {}
   await persist(original);
   const policy = (action: "enable" | "disable") => store.editWritebackPolicy(deployment, entity.key, { action });
   if (enabled) await policy("enable");
-  const rebuild = () => store.ensureProjections(deployment, [entity]);
+  const rebuild = (force = false) => store.ensureProjections(deployment, [entity], { rebuild: force });
   await rebuild();
   const table = location(entity);
   const run = (statement: string) => db.query<Record<string, unknown>>(statement.replaceAll("WIDE_TABLE", table));
@@ -134,7 +134,7 @@ test("rebuild preserves the exact pending request and reinstalls all triggers", 
   const f = await fixture(t);
   await f.run(editName);
   const before = await f.queue();
-  await f.rebuild();
+  await f.rebuild(true);
   assert.deepEqual(await f.queue(), before);
   assert.deepEqual(await f.triggers(), ["replcrm_edit_delete", "replcrm_edit_insert", "replcrm_edit_update"]);
   await f.run(editName);

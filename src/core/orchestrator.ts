@@ -76,9 +76,17 @@ export async function runUsersStage({ store, config, sourceClient: source }: Orc
 }
 
 export async function runRecordsStage(
-  { store, config, sourceClient: source }: OrchestratorDeps,
+  deps: OrchestratorDeps,
   definitions?: CanonicalEntity[],
 ): Promise<void> {
+  const entities = await syncRecordsStage(deps, definitions);
+  if (deps.config.buildWideViews) await runProjectionsStage(deps, entities);
+}
+
+async function syncRecordsStage(
+  { store, config, sourceClient: source }: OrchestratorDeps,
+  definitions?: CanonicalEntity[],
+): Promise<CanonicalEntity[]> {
   const entities = definitions ?? await describeEntities(source, await selectEntityKeys(config, source));
   const pending: PendingRun[] = [];
   try {
@@ -99,18 +107,28 @@ export async function runRecordsStage(
     for (const item of pending) await store.failRun(item.id, error instanceof Error ? error.message : String(error));
     throw error;
   }
+  return entities;
 }
 
 export async function runProjectionsStage(
   { store, config, sourceClient: source }: OrchestratorDeps,
   definitions?: CanonicalEntity[],
+  options?: { rebuild?: boolean },
 ): Promise<void> {
   const entities = definitions ?? await describeEntities(source, await selectEntityKeys(config, source));
   await stage(
     store,
     config.deploymentId,
     "projections",
-    () => store.ensureProjections(config.deploymentId, entities),
+    async () => {
+      const projectionOptions = config.replicaViewSchema === undefined
+        ? options : { ...options, replicaViewSchema: config.replicaViewSchema };
+      const results = await store.ensureProjections(config.deploymentId, entities, projectionOptions);
+      for (const result of results) {
+        if (result.rebuildReason) console.log(`[replication] Rebuilt projection for ${result.entityKey} (${result.rebuildReason})`);
+      }
+      return results;
+    },
     (results: ProjectionResult[]): Counts => ({
       ...emptyCounts(),
       processed: results.reduce((sum, item) => sum + item.rowsLoaded, 0),
@@ -122,7 +140,7 @@ export async function runReplication(deps: OrchestratorDeps): Promise<void> {
   await runWithSource(deps, async () => {
     const definitions = await runMetadataStage(deps);
     await runUsersStage(deps);
-    await runRecordsStage(deps, definitions);
+    await syncRecordsStage(deps, definitions);
     if (deps.config.buildWideViews ?? true) await runProjectionsStage(deps, definitions);
   });
 }

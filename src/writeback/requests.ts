@@ -60,6 +60,7 @@ export interface ChangeTransition {
 }
 
 export interface WritebackStore {
+  listReplicaViews?(deploymentId: string): Promise<import("../core/replica-store.js").ReplicaView[]>;
   submitWritebackChange?(input: import("./index.js").ChangeSubmission): Promise<ChangeRequest>;
   listPersistedEntityKeys(deploymentId: string): Promise<string[]> | string[];
   readEntity(deploymentId: string, entityKey: string): Promise<CanonicalEntity | null> | CanonicalEntity | null;

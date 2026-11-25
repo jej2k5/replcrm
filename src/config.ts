@@ -69,6 +69,7 @@ export async function loadSourceAuth(
 export function loadReplicationConfig(env: NodeJS.ProcessEnv): ReplicationConfig {
   return {
     deploymentId: required(env, "DEPLOYMENT_ID"),
+    ...(env.REPLICA_VIEW_SCHEMA !== undefined && { replicaViewSchema: env.REPLICA_VIEW_SCHEMA }),
     buildWideViews: optional(env, "BUILD_WIDE_VIEWS", "true").toLowerCase() !== "false",
     batchSize: Number.parseInt(optional(env, "SYNC_BATCH_SIZE", "2000"), 10),
     entityKeys: optional(env, "SYNC_ENTITIES", "Account,Contact,Lead,Opportunity,Case")

@@ -146,3 +146,11 @@ async function removeOwnedLock(path: string, token: string): Promise<void> {
     if (error.code !== "ENOENT") throw error;
   });
 }
+
+export async function localLockMatches(
+  path: string, command: string, alive: (pid: number) => boolean = isProcessAlive,
+): Promise<boolean> {
+  const holder = await readHolder(path);
+  return Boolean(holder && holder !== unreadable && holder.hostname === hostname() &&
+    holder.command.startsWith(command) && alive(holder.pid));
+}

@@ -22,7 +22,7 @@ replicaStoreContractTests("postgres", async (): Promise<ContractFixture> => {
   const dataDir: string = await mkdtemp(join(tmpdir(), "replcrm-contract-"));
   let { db, prisma } = await database(undefined, { dataDir, initialize: true });
   await prisma.deployment.create({ data: { id: "contract", name: "Contract" } });
-  const fixture: ContractFixture = { store: new PostgresReplicaStore(prisma), reopen: async (): Promise<PostgresReplicaStore> => {
+  const fixture: ContractFixture = { store: new PostgresReplicaStore(prisma), evolvesProjectionSchema: true, reopen: async (): Promise<PostgresReplicaStore> => {
       await db.close();
       ({ db, prisma } = await database(undefined, { dataDir, initialize: false }));
       const store: PostgresReplicaStore = new PostgresReplicaStore(prisma);

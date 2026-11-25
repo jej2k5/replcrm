@@ -46,7 +46,8 @@ A single `*` discovers objects Salesforce marks queryable and replicateable. Dis
 | core | SYNC_BATCH_SIZE | Page size, default 2000 |
 | core | SYNC_ENTITIES | Fallback object selection when no flag or saved selection is present. A single `*` enables discovery. |
 | core | SYNC_ENTITY_DENY | Always-applied exclusion list, default empty |
-| core | BUILD_WIDE_VIEWS | Default true. Set false to skip wide projections during full replication. The explicit projections command builds wide views. |
+| core | BUILD_WIDE_VIEWS | Default true. Set false to skip automatic refresh during full and records runs. The explicit projections command refreshes wide tables independently. |
+| core | REPLICA_VIEW_SCHEMA | Defaults to `replica` for new deployments. Choose a distinct lowercase SQL schema name before the first projection refresh when deployments share a database. Later refreshes use the registered schema. |
 | source | SF_LOGIN_URL | Default https://login.salesforce.com; use test host for sandbox |
 | source | SF_AUTH_MODE | `auto` (default), `oauth`, or `password` |
 | source | SF_CLIENT_ID | External Client App client ID, required in OAuth mode |
