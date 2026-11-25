@@ -2,6 +2,10 @@
 
 Changes will be recorded here for future releases. This file does not assert that a tagged or published release exists.
 
+## Next release (unreleased)
+
+- `npm run demo` opens the console on a fictional Salesforce org held in memory, with no credentials, database or network access. Syncs and write-back run against the fictional org; setup and sign-in are disabled; every page is labeled as demo data.
+
 ## 0.4.0 (2026-11-25)
 
 ### Live replica
