@@ -8,6 +8,8 @@ The [dependency inventory](docs/dependency-license-inventory.json) maps each ins
 
 MIT permission/copyright sections embedded in the csprng and sequin README files are retained. The esbuild root MIT text also covers the platform packages' matching upstream copyright/version.
 
+The container image's Node.js runtime is covered by [Node's own license](licenses/NODEJS-22.23.5-LICENSE.txt) for the pinned version, which includes the notices of its bundled components (V8, ICU, libuv and others).
+
 [PostgreSQL/PGlite upstream attribution](licenses/PGLITE-POSTGRES-LICENSE.txt) is retained in addition to PGlite's packaged Apache license. Installed/generated dependency notices remain intact; generated clients and native binaries are not committed as project source.
 
 ## Embedded font
