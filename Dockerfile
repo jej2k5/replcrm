@@ -15,6 +15,9 @@ COPY . .
 # Generate Prisma client now that schema.prisma is present.
 RUN npx prisma generate
 RUN npx tsc
+# Drop build-only packages (TypeScript, tsx, PGlite, type definitions). The Prisma CLI stays:
+# it is a production dependency in the lockfile, and console setup runs `prisma migrate deploy`.
+RUN npm prune --omit=dev
 
 FROM node:22-alpine AS runner
 WORKDIR /app
@@ -34,8 +37,8 @@ COPY package.json LICENSE NOTICE THIRD_PARTY_NOTICES.md ./
 COPY licenses ./licenses
 
 # Prisma client (generated artifacts) lives under node_modules/.prisma —
-# already copied via node_modules above. Sanity check.
-RUN node -e "require.resolve('@prisma/client')"
+# already copied via node_modules above. Sanity check, including the CLI setup uses.
+RUN node -e "require.resolve('@prisma/client'); require.resolve('./node_modules/prisma/build/index.js')"
 
 USER replcrm
 
